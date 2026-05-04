@@ -1,14 +1,17 @@
+import { resolveMediaUrl } from '@/utils/media'
+
 export class Post {
   constructor(data = {}) {
     this.id = data.id || ''
     this.userName = data.userName || ''
-    this.profilePhotoUrl = data.profilePhotoUrl || ''
+    this.profilePhotoUrl = resolveMediaUrl(data.profilePhotoUrl) || ''
     this.displayName = data.displayName || ''
     this.caption = data.caption || ''
-    this.imageUrl = data.imageUrl || null
-    this.imageUrls = Array.isArray(data.imageUrls) && data.imageUrls.length
+    this.imageUrl = resolveMediaUrl(data.imageUrl) || null
+    const rawUrls = Array.isArray(data.imageUrls) && data.imageUrls.length
       ? data.imageUrls
       : (data.imageUrl ? [data.imageUrl] : [])
+    this.imageUrls = rawUrls.map(resolveMediaUrl)
     this.createdAtUtc = data.createdAtUtc || ''
     this.likeCount = data.likeCount || 0
     this.likedByMe = data.likedByMe || false

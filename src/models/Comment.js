@@ -1,8 +1,10 @@
+import { resolveMediaUrl } from '@/utils/media'
+
 export class Comment {
   constructor(data = {}) {
     this.id = data.id || ''
     this.userName = data.userName || ''
-    this.profilePhotoUrl = data.profilePhotoUrl || ''
+    this.profilePhotoUrl = resolveMediaUrl(data.profilePhotoUrl) || ''
     this.displayName = data.displayName || ''
     this.text = data.text || ''
     this.createdAtUtc = data.createdAtUtc || ''
