@@ -40,8 +40,8 @@
           </RouterLink>
         </div>
 
-        <!-- Action buttons top-right -->
-        <div class="absolute top-5 right-5 flex items-center gap-2 flex-wrap justify-end max-w-[80%]">
+        <!-- Action buttons top-right (DESKTOP) -->
+        <div class="absolute top-5 right-5 hidden md:flex items-center gap-2 flex-wrap justify-end max-w-[60%]">
           <RouterLink
             v-if="isOwner"
             :to="`/trips/${trip.id}/edit`"
@@ -66,7 +66,8 @@
           </button>
           <button
             v-if="auth.isAuthenticated && !isOwner"
-            @click="onCloneTrip"
+            type="button"
+            @click.stop="askCloneTrip"
             :disabled="cloning"
             class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/15 backdrop-blur-md ring-1 ring-white/30 rounded-full text-xs font-semibold text-white transition shadow hover:bg-white/25 disabled:opacity-60"
             title="Plan een soortgelijke reis"
@@ -92,6 +93,77 @@
             {{ trip.bookmarkedByMe ? 'Opgeslagen' : 'Bewaar' }}
             <span v-if="trip.bookmarkCount > 0" class="opacity-70">· {{ trip.bookmarkCount }}</span>
           </button>
+        </div>
+
+        <!-- Action menu (MOBILE) — bookmark + 3-dot dropdown, geen overlap met username -->
+        <div class="absolute top-3 right-3 md:hidden flex items-center gap-2">
+          <button
+            v-if="auth.isAuthenticated"
+            @click="onToggleBookmark"
+            :disabled="bookmarking"
+            class="w-9 h-9 rounded-full backdrop-blur-md ring-1 flex items-center justify-center transition shadow"
+            :class="trip.bookmarkedByMe
+              ? 'bg-yellow-400 text-gray-900 ring-yellow-300'
+              : 'bg-white/20 text-white ring-white/30'"
+            :aria-label="trip.bookmarkedByMe ? 'Opgeslagen' : 'Bewaar'"
+          >
+            <svg class="w-4 h-4" :fill="trip.bookmarkedByMe ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+            </svg>
+          </button>
+          <div ref="actionMenuRef" class="relative">
+            <button
+              type="button"
+              @click.stop="showActionMenu = !showActionMenu"
+              class="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md ring-1 ring-white/30 text-white flex items-center justify-center shadow"
+              aria-label="Meer acties"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 6a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 5.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 5.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/>
+              </svg>
+            </button>
+            <div
+              v-if="showActionMenu"
+              class="absolute right-0 top-full mt-1 w-52 bg-white rounded-xl shadow-xl ring-1 ring-gray-200 overflow-hidden z-30"
+            >
+              <RouterLink
+                v-if="isOwner"
+                :to="`/trips/${trip.id}/edit`"
+                class="flex items-center gap-2.5 px-4 py-3 text-sm text-gray-800 hover:bg-gray-50 transition"
+                @click="showActionMenu = false"
+              >
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                Bewerken
+              </RouterLink>
+              <button
+                v-if="isOwner"
+                type="button"
+                @click="showActionMenu = false; onDeleteTrip()"
+                class="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition text-left"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3"/></svg>
+                Verwijder
+              </button>
+              <button
+                v-if="auth.isAuthenticated && !isOwner"
+                type="button"
+                @click="showActionMenu = false; askCloneTrip()"
+                class="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-gray-800 hover:bg-gray-50 transition text-left"
+              >
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Plan soortgelijke reis
+              </button>
+              <button
+                v-if="auth.isAuthenticated && !isOwner"
+                type="button"
+                @click="showActionMenu = false; onReportTrip()"
+                class="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-gray-800 hover:bg-gray-50 transition text-left border-t border-gray-100"
+              >
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 2H21l-3 6 3 6h-8.5l-1-2H5a2 2 0 00-2 2zm9-13.5V9"/></svg>
+                Rapporteer reis
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="absolute bottom-0 left-0 right-0 p-8">
@@ -576,6 +648,17 @@
       :loading="deleting"
       @confirm="confirmDeleteTrip"
     />
+
+    <!-- Clone confirmation dialog -->
+    <ConfirmDialog
+      v-model="confirmCloneOpen"
+      title="Soortgelijke reis maken?"
+      :message="trip ? `Er wordt een kopie van &quot;${trip.title}&quot; aangemaakt onder jouw account, die je daarna kunt aanpassen.` : ''"
+      confirm-label="Ja, maak kopie"
+      loading-label="Bezig met kopiëren..."
+      :loading="cloning"
+      @confirm="confirmCloneTrip"
+    />
   </div>
 </template>
 
@@ -600,6 +683,16 @@ const deleting = ref(false)
 const isOwner = computed(() => trip.value && auth.userName && auth.userName === trip.value.userName)
 
 const confirmDeleteOpen = ref(false)
+const confirmCloneOpen = ref(false)
+const showActionMenu = ref(false)
+const actionMenuRef = ref(null)
+
+function handleActionMenuClickOutside(e) {
+  if (!showActionMenu.value) return
+  if (actionMenuRef.value && !actionMenuRef.value.contains(e.target)) {
+    showActionMenu.value = false
+  }
+}
 
 function onDeleteTrip() {
   if (!trip.value || deleting.value) return
@@ -619,12 +712,17 @@ async function confirmDeleteTrip() {
   }
 }
 
-async function onCloneTrip() {
+function askCloneTrip() {
+  if (!trip.value || cloning.value) return
+  confirmCloneOpen.value = true
+}
+
+async function confirmCloneTrip() {
   if (!trip.value || cloning.value) return
   cloning.value = true
   try {
     const cloned = await tripsApi.cloneTrip(trip.value.id)
-    // Direct naar de edit-pagina zodat de gebruiker meteen kan aanpassen
+    confirmCloneOpen.value = false
     router.push(`/trips/${cloned.id}/edit`)
   } catch (e) {
     console.error('Clone trip failed', e)
@@ -632,6 +730,10 @@ async function onCloneTrip() {
   } finally {
     cloning.value = false
   }
+}
+
+function onReportTrip() {
+  alert('Bedankt voor je melding — onze moderators bekijken de reis.')
 }
 
 async function onToggleBookmark() {
@@ -663,10 +765,12 @@ onMounted(async () => {
 
   await nextTick()
   if (trip.value && mapContainer.value) initMap()
+  document.addEventListener('mousedown', handleActionMenuClickOutside)
 })
 
 onUnmounted(() => {
   if (map) { map.remove(); map = null }
+  document.removeEventListener('mousedown', handleActionMenuClickOutside)
 })
 
 const tripDays = computed(() => {

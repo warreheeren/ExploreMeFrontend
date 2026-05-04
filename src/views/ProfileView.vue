@@ -12,6 +12,33 @@
         <div class="h-32 bg-gradient-to-br from-teal-400 via-cyan-400 to-blue-500 relative rounded-t-2xl overflow-hidden">
           <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.4) 0%, transparent 40%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.3) 0%, transparent 35%);"></div>
 
+          <!-- Report menu (non-own profile) -->
+          <div v-if="!isOwnProfile && auth.isAuthenticated" ref="profileMenuRef" class="absolute top-3 left-3 z-10">
+            <button
+              @click.stop="profileMenuOpen = !profileMenuOpen"
+              class="w-8 h-8 rounded-full bg-white/85 backdrop-blur-sm hover:bg-white transition shadow flex items-center justify-center text-gray-700"
+              aria-label="Meer"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 6a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 5.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 5.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/>
+              </svg>
+            </button>
+            <div
+              v-if="profileMenuOpen"
+              class="absolute left-0 top-full mt-1 w-44 bg-white rounded-xl shadow-xl ring-1 ring-gray-200 overflow-hidden z-30"
+            >
+              <button
+                @click="onReportProfile"
+                class="w-full flex items-center gap-2.5 px-4 py-3 text-sm text-gray-800 hover:bg-gray-50 transition text-left"
+              >
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 2H21l-3 6 3 6h-8.5l-1-2H5a2 2 0 00-2 2zm9-13.5V9"/>
+                </svg>
+                Rapporteer profiel
+              </button>
+            </div>
+          </div>
+
           <!-- Action button positioned in banner top-right -->
           <div class="absolute top-3 right-3 flex items-center gap-2">
             <RouterLink
@@ -400,6 +427,21 @@ const followLoading = ref(false)
 const mapContainer = ref(null)
 let map = null
 
+const profileMenuOpen = ref(false)
+const profileMenuRef = ref(null)
+
+function handleProfileMenuClickOutside(e) {
+  if (!profileMenuOpen.value) return
+  if (profileMenuRef.value && !profileMenuRef.value.contains(e.target)) {
+    profileMenuOpen.value = false
+  }
+}
+
+function onReportProfile() {
+  profileMenuOpen.value = false
+  alert('Bedankt voor je melding — onze moderators bekijken het profiel.')
+}
+
 const ui = reactive({})
 
 const isOwnProfile = computed(() => auth.userName === username.value)
@@ -769,10 +811,16 @@ async function initMap() {
   setTimeout(() => map && map.invalidateSize(), 100)
 }
 
-onMounted(load)
+onMounted(() => {
+  load()
+  document.addEventListener('mousedown', handleProfileMenuClickOutside)
+  window.addEventListener('app-refresh', load)
+})
 onUnmounted(() => {
   if (map) { map.remove(); map = null }
   countriesLayer = null
+  document.removeEventListener('mousedown', handleProfileMenuClickOutside)
+  window.removeEventListener('app-refresh', load)
 })
 watch(() => route.params.username, load)
 

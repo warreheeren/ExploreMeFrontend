@@ -42,6 +42,7 @@
           </div>
           <div class="flex-1 space-y-3 min-w-0">
             <textarea
+              ref="captionRef"
               v-model.trim="newPost.caption"
               rows="2"
               placeholder="Deel je avontuur..."
@@ -81,7 +82,7 @@
 
               <button
                 @click="onCreatePost"
-                :disabled="creating || !newPost.caption"
+                :disabled="creating || (!newPost.caption && imageUrls.length === 0)"
                 class="ml-auto px-5 py-1.5 text-sm font-semibold text-white bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg hover:from-gray-700 hover:to-gray-800 disabled:from-gray-300 disabled:to-gray-300 disabled:cursor-default transition shadow-sm"
               >
                 {{ creating ? '...' : 'Posten' }}
@@ -270,7 +271,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import * as postsApi from '@/api/postsApi'
@@ -290,6 +291,13 @@ const imagePreviews = ref([])
 const imageUrls = ref([])
 const newPost = reactive({ caption: '' })
 const ui = reactive({})
+const captionRef = ref(null)
+
+function focusCaption() {
+  if (!captionRef.value) return
+  captionRef.value.focus()
+  captionRef.value.scrollIntoView({ behavior: 'smooth', block: 'center' })
+}
 
 const trendingTrips = ref([])
 const suggestedUsers = ref([])
@@ -374,9 +382,21 @@ async function loadSidebar() {
   }
 }
 
+function handleAppRefresh() {
+  loadFeed()
+  loadSidebar()
+}
+
 onMounted(() => {
   loadFeed()
   loadSidebar()
+  window.addEventListener('focus-create-post', focusCaption)
+  window.addEventListener('app-refresh', handleAppRefresh)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('focus-create-post', focusCaption)
+  window.removeEventListener('app-refresh', handleAppRefresh)
 })
 
 async function onLike(post) {

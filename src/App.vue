@@ -1,8 +1,41 @@
 <template>
   <div class="min-h-screen bg-[#FAFAFA] flex flex-col">
 
+    <!-- Mobile pull-to-refresh indicator (verbergt op desktop, maar de spinner
+         tijdens refresh is wél zichtbaar zodat een desktop-klik op het home-icoon
+         visueel feedback geeft) -->
+    <div
+      v-if="auth.isAuthenticated"
+      class="fixed top-0 left-0 right-0 flex justify-center pointer-events-none z-[55]"
+      :class="ptrDistance > 4 && !ptrRefreshing ? 'md:hidden' : ''"
+      :style="{
+        transform: `translateY(${Math.max(0, (ptrRefreshing ? 56 : ptrDistance) - 32)}px)`,
+        opacity: ptrDistance > 4 || ptrRefreshing ? 1 : 0,
+        transition: ptrAnimating ? 'transform 0.25s ease, opacity 0.2s ease' : 'opacity 0.2s ease'
+      }"
+    >
+      <div class="mt-2 w-10 h-10 rounded-full bg-white shadow-lg ring-1 ring-gray-100 flex items-center justify-center">
+        <svg
+          class="w-5 h-5 text-gray-700 transition-transform"
+          :class="{ 'animate-spin': ptrRefreshing }"
+          :style="{ transform: ptrRefreshing ? '' : `rotate(${Math.min(180, ptrDistance * 2.5)}deg)` }"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path v-if="!ptrRefreshing" stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          <circle v-else cx="12" cy="12" r="9" stroke-dasharray="40" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
+
     <!-- Navbar -->
-    <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
+    <header
+      class="sticky top-0 z-50 bg-white border-b border-gray-200 transition-transform duration-300 will-change-transform"
+      :class="navHidden ? '-translate-y-full md:translate-y-0' : 'translate-y-0'"
+    >
       <div class="mx-auto max-w-4xl flex items-center justify-between px-4 h-14">
 
         <!-- Brand -->
@@ -76,6 +109,7 @@
 
             <RouterLink
               to="/"
+              @click="onHomeNavClick"
               class="hidden md:inline-flex p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition"
               :class="{ 'text-primary-600': $route.name === 'home' }"
             >
@@ -249,6 +283,7 @@
       <div class="flex items-stretch justify-around h-14">
         <RouterLink
           to="/"
+          @click="onHomeNavClick"
           class="flex-1 flex flex-col items-center justify-center gap-0.5 transition"
           :class="$route.name === 'home' ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
         >
@@ -269,18 +304,19 @@
           <span class="text-[10px] font-medium">Reizen</span>
         </RouterLink>
 
-        <!-- Center FAB: nieuwe reis -->
-        <RouterLink
-          to="/trips/new"
+        <!-- Center FAB: opent action-sheet (post of reis) -->
+        <button
+          type="button"
+          @click="showCreateSheet = true"
           class="flex-1 flex flex-col items-center justify-center -mt-4"
-          aria-label="Nieuwe reis"
+          aria-label="Nieuw item maken"
         >
           <span class="w-12 h-12 rounded-full bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-lg flex items-center justify-center">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
             </svg>
           </span>
-        </RouterLink>
+        </button>
 
         <RouterLink
           to="/messages"
@@ -625,6 +661,72 @@
       </Transition>
     </Teleport>
 
+    <!-- Mobile create action-sheet (Post of Reis) -->
+    <Teleport to="body">
+      <Transition name="settings-backdrop">
+        <div
+          v-if="showCreateSheet"
+          class="md:hidden fixed inset-0 bg-black/40 z-[75]"
+          @click="showCreateSheet = false"
+        />
+      </Transition>
+      <Transition name="create-sheet">
+        <div
+          v-if="showCreateSheet"
+          class="md:hidden fixed bottom-0 inset-x-0 z-[80] bg-white rounded-t-3xl shadow-2xl pb-[env(safe-area-inset-bottom)]"
+        >
+          <div class="flex justify-center pt-2.5 pb-1">
+            <span class="w-10 h-1 rounded-full bg-gray-300"></span>
+          </div>
+          <div class="px-5 pt-3 pb-2">
+            <h3 class="text-base font-bold text-gray-900">Wat wil je delen?</h3>
+            <p class="text-xs text-gray-500 mt-0.5">Kies wat je wilt aanmaken</p>
+          </div>
+          <div class="p-3 space-y-2">
+            <button
+              type="button"
+              @click="onCreatePostFromSheet"
+              class="w-full flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 transition text-left"
+            >
+              <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-gray-800 to-gray-900 text-white flex items-center justify-center shadow">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+              </span>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-gray-900">Nieuwe post</p>
+                <p class="text-xs text-gray-500">Deel een foto of update met je volgers</p>
+              </div>
+            </button>
+            <RouterLink
+              to="/trips/new"
+              @click="showCreateSheet = false"
+              class="w-full flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-br from-teal-50 to-cyan-50 hover:from-teal-100 hover:to-cyan-100 transition text-left"
+            >
+              <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-600 text-white flex items-center justify-center shadow">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"/>
+                </svg>
+              </span>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold text-gray-900">Nieuwe reis</p>
+                <p class="text-xs text-gray-500">Plan een reis met stops, hotels en activiteiten</p>
+              </div>
+            </RouterLink>
+          </div>
+          <div class="px-3 pb-4">
+            <button
+              type="button"
+              @click="showCreateSheet = false"
+              class="w-full py-3 text-sm font-semibold text-gray-700 bg-gray-100 rounded-2xl hover:bg-gray-200 transition"
+            >
+              Annuleren
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
     <!-- Mobile search overlay -->
     <Teleport to="body">
       <Transition name="settings-backdrop">
@@ -704,8 +806,19 @@ const notifWrapperRef = ref(null)
 const showSettings = ref(false)
 const showMobileMenu = ref(false)
 const showMobileSearch = ref(false)
+const showCreateSheet = ref(false)
 const mobileSearchInputRef = ref(null)
 const unreadMessages = ref(0)
+const navHidden = ref(false)
+let lastScrollY = 0
+
+// Pull-to-refresh state (mobile only)
+const ptrDistance = ref(0)
+const ptrRefreshing = ref(false)
+const ptrAnimating = ref(false)
+let ptrStartY = 0
+let ptrTracking = false
+const PTR_THRESHOLD = 70
 let messagesPollInterval = null
 const searchQuery = ref('')
 const searchResults = ref([])
@@ -738,19 +851,119 @@ function stopMessagesPoll() {
   if (messagesPollInterval) { clearInterval(messagesPollInterval); messagesPollInterval = null }
 }
 
+function isMobile() {
+  return window.matchMedia('(max-width: 767px)').matches
+}
+
+function onTouchStart(e) {
+  if (!isMobile() || ptrRefreshing.value) return
+  if (window.scrollY > 0) { ptrTracking = false; return }
+  if (e.touches.length !== 1) return
+  ptrStartY = e.touches[0].clientY
+  ptrTracking = true
+  ptrAnimating.value = false
+}
+
+function onTouchMove(e) {
+  if (!ptrTracking || ptrRefreshing.value) return
+  if (window.scrollY > 0) {
+    ptrTracking = false
+    if (ptrDistance.value > 0) {
+      ptrAnimating.value = true
+      ptrDistance.value = 0
+    }
+    return
+  }
+  const dy = e.touches[0].clientY - ptrStartY
+  if (dy > 0) {
+    ptrDistance.value = Math.min(140, dy * 0.5)
+    if (e.cancelable && ptrDistance.value > 4) e.preventDefault()
+  } else if (ptrDistance.value > 0) {
+    ptrDistance.value = 0
+  }
+}
+
+function onTouchEnd() {
+  if (!ptrTracking) return
+  ptrTracking = false
+  if (ptrRefreshing.value) return
+  ptrAnimating.value = true
+  if (ptrDistance.value >= PTR_THRESHOLD) {
+    triggerRefresh()
+  } else {
+    ptrDistance.value = 0
+  }
+}
+
+async function triggerRefresh() {
+  ptrRefreshing.value = true
+  ptrDistance.value = 56
+  window.dispatchEvent(new CustomEvent('app-refresh'))
+  setTimeout(() => {
+    ptrRefreshing.value = false
+    ptrAnimating.value = true
+    ptrDistance.value = 0
+    setTimeout(() => { ptrAnimating.value = false }, 300)
+  }, 1000)
+}
+
+function onHomeNavClick(e) {
+  // Wanneer al op home: scroll naar boven + trigger refresh i.p.v. routenavigatie
+  if (router.currentRoute.value.name === 'home') {
+    e.preventDefault()
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    triggerRefresh()
+  }
+}
+
+function handleScroll() {
+  // Auto-hide nav on mobile: hide on scroll down past 80px, show on scroll up.
+  // Desktop is unaffected (translate is suppressed via md:translate-y-0 class).
+  const y = window.scrollY
+  if (y < 80) {
+    navHidden.value = false
+  } else if (y > lastScrollY + 8) {
+    navHidden.value = true
+  } else if (y < lastScrollY - 4) {
+    navHidden.value = false
+  }
+  lastScrollY = y
+}
+
 onMounted(() => {
   if (auth.isAuthenticated) {
     if (!auth.profilePhotoUrl) auth.loadProfile()
     notifStore.startPolling()
     startMessagesPoll()
   }
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  window.addEventListener('touchstart', onTouchStart, { passive: true })
+  window.addEventListener('touchmove', onTouchMove, { passive: false })
+  window.addEventListener('touchend', onTouchEnd, { passive: true })
+  window.addEventListener('touchcancel', onTouchEnd, { passive: true })
 })
 
 onUnmounted(() => {
   notifStore.stopPolling()
   stopMessagesPoll()
   document.removeEventListener('mousedown', handleNotifClickOutside)
+  window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('touchstart', onTouchStart)
+  window.removeEventListener('touchmove', onTouchMove)
+  window.removeEventListener('touchend', onTouchEnd)
+  window.removeEventListener('touchcancel', onTouchEnd)
 })
+
+function onCreatePostFromSheet() {
+  showCreateSheet.value = false
+  if (router.currentRoute.value.name !== 'home') {
+    router.push('/').then(() => {
+      window.dispatchEvent(new CustomEvent('focus-create-post'))
+    })
+  } else {
+    window.dispatchEvent(new CustomEvent('focus-create-post'))
+  }
+}
 
 watch(() => auth.isAuthenticated, (val) => {
   if (val) { notifStore.startPolling(); startMessagesPoll() }
@@ -842,6 +1055,7 @@ watch(showMobileSearch, (val) => {
 watch(() => router.currentRoute.value.fullPath, () => {
   showMobileMenu.value = false
   showMobileSearch.value = false
+  showCreateSheet.value = false
 })
 
 // Settings drawer functions
@@ -948,5 +1162,14 @@ function timeAgo(dateStr) {
 .mobile-menu-enter-from,
 .mobile-menu-leave-to {
   transform: translateX(100%);
+}
+
+.create-sheet-enter-active,
+.create-sheet-leave-active {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.create-sheet-enter-from,
+.create-sheet-leave-to {
+  transform: translateY(100%);
 }
 </style>

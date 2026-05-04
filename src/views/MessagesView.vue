@@ -515,6 +515,11 @@ function handleEscape(e) {
   if (e.key === 'Escape' && showNewMessage.value) closeNewMessageModal()
 }
 
+function handleAppRefresh() {
+  loadConversations()
+  if (activeUserName.value) loadActiveConversation()
+}
+
 onMounted(() => {
   loadConversations()
   loadActiveConversation()
@@ -523,11 +528,13 @@ onMounted(() => {
     refreshActiveConversation()
   }, 8000)
   document.addEventListener('keydown', handleEscape)
+  window.addEventListener('app-refresh', handleAppRefresh)
 })
 
 onUnmounted(() => {
   if (pollInterval) clearInterval(pollInterval)
   document.removeEventListener('keydown', handleEscape)
+  window.removeEventListener('app-refresh', handleAppRefresh)
 })
 
 watch(() => route.params.userName, () => {

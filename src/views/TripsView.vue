@@ -202,7 +202,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import * as tripsApi from '@/api/tripsApi'
 import StarRating from '@/components/StarRating.vue'
 
@@ -220,7 +220,8 @@ const sortOptions = [
   { id: 'top_rated', label: 'Best beoordeeld' },
 ]
 
-onMounted(async () => {
+async function loadTrips() {
+  loading.value = true
   try {
     trips.value = await tripsApi.getAllTrips()
   } catch (e) {
@@ -228,6 +229,15 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+}
+
+onMounted(() => {
+  loadTrips()
+  window.addEventListener('app-refresh', loadTrips)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('app-refresh', loadTrips)
 })
 
 const countries = computed(() => {

@@ -4,17 +4,16 @@
 
 /* ---------- Mobile app-feel basics ---------- */
 
-/* Geen horizontaal sliden van de hele pagina */
-html,
-body {
-  overflow-x: hidden;
-  max-width: 100%;
-}
-
-/* Vermijd rubber-band bounce op iOS, hou overlays binnen scope */
-html,
-body {
-  overscroll-behavior-y: none;
+/* Mobile-only: voorkom horizontaal slidegevoel + iOS rubber-band.
+   Op desktop niet toepassen, anders kan dit met sticky/overflow rendering
+   conflicteren en de scroll blokkeren. */
+@media (max-width: 767px) {
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100%;
+    overscroll-behavior-y: none;
+  }
 }
 
 /* Smooth font rendering + native tap-feel */

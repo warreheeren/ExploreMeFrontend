@@ -27,8 +27,36 @@
         </div>
       </div>
 
+      <!-- Non-owner: report menu -->
+      <div v-if="!isOwner && auth.isAuthenticated" class="relative">
+        <button
+          @click.stop="reportMenuOpen = !reportMenuOpen"
+          class="p-1.5 -mr-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition"
+          aria-label="Meer"
+        >
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+          </svg>
+        </button>
+        <div
+          v-if="reportMenuOpen"
+          v-click-outside="() => reportMenuOpen = false"
+          class="absolute right-0 top-full mt-1 w-44 bg-white ring-1 ring-gray-200 shadow-lg rounded-xl overflow-hidden z-20"
+        >
+          <button
+            @click="onReportPost"
+            class="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition text-left"
+          >
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 2H21l-3 6 3 6h-8.5l-1-2H5a2 2 0 00-2 2zm9-13.5V9"/>
+            </svg>
+            Rapporteer post
+          </button>
+        </div>
+      </div>
+
       <!-- Owner menu -->
-      <div v-if="isOwner" class="relative">
+      <div v-else-if="isOwner" class="relative">
         <button
           @click.stop="menuOpen = !menuOpen"
           class="p-1.5 -mr-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition"
@@ -347,6 +375,12 @@ const isOwner = computed(() => auth.userName && auth.userName === props.post.use
 
 // Post edit/delete state
 const menuOpen = ref(false)
+const reportMenuOpen = ref(false)
+
+function onReportPost() {
+  reportMenuOpen.value = false
+  alert('Bedankt voor je melding — onze moderators bekijken de post.')
+}
 const editing = ref(false)
 const editCaption = ref('')
 const savingEdit = ref(false)
