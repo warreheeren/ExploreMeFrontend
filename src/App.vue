@@ -16,11 +16,11 @@
             <line x1="8" y1="16" x2="6" y2="16" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
             <line x1="26" y1="16" x2="24" y2="16" stroke="#1a1a1a" stroke-width="1.5" stroke-linecap="round"/>
           </svg>
-          <span class="text-base font-bold text-gray-900 tracking-tight hidden sm:inline">ExploreMe</span>
+          <span class="text-base font-bold text-gray-900 tracking-tight">ExploreMe</span>
         </RouterLink>
 
-        <!-- Search bar -->
-        <div v-if="auth.isAuthenticated" class="relative mx-4 flex-1 max-w-xs">
+        <!-- Search bar (desktop only) -->
+        <div v-if="auth.isAuthenticated" class="relative mx-4 flex-1 max-w-xs hidden md:block">
           <input
             v-model="searchQuery"
             @input="onSearchInput"
@@ -63,9 +63,20 @@
         <!-- Nav -->
         <nav class="flex items-center gap-1 shrink-0">
           <template v-if="auth.isAuthenticated">
+            <!-- Mobile-only: search button -->
+            <button
+              @click="showMobileSearch = true"
+              class="md:hidden p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition"
+              aria-label="Zoeken"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="m21 21-4.35-4.35"/>
+              </svg>
+            </button>
+
             <RouterLink
               to="/"
-              class="p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition"
+              class="hidden md:inline-flex p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition"
               :class="{ 'text-primary-600': $route.name === 'home' }"
             >
               <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -76,7 +87,7 @@
             <!-- Trips -->
             <RouterLink
               to="/trips"
-              class="p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition"
+              class="hidden md:inline-flex p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition"
               :class="{ 'text-primary-600': $route.name?.startsWith('trip') }"
             >
               <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -87,7 +98,7 @@
             <!-- Messages -->
             <RouterLink
               to="/messages"
-              class="p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition relative"
+              class="hidden md:inline-flex p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition relative"
               :class="{ 'text-primary-600': $route.name?.startsWith('message') }"
             >
               <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -167,7 +178,7 @@
 
             <RouterLink
               :to="`/u/${auth.userName}`"
-              class="p-1"
+              class="hidden md:inline-flex p-1"
             >
               <img
                 v-if="auth.profilePhotoUrl"
@@ -184,14 +195,25 @@
               </div>
             </RouterLink>
 
-            <!-- Settings gear -->
+            <!-- Settings gear (desktop) -->
             <button
               @click="showSettings = true"
-              class="ml-3 p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition"
+              class="hidden md:inline-flex ml-3 p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition"
             >
               <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                 <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+
+            <!-- Hamburger (mobile) -->
+            <button
+              @click="showMobileMenu = true"
+              class="md:hidden p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition"
+              aria-label="Menu"
+            >
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
               </svg>
             </button>
           </template>
@@ -211,13 +233,99 @@
     <!-- Content -->
     <main
       class="mx-auto w-full px-4 py-6 flex-1"
-      :class="['home', 'profile'].includes($route.name) ? 'max-w-7xl' : 'max-w-4xl'"
+      :class="[
+        ['home', 'profile'].includes($route.name) ? 'max-w-7xl' : 'max-w-4xl',
+        auth.isAuthenticated ? 'pb-24 md:pb-6' : ''
+      ]"
     >
       <RouterView />
     </main>
 
-    <!-- Footer -->
-    <footer class="mt-12 bg-white border-t border-gray-200">
+    <!-- Mobile bottom nav -->
+    <nav
+      v-if="auth.isAuthenticated"
+      class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)]"
+    >
+      <div class="flex items-stretch justify-around h-14">
+        <RouterLink
+          to="/"
+          class="flex-1 flex flex-col items-center justify-center gap-0.5 transition"
+          :class="$route.name === 'home' ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4"/>
+          </svg>
+          <span class="text-[10px] font-medium">Home</span>
+        </RouterLink>
+
+        <RouterLink
+          to="/trips"
+          class="flex-1 flex flex-col items-center justify-center gap-0.5 transition"
+          :class="$route.name?.startsWith('trip') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z"/>
+          </svg>
+          <span class="text-[10px] font-medium">Reizen</span>
+        </RouterLink>
+
+        <!-- Center FAB: nieuwe reis -->
+        <RouterLink
+          to="/trips/new"
+          class="flex-1 flex flex-col items-center justify-center -mt-4"
+          aria-label="Nieuwe reis"
+        >
+          <span class="w-12 h-12 rounded-full bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-lg flex items-center justify-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+          </span>
+        </RouterLink>
+
+        <RouterLink
+          to="/messages"
+          class="flex-1 flex flex-col items-center justify-center gap-0.5 transition relative"
+          :class="$route.name?.startsWith('message') ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
+        >
+          <span class="relative">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
+            <span
+              v-if="unreadMessages > 0"
+              class="absolute -top-1 -right-1.5 min-w-[16px] h-[16px] flex items-center justify-center text-[9px] font-bold text-white bg-red-500 rounded-full px-1"
+            >
+              {{ unreadMessages > 9 ? '9+' : unreadMessages }}
+            </span>
+          </span>
+          <span class="text-[10px] font-medium">Berichten</span>
+        </RouterLink>
+
+        <RouterLink
+          :to="`/u/${auth.userName}`"
+          class="flex-1 flex flex-col items-center justify-center gap-0.5 transition"
+          :class="$route.name === 'profile' && $route.params.username === auth.userName ? 'text-primary-600' : 'text-gray-500 hover:text-gray-900'"
+        >
+          <img
+            v-if="auth.profilePhotoUrl"
+            :src="auth.profilePhotoUrl"
+            class="w-6 h-6 rounded-full object-cover ring-2"
+            :class="$route.name === 'profile' && $route.params.username === auth.userName ? 'ring-primary-600' : 'ring-transparent'"
+          />
+          <div
+            v-else
+            class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-600 ring-2"
+            :class="$route.name === 'profile' && $route.params.username === auth.userName ? 'ring-primary-600' : 'ring-transparent'"
+          >
+            {{ auth.displayName?.[0]?.toUpperCase() }}
+          </div>
+          <span class="text-[10px] font-medium">Profiel</span>
+        </RouterLink>
+      </div>
+    </nav>
+
+    <!-- Footer (verborgen op mobile als ingelogd — bottom-nav neemt zijn rol over) -->
+    <footer class="mt-12 bg-white border-t border-gray-200" :class="auth.isAuthenticated ? 'hidden md:block' : ''">
       <div class="mx-auto max-w-4xl px-4 py-10">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <!-- Brand -->
@@ -409,11 +517,176 @@
         </div>
       </Transition>
     </Teleport>
+
+    <!-- Mobile menu drawer -->
+    <Teleport to="body">
+      <Transition name="settings-backdrop">
+        <div
+          v-if="showMobileMenu"
+          class="md:hidden fixed inset-0 bg-black/30 z-[60]"
+          @click="showMobileMenu = false"
+        />
+      </Transition>
+
+      <Transition name="mobile-menu">
+        <div
+          v-if="showMobileMenu"
+          class="md:hidden fixed top-0 right-0 h-full w-[85%] max-w-xs bg-white shadow-2xl z-[70] flex flex-col"
+        >
+          <!-- Header with profile -->
+          <div class="px-5 py-4 border-b border-gray-200 flex items-center gap-3 shrink-0">
+            <RouterLink :to="`/u/${auth.userName}`" @click="showMobileMenu = false" class="flex items-center gap-3 flex-1 min-w-0">
+              <img
+                v-if="auth.profilePhotoUrl"
+                :src="auth.profilePhotoUrl"
+                class="w-10 h-10 rounded-full object-cover shrink-0"
+              />
+              <div v-else class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-sm font-bold text-gray-500 shrink-0">
+                {{ auth.displayName?.[0]?.toUpperCase() || '?' }}
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-bold text-gray-900 truncate">{{ auth.displayName }}</p>
+                <p class="text-xs text-gray-400 truncate">@{{ auth.userName }}</p>
+              </div>
+            </RouterLink>
+            <button
+              @click="showMobileMenu = false"
+              class="p-1.5 rounded-lg hover:bg-gray-100 transition text-gray-500"
+              aria-label="Sluit menu"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Nav links -->
+          <nav class="flex-1 overflow-y-auto py-2">
+            <RouterLink
+              :to="`/u/${auth.userName}`"
+              @click="showMobileMenu = false"
+              class="flex items-center gap-3 px-5 py-3 text-sm text-gray-800 hover:bg-gray-50 transition"
+            >
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+              Mijn profiel
+            </RouterLink>
+            <RouterLink
+              to="/trips/new"
+              @click="showMobileMenu = false"
+              class="flex items-center gap-3 px-5 py-3 text-sm text-gray-800 hover:bg-gray-50 transition"
+            >
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+              </svg>
+              Nieuwe reis plannen
+            </RouterLink>
+            <button
+              @click="openSettingsFromMenu"
+              class="w-full flex items-center gap-3 px-5 py-3 text-sm text-gray-800 hover:bg-gray-50 transition text-left"
+            >
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+              Instellingen
+            </button>
+
+            <div class="my-2 border-t border-gray-100"></div>
+
+            <a href="#" class="flex items-center gap-3 px-5 py-3 text-sm text-gray-600 hover:bg-gray-50 transition">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/>
+              </svg>
+              Help & support
+            </a>
+            <a href="#" class="flex items-center gap-3 px-5 py-3 text-sm text-gray-600 hover:bg-gray-50 transition">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 5.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-.34-.02-.673-.057-1.003z"/>
+              </svg>
+              Privacy
+            </a>
+          </nav>
+
+          <!-- Logout footer -->
+          <div class="border-t border-gray-200 p-4 shrink-0">
+            <button
+              @click="onMobileLogout"
+              class="w-full px-4 py-2.5 text-sm font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition flex items-center justify-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+              Uitloggen
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- Mobile search overlay -->
+    <Teleport to="body">
+      <Transition name="settings-backdrop">
+        <div
+          v-if="showMobileSearch"
+          class="md:hidden fixed inset-0 bg-white z-[80] flex flex-col"
+        >
+          <div class="flex items-center gap-2 px-3 h-14 border-b border-gray-200 shrink-0">
+            <button
+              @click="closeMobileSearch"
+              class="p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition"
+              aria-label="Terug"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <div class="relative flex-1">
+              <input
+                ref="mobileSearchInputRef"
+                v-model="searchQuery"
+                @input="onSearchInput"
+                type="text"
+                placeholder="Zoeken..."
+                class="w-full pl-9 pr-3 py-2 text-sm bg-gray-100 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-primary-300 transition"
+              />
+              <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="m21 21-4.35-4.35"/>
+              </svg>
+            </div>
+          </div>
+          <div class="flex-1 overflow-y-auto">
+            <div v-if="!searchQuery" class="p-8 text-center text-sm text-gray-400">Begin met typen om reizigers te vinden</div>
+            <div v-else-if="searchResults.length === 0" class="p-8 text-center text-sm text-gray-400">Geen gebruikers gevonden</div>
+            <button
+              v-for="user in searchResults"
+              :key="user.userName"
+              @click="goToProfileMobile(user.userName)"
+              class="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition text-left border-b border-gray-50"
+            >
+              <img
+                v-if="user.profilePhotoUrl"
+                :src="user.profilePhotoUrl"
+                class="w-10 h-10 rounded-full object-cover shrink-0"
+              />
+              <div v-else class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-500 shrink-0">
+                {{ user.displayName?.[0]?.toUpperCase() || '?' }}
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-900 truncate">{{ user.userName }}</p>
+                <p class="text-xs text-gray-500 truncate">{{ user.displayName }}</p>
+              </div>
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
+import { nextTick, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useNotificationsStore } from '@/stores/notifications'
@@ -429,6 +702,9 @@ const router = useRouter()
 const showNotifications = ref(false)
 const notifWrapperRef = ref(null)
 const showSettings = ref(false)
+const showMobileMenu = ref(false)
+const showMobileSearch = ref(false)
+const mobileSearchInputRef = ref(null)
 const unreadMessages = ref(0)
 let messagesPollInterval = null
 const searchQuery = ref('')
@@ -537,6 +813,37 @@ function hideSearchDelayed() {
   setTimeout(() => { showSearch.value = false }, 200)
 }
 
+function closeMobileSearch() {
+  showMobileSearch.value = false
+  searchQuery.value = ''
+  searchResults.value = []
+}
+
+function goToProfileMobile(userName) {
+  closeMobileSearch()
+  router.push(`/u/${userName}`)
+}
+
+function openSettingsFromMenu() {
+  showMobileMenu.value = false
+  showSettings.value = true
+}
+
+function onMobileLogout() {
+  showMobileMenu.value = false
+  auth.logout()
+  router.push({ name: 'login' })
+}
+
+watch(showMobileSearch, (val) => {
+  if (val) nextTick(() => mobileSearchInputRef.value?.focus())
+})
+
+watch(() => router.currentRoute.value.fullPath, () => {
+  showMobileMenu.value = false
+  showMobileSearch.value = false
+})
+
 // Settings drawer functions
 async function loadSettingsProfile() {
   if (!auth.userName) return
@@ -631,6 +938,15 @@ function timeAgo(dateStr) {
 }
 .settings-drawer-enter-from,
 .settings-drawer-leave-to {
+  transform: translateX(100%);
+}
+
+.mobile-menu-enter-active,
+.mobile-menu-leave-active {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mobile-menu-enter-from,
+.mobile-menu-leave-to {
   transform: translateX(100%);
 }
 </style>
