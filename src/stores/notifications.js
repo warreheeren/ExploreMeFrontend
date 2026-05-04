@@ -25,9 +25,13 @@ export const useNotificationsStore = defineStore('notifications', {
       }
     },
     async markAllRead() {
-      await notificationsApi.markAllRead()
       this.unreadCount = 0
       this.items.forEach(n => n.isRead = true)
+      try {
+        await notificationsApi.markAllRead()
+      } catch {
+        // silently fail; next poll will resync
+      }
     },
     startPolling() {
       this.fetchUnreadCount()

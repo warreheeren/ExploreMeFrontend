@@ -102,7 +102,7 @@
             </RouterLink>
 
             <!-- Notifications bell -->
-            <div class="relative">
+            <div ref="notifWrapperRef" class="relative">
               <button
                 @click="toggleNotifications"
                 class="p-2 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition relative"
@@ -427,6 +427,7 @@ const notifStore = useNotificationsStore()
 const router = useRouter()
 
 const showNotifications = ref(false)
+const notifWrapperRef = ref(null)
 const showSettings = ref(false)
 const unreadMessages = ref(0)
 let messagesPollInterval = null
@@ -472,6 +473,7 @@ onMounted(() => {
 onUnmounted(() => {
   notifStore.stopPolling()
   stopMessagesPoll()
+  document.removeEventListener('mousedown', handleNotifClickOutside)
 })
 
 watch(() => auth.isAuthenticated, (val) => {
@@ -488,8 +490,21 @@ function toggleNotifications() {
   showNotifications.value = !showNotifications.value
   if (showNotifications.value) {
     notifStore.fetchNotifications()
+    if (notifStore.unreadCount > 0) notifStore.markAllRead()
   }
 }
+
+function handleNotifClickOutside(e) {
+  if (!showNotifications.value) return
+  if (notifWrapperRef.value && !notifWrapperRef.value.contains(e.target)) {
+    showNotifications.value = false
+  }
+}
+
+watch(showNotifications, (val) => {
+  if (val) document.addEventListener('mousedown', handleNotifClickOutside)
+  else document.removeEventListener('mousedown', handleNotifClickOutside)
+})
 
 function onNotificationClick(n) {
   showNotifications.value = false
