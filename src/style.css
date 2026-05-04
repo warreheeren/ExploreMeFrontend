@@ -2,6 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------- Mobile app-feel basics ---------- */
+
+/* Geen horizontaal sliden van de hele pagina */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Vermijd rubber-band bounce op iOS, hou overlays binnen scope */
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
+/* Smooth font rendering + native tap-feel */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  text-rendering: optimizeLegibility;
+}
+
+/* Geen 300ms tap-delay, geen lange selectie-popups op UI elementen */
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+}
+
+/* iOS zoomt automatisch in op een input wanneer font-size < 16px.
+   Forceer minimaal 16px op mobile om dit (en de geijkte "uitgezoomde" eerste
+   login-flow) te voorkomen — desktop styling blijft ongemoeid. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Veiligheidsruimte voor iOS notch / home-indicator wanneer fixed onderaan */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 /* Leaflet fix: Tailwind preflight reset breekt tile/marker positionering */
 .leaflet-container img,
 .leaflet-container img.leaflet-tile {
