@@ -427,7 +427,15 @@ async function onSubmit() {
       router.push(`/trips/${created.id}`)
     }
   } catch (e) {
-    error.value = e?.response?.data?.message || e?.response?.data?.title || (isEdit.value ? 'Opslaan mislukt' : 'Aanmaken mislukt')
+    const data = e?.response?.data
+    let msg = data?.message || data?.title
+    if (!msg && data?.errors && typeof data.errors === 'object') {
+      msg = Object.entries(data.errors)
+        .map(([field, errs]) => `${field}: ${Array.isArray(errs) ? errs.join(', ') : errs}`)
+        .join(' | ')
+    }
+    error.value = msg || (isEdit.value ? 'Opslaan mislukt' : 'Aanmaken mislukt')
+    console.error('Trip save failed', e?.response?.status, data, e)
   } finally {
     saving.value = false
   }

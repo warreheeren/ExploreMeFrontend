@@ -93,22 +93,6 @@
         </div>
       </div>
 
-      <!-- Tabs / filters -->
-      <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
-        <button
-          v-for="tab in tabs"
-          :key="tab.id"
-          @click="activeTab = tab.id"
-          class="shrink-0 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-medium transition ring-1"
-          :class="activeTab === tab.id
-            ? 'bg-gray-900 text-white ring-gray-900'
-            : 'bg-white text-gray-600 ring-gray-200 hover:ring-gray-400 hover:text-gray-900'"
-        >
-          <span>{{ tab.icon }}</span>
-          {{ tab.label }}
-        </button>
-      </div>
-
       <!-- Loading skeletons -->
       <div v-if="loading" class="space-y-5">
         <div v-for="i in 3" :key="i" class="bg-white rounded-2xl overflow-hidden shadow-sm ring-1 ring-gray-100 animate-pulse">
@@ -128,17 +112,17 @@
       </div>
 
       <!-- Empty -->
-      <div v-else-if="filteredPosts.length === 0" class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-12 text-center">
+      <div v-else-if="posts.length === 0" class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-100 p-12 text-center">
         <div class="w-14 h-14 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-3">
           <svg class="w-7 h-7 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         </div>
-        <p class="text-gray-500 text-sm font-medium">{{ emptyMessage }}</p>
+        <p class="text-gray-500 text-sm font-medium">Nog geen posts van mensen die je volgt</p>
         <p class="text-xs text-gray-400 mt-1">Volg meer reizigers of deel je eerste avontuur</p>
       </div>
 
       <!-- Feed -->
       <PostCard
-        v-for="post in filteredPosts"
+        v-for="post in posts"
         :key="post.id"
         :post="post"
         :ui="ui[post.id]"
@@ -303,32 +287,12 @@ const trendingTrips = ref([])
 const suggestedUsers = ref([])
 const trendingLoading = ref(true)
 
-const activeTab = ref('foryou')
-const tabs = [
-  { id: 'foryou', label: 'Voor jou', icon: '✨' },
-  { id: 'following', label: 'Volgend', icon: '👥' },
-  { id: 'trending', label: 'Trending', icon: '🔥' },
-]
-
 const greeting = computed(() => {
   const h = new Date().getHours()
   if (h < 6) return 'Goedemorgen vroeg'
   if (h < 12) return 'Goedemorgen'
   if (h < 18) return 'Goedemiddag'
   return 'Goedenavond'
-})
-
-const filteredPosts = computed(() => {
-  if (activeTab.value === 'trending') {
-    return [...posts.value].sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0))
-  }
-  return posts.value
-})
-
-const emptyMessage = computed(() => {
-  if (activeTab.value === 'following') return 'Geen posts van mensen die je volgt'
-  if (activeTab.value === 'trending') return 'Nog geen trending posts'
-  return 'Nog geen posts. Deel je eerste avontuur!'
 })
 
 function ensureUi(postId) {

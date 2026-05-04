@@ -66,13 +66,24 @@
           <svg class="w-4 h-4 absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
           </svg>
-          <!-- Search results dropdown -->
+          <!-- Search dropdown: results when typing, history when empty -->
           <div
-            v-if="showSearch && searchResults.length > 0"
+            v-if="showSearch && (searchResults.length > 0 || (!searchQuery && recentSearches.length > 0))"
             class="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50"
           >
+            <!-- Recent searches header (only when no query) -->
+            <div v-if="!searchQuery && recentSearches.length > 0" class="flex items-center justify-between px-3 py-2 border-b border-gray-100">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-gray-400">Recent</span>
+              <button
+                @mousedown.prevent="clearRecentSearches"
+                class="text-[11px] font-semibold text-gray-400 hover:text-gray-700 transition"
+              >
+                Wissen
+              </button>
+            </div>
+
             <button
-              v-for="user in searchResults"
+              v-for="user in (searchQuery ? searchResults : recentSearches)"
               :key="user.userName"
               @mousedown.prevent="goToProfile(user.userName)"
               class="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-gray-50 transition text-left"
@@ -85,10 +96,20 @@
               <div v-else class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-500 shrink-0">
                 {{ user.displayName?.[0]?.toUpperCase() || '?' }}
               </div>
-              <div class="min-w-0">
+              <div class="min-w-0 flex-1">
                 <p class="text-sm font-semibold text-gray-900 truncate">{{ user.userName }}</p>
                 <p class="text-xs text-gray-500 truncate">{{ user.displayName }}</p>
               </div>
+              <button
+                v-if="!searchQuery"
+                @mousedown.prevent.stop="removeRecentSearch(user.userName)"
+                class="p-1 -mr-1 text-gray-300 hover:text-gray-700 transition shrink-0"
+                aria-label="Uit geschiedenis verwijderen"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
             </button>
           </div>
         </div>
@@ -759,10 +780,26 @@
             </div>
           </div>
           <div class="flex-1 overflow-y-auto">
-            <div v-if="!searchQuery" class="p-8 text-center text-sm text-gray-400">Begin met typen om reizigers te vinden</div>
-            <div v-else-if="searchResults.length === 0" class="p-8 text-center text-sm text-gray-400">Geen gebruikers gevonden</div>
+            <!-- Empty state (no history yet) -->
+            <div v-if="!searchQuery && recentSearches.length === 0" class="p-8 text-center text-sm text-gray-400">
+              Begin met typen om reizigers te vinden
+            </div>
+
+            <!-- Recent searches header -->
+            <div v-if="!searchQuery && recentSearches.length > 0" class="flex items-center justify-between px-4 py-2 bg-gray-50 border-b border-gray-100">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-gray-500">Recent gezocht</span>
+              <button
+                @click="clearRecentSearches"
+                class="text-xs font-semibold text-gray-500 hover:text-gray-900 transition"
+              >
+                Wissen
+              </button>
+            </div>
+
+            <div v-if="searchQuery && searchResults.length === 0" class="p-8 text-center text-sm text-gray-400">Geen gebruikers gevonden</div>
+
             <button
-              v-for="user in searchResults"
+              v-for="user in (searchQuery ? searchResults : recentSearches)"
               :key="user.userName"
               @click="goToProfileMobile(user.userName)"
               class="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition text-left border-b border-gray-50"
@@ -775,10 +812,20 @@
               <div v-else class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-500 shrink-0">
                 {{ user.displayName?.[0]?.toUpperCase() || '?' }}
               </div>
-              <div class="min-w-0">
+              <div class="min-w-0 flex-1">
                 <p class="text-sm font-semibold text-gray-900 truncate">{{ user.userName }}</p>
                 <p class="text-xs text-gray-500 truncate">{{ user.displayName }}</p>
               </div>
+              <button
+                v-if="!searchQuery"
+                @click.stop="removeRecentSearch(user.userName)"
+                class="p-1.5 text-gray-300 hover:text-gray-700 transition shrink-0"
+                aria-label="Uit geschiedenis verwijderen"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
             </button>
           </div>
         </div>
@@ -824,6 +871,42 @@ const searchQuery = ref('')
 const searchResults = ref([])
 const showSearch = ref(false)
 let searchTimeout = null
+
+const RECENT_SEARCH_KEY = 'exploreme:recentSearches'
+const RECENT_SEARCH_MAX = 6
+const recentSearches = ref(loadRecentSearches())
+
+function loadRecentSearches() {
+  try {
+    const raw = localStorage.getItem(RECENT_SEARCH_KEY)
+    if (!raw) return []
+    const arr = JSON.parse(raw)
+    return Array.isArray(arr) ? arr.slice(0, RECENT_SEARCH_MAX) : []
+  } catch { return [] }
+}
+
+function persistRecentSearches() {
+  try { localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(recentSearches.value)) } catch { /* ignore */ }
+}
+
+function rememberSearch(user) {
+  if (!user?.userName) return
+  recentSearches.value = [
+    { userName: user.userName, displayName: user.displayName, profilePhotoUrl: user.profilePhotoUrl },
+    ...recentSearches.value.filter(u => u.userName !== user.userName)
+  ].slice(0, RECENT_SEARCH_MAX)
+  persistRecentSearches()
+}
+
+function removeRecentSearch(userName) {
+  recentSearches.value = recentSearches.value.filter(u => u.userName !== userName)
+  persistRecentSearches()
+}
+
+function clearRecentSearches() {
+  recentSearches.value = []
+  persistRecentSearches()
+}
 
 // Settings drawer state
 const settingsForm = reactive({ displayName: '', bio: '', profileImgUrl: '' })
@@ -1016,6 +1099,9 @@ function onSearchInput() {
 }
 
 function goToProfile(userName) {
+  const user = searchResults.value.find(u => u.userName === userName)
+    || recentSearches.value.find(u => u.userName === userName)
+  if (user) rememberSearch(user)
   searchQuery.value = ''
   searchResults.value = []
   showSearch.value = false
@@ -1033,6 +1119,9 @@ function closeMobileSearch() {
 }
 
 function goToProfileMobile(userName) {
+  const user = searchResults.value.find(u => u.userName === userName)
+    || recentSearches.value.find(u => u.userName === userName)
+  if (user) rememberSearch(user)
   closeMobileSearch()
   router.push(`/u/${userName}`)
 }
