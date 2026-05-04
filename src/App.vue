@@ -324,8 +324,8 @@
       </div>
     </nav>
 
-    <!-- Footer (verborgen op mobile als ingelogd — bottom-nav neemt zijn rol over) -->
-    <footer class="mt-12 bg-white border-t border-gray-200" :class="auth.isAuthenticated ? 'hidden md:block' : ''">
+    <!-- Footer — verborgen op mobile (bottom-nav neemt die rol over) -->
+    <footer class="hidden md:block mt-12 bg-white border-t border-gray-200">
       <div class="mx-auto max-w-4xl px-4 py-10">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
           <!-- Brand -->

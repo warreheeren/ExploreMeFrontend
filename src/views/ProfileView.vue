@@ -83,8 +83,24 @@
             {{ followLoading ? '...' : profile.isFollowedByMe ? 'Volgend ✓' : '+ Volgen' }}
           </button>
 
-          <!-- Stats grid -->
-          <div class="grid grid-cols-3 sm:grid-cols-5 gap-2 mt-5">
+          <!-- Mobile stats: clean Instagram-style strip (Posts · Volgers · Volgend) -->
+          <div class="md:hidden mt-5 grid grid-cols-3 border-y border-gray-100 py-3">
+            <button class="text-center group">
+              <div class="text-lg font-bold text-gray-900 tabular-nums">{{ profile.postsCount }}</div>
+              <div class="text-[11px] text-gray-500 mt-0.5">Posts</div>
+            </button>
+            <button class="text-center border-x border-gray-100 group">
+              <div class="text-lg font-bold text-gray-900 tabular-nums">{{ profile.followerCount }}</div>
+              <div class="text-[11px] text-gray-500 mt-0.5">Volgers</div>
+            </button>
+            <button class="text-center group">
+              <div class="text-lg font-bold text-gray-900 tabular-nums">{{ profile.followingCount }}</div>
+              <div class="text-[11px] text-gray-500 mt-0.5">Volgend</div>
+            </button>
+          </div>
+
+          <!-- Desktop stats: rich card grid -->
+          <div class="hidden md:grid grid-cols-5 gap-2 mt-5">
             <div class="bg-gray-50 rounded-xl p-2.5 text-center">
               <div class="text-base font-bold text-gray-900">{{ profile.postsCount }}</div>
               <div class="text-[10px] text-gray-500 uppercase tracking-wider">Posts</div>
