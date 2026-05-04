@@ -6,9 +6,20 @@
       class="border-r border-gray-100 flex flex-col"
       :class="activeUserName ? 'hidden md:flex' : 'flex'"
     >
-      <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+      <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between gap-2">
         <h2 class="text-base font-bold text-gray-900">Berichten</h2>
-        <span v-if="totalUnread > 0" class="text-[10px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">{{ totalUnread }}</span>
+        <div class="flex items-center gap-2">
+          <span v-if="totalUnread > 0" class="text-[10px] font-bold text-white bg-red-500 px-2 py-0.5 rounded-full">{{ totalUnread }}</span>
+          <button
+            @click="openNewMessageModal"
+            class="p-1.5 rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition"
+            title="Nieuw bericht"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div class="flex-1 overflow-y-auto">
@@ -124,16 +135,42 @@
               </div>
 
               <!-- Message bubble -->
-              <div class="flex" :class="msg.fromMe ? 'justify-end' : 'justify-start'">
+              <div class="flex group items-end gap-1.5" :class="msg.fromMe ? 'justify-end' : 'justify-start'">
+                <button
+                  v-if="msg.fromMe && !msg._sending"
+                  @click="onDelete(msg)"
+                  class="opacity-0 group-hover:opacity-100 p-1 rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition"
+                  title="Bericht verwijderen"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3"/>
+                  </svg>
+                </button>
                 <div
                   class="max-w-[75%] px-4 py-2 rounded-2xl text-sm leading-relaxed break-words whitespace-pre-wrap shadow-sm"
-                  :class="msg.fromMe
-                    ? 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-br-sm'
-                    : 'bg-white ring-1 ring-gray-100 text-gray-800 rounded-bl-sm'"
+                  :class="[
+                    msg.fromMe
+                      ? 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white rounded-br-sm'
+                      : 'bg-white ring-1 ring-gray-100 text-gray-800 rounded-bl-sm',
+                    msg._sending ? 'opacity-60' : ''
+                  ]"
                 >
                   {{ msg.text }}
-                  <div class="text-[10px] mt-1" :class="msg.fromMe ? 'text-white/70' : 'text-gray-400'">
-                    {{ formatTime(msg.createdAtUtc) }}
+                  <div class="text-[10px] mt-1 flex items-center gap-1" :class="msg.fromMe ? 'text-white/70 justify-end' : 'text-gray-400'">
+                    <span>{{ formatTime(msg.createdAtUtc) }}</span>
+                    <span v-if="msg.fromMe && msg._sending" title="Verzenden...">
+                      <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" stroke-dasharray="40" stroke-linecap="round"/></svg>
+                    </span>
+                    <span v-else-if="msg.fromMe && shouldShowReceipt(idx)" :title="msg.isRead ? 'Gelezen' : 'Verzonden'">
+                      <!-- single tick when unread, double tick (filled) when read -->
+                      <svg v-if="!msg.isRead" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                      </svg>
+                      <svg v-else class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2 13l4 4 8-8"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 17l4 4L23 9"/>
+                      </svg>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -165,6 +202,70 @@
         </form>
       </template>
     </section>
+
+    <!-- New message modal -->
+    <Teleport to="body">
+      <Transition name="nm-backdrop">
+        <div
+          v-if="showNewMessage"
+          class="fixed inset-0 bg-black/40 z-[60] flex items-start justify-center pt-24 px-4"
+          @click.self="closeNewMessageModal"
+        >
+          <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="flex items-center justify-between px-5 h-14 border-b border-gray-200">
+              <h3 class="text-base font-bold text-gray-900">Nieuw bericht</h3>
+              <button
+                @click="closeNewMessageModal"
+                class="p-1.5 rounded-lg hover:bg-gray-100 transition text-gray-500 hover:text-gray-900"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="p-4">
+              <div class="relative">
+                <input
+                  ref="newMessageInputRef"
+                  v-model="newMessageQuery"
+                  @input="onNewMessageSearchInput"
+                  type="text"
+                  placeholder="Zoek een gebruiker..."
+                  class="w-full pl-9 pr-3 py-2.5 text-sm bg-gray-100 rounded-lg border border-transparent focus:border-primary-500 focus:bg-white focus:outline-none transition"
+                />
+                <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+              </div>
+              <div class="mt-3 max-h-72 overflow-y-auto">
+                <div v-if="newMessageSearching" class="p-4 text-center text-xs text-gray-400">Zoeken...</div>
+                <div v-else-if="newMessageQuery && newMessageResults.length === 0" class="p-4 text-center text-xs text-gray-400">Geen gebruikers gevonden</div>
+                <div v-else-if="!newMessageQuery" class="p-4 text-center text-xs text-gray-400">Typ om gebruikers te zoeken</div>
+                <button
+                  v-for="user in newMessageResults"
+                  :key="user.userName"
+                  @click="startConversation(user.userName)"
+                  class="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-gray-50 transition text-left"
+                >
+                  <img
+                    v-if="user.profilePhotoUrl"
+                    :src="user.profilePhotoUrl"
+                    class="w-10 h-10 rounded-full object-cover shrink-0"
+                  />
+                  <div v-else class="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center text-sm font-bold text-white shrink-0">
+                    {{ user.displayName?.[0]?.toUpperCase() || '?' }}
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <p class="text-sm font-semibold text-gray-900 truncate">{{ user.displayName }}</p>
+                    <p class="text-xs text-gray-400 truncate">@{{ user.userName }}</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -174,6 +275,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import * as messagesApi from '@/api/messagesApi'
 import * as usersApi from '@/api/userApi'
+import * as followApi from '@/api/followApi'
 
 const route = useRoute()
 const router = useRouter()
@@ -191,6 +293,13 @@ const sending = ref(false)
 
 const messagesContainer = ref(null)
 const composerRef = ref(null)
+
+const showNewMessage = ref(false)
+const newMessageQuery = ref('')
+const newMessageResults = ref([])
+const newMessageSearching = ref(false)
+const newMessageInputRef = ref(null)
+let newMessageSearchTimeout = null
 
 let pollInterval = null
 
@@ -264,19 +373,102 @@ async function onSend() {
   const text = draft.value.trim()
   if (!text || sending.value || !activeUserName.value) return
   sending.value = true
+
+  const tempId = `tmp-${Date.now()}-${Math.random().toString(36).slice(2)}`
+  const optimistic = {
+    id: tempId,
+    senderUserName: auth.userName,
+    senderDisplayName: auth.displayName,
+    senderProfilePhotoUrl: auth.profilePhotoUrl,
+    recipientUserName: activeUserName.value,
+    text,
+    createdAtUtc: new Date().toISOString(),
+    isRead: false,
+    fromMe: true,
+    _sending: true
+  }
+  messages.value.push(optimistic)
+  draft.value = ''
+  autoResize({ target: composerRef.value })
+  await nextTick()
+  scrollToBottom()
+
   try {
     const msg = await messagesApi.sendMessage(activeUserName.value, text)
-    messages.value.push(msg)
-    draft.value = ''
-    autoResize({ target: composerRef.value })
-    await nextTick()
-    scrollToBottom()
-    await loadConversations()
+    const idx = messages.value.findIndex(m => m.id === tempId)
+    if (idx >= 0) messages.value.splice(idx, 1, msg)
+    loadConversations()
   } catch (e) {
     console.error('Failed to send', e)
+    const idx = messages.value.findIndex(m => m.id === tempId)
+    if (idx >= 0) messages.value[idx]._failed = true
+    if (idx >= 0) messages.value[idx]._sending = false
   } finally {
     sending.value = false
   }
+}
+
+async function onDelete(msg) {
+  if (!msg?.id || msg._sending) return
+  if (!confirm('Bericht verwijderen?')) return
+  const idx = messages.value.findIndex(m => m.id === msg.id)
+  if (idx < 0) return
+  const removed = messages.value.splice(idx, 1)[0]
+  try {
+    await messagesApi.deleteMessage(msg.id)
+    loadConversations()
+  } catch (e) {
+    console.error('Failed to delete', e)
+    messages.value.splice(idx, 0, removed)
+  }
+}
+
+function shouldShowReceipt(idx) {
+  // Show receipt only on the last fromMe message (Instagram-style)
+  for (let i = messages.value.length - 1; i >= 0; i--) {
+    if (messages.value[i].fromMe && !messages.value[i]._sending) {
+      return i === idx
+    }
+  }
+  return false
+}
+
+function openNewMessageModal() {
+  showNewMessage.value = true
+  newMessageQuery.value = ''
+  newMessageResults.value = []
+  nextTick(() => newMessageInputRef.value?.focus())
+}
+
+function closeNewMessageModal() {
+  showNewMessage.value = false
+  clearTimeout(newMessageSearchTimeout)
+}
+
+function onNewMessageSearchInput() {
+  clearTimeout(newMessageSearchTimeout)
+  const q = newMessageQuery.value.trim()
+  if (!q) {
+    newMessageResults.value = []
+    newMessageSearching.value = false
+    return
+  }
+  newMessageSearching.value = true
+  newMessageSearchTimeout = setTimeout(async () => {
+    try {
+      const results = await followApi.searchUsers(q, 10)
+      newMessageResults.value = (results || []).filter(u => u.userName !== auth.userName)
+    } catch {
+      newMessageResults.value = []
+    } finally {
+      newMessageSearching.value = false
+    }
+  }, 250)
+}
+
+function startConversation(userName) {
+  closeNewMessageModal()
+  router.push(`/messages/${userName}`)
 }
 
 function autoResize(e) {
@@ -319,6 +511,10 @@ function timeAgo(d) {
   return new Date(d).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })
 }
 
+function handleEscape(e) {
+  if (e.key === 'Escape' && showNewMessage.value) closeNewMessageModal()
+}
+
 onMounted(() => {
   loadConversations()
   loadActiveConversation()
@@ -326,13 +522,26 @@ onMounted(() => {
     loadConversations()
     refreshActiveConversation()
   }, 8000)
+  document.addEventListener('keydown', handleEscape)
 })
 
 onUnmounted(() => {
   if (pollInterval) clearInterval(pollInterval)
+  document.removeEventListener('keydown', handleEscape)
 })
 
 watch(() => route.params.userName, () => {
   loadActiveConversation()
 })
 </script>
+
+<style scoped>
+.nm-backdrop-enter-active,
+.nm-backdrop-leave-active {
+  transition: opacity 0.2s ease;
+}
+.nm-backdrop-enter-from,
+.nm-backdrop-leave-to {
+  opacity: 0;
+}
+</style>

@@ -23,3 +23,7 @@ export async function getUnreadCount() {
   const { data } = await http.get('/messages/unread-count')
   return data
 }
+
+export async function deleteMessage(messageId) {
+  await http.delete(`/messages/${messageId}`)
+}
