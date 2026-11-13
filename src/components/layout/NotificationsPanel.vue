@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-full flex-col">
     <header class="flex items-center justify-between gap-2 border-b border-line px-4 py-3">
-      <h2 class="text-base font-extrabold text-ink">{{ $t('nav.notifications') }}</h2>
+      <h2 class="text-base font-bold text-ink">{{ $t('nav.notifications') }}</h2>
       <div class="flex items-center gap-1">
         <button v-if="notif.unreadCount > 0" type="button" class="btn btn-ghost btn-sm text-accent-700" @click="notif.markAllRead()">{{ $t('nav.markAllRead') }}</button>
         <RouterLink to="/settings?tab=meldingen" class="btn-icon btn-icon-sm" :aria-label="$t('nav.notificationSettings')" :title="$t('nav.notificationSettings')" @click="$emit('close')"><Icon name="settings" :size="16" /></RouterLink>

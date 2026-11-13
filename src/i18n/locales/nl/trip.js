@@ -38,6 +38,7 @@ export default {
     removed: 'Reisgenoot verwijderd',
     failed: 'Dat lukte niet.',
   },
+  groups: { plan: 'Route', together: 'Samen', memories: 'Herinneringen', info: 'Info' },
   tabs: {
     aria: 'Onderdelen van de reis',
     overview: 'Overzicht',

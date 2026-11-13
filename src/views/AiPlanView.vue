@@ -66,7 +66,7 @@
         <div>
           <p class="eyebrow-accent mb-2">{{ $t('ai.preview') }}</p>
           <label for="ai-title" class="sr-only">{{ $t('ai.titleLabel') }}</label>
-          <input id="ai-title" v-model="draft.title" class="input text-base font-extrabold" maxlength="120" />
+          <input id="ai-title" v-model="draft.title" class="input text-base font-bold" maxlength="120" />
           <p class="mt-2 text-sm text-muted">
             <span v-if="draft.country" class="font-bold text-body">{{ draft.country }} · </span>{{ formatDateRange(draft.startDate, draft.endDate) }} · {{ $t('ai.stopCount', draft.stops.length) }}
           </p>
@@ -85,7 +85,7 @@
               <li v-for="s in d.stops" :key="s.index" class="flex items-start gap-3 rounded-xl border border-line p-2.5">
                 <span class="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg" :class="stopTypeMeta(s.type).soft"><Icon :name="stopTypeMeta(s.type).icon" :size="16" /></span>
                 <span class="min-w-0 flex-1">
-                  <span class="block text-sm font-extrabold text-ink">{{ s.name }}</span>
+                  <span class="block text-sm font-bold text-ink">{{ s.name }}</span>
                   <span v-if="s.description" class="block text-[13px] leading-snug text-body">{{ s.description }}</span>
                   <span v-if="s.address" class="mt-0.5 block truncate text-xs text-muted">{{ s.address }}</span>
                 </span>

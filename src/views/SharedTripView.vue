@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-ground">
     <header class="sticky top-0 z-40 border-b border-line bg-surface/95 backdrop-blur">
       <div class="mx-auto flex h-16 max-w-content items-center justify-between gap-3 px-4 sm:px-6">
-        <RouterLink :to="auth.isAuthenticated ? '/' : '/login'" aria-label="ExploreMe"><Logo /></RouterLink>
+        <RouterLink to="/" aria-label="ExploreMe"><Logo /></RouterLink>
         <div class="flex items-center gap-2">
           <template v-if="auth.isAuthenticated">
             <RouterLink v-if="trip" :to="`/trips/${trip.id}`" class="btn btn-secondary btn-sm">{{ $t('sharedTrip.openInApp') }}</RouterLink>
@@ -21,12 +21,16 @@
         <div class="grid grid-cols-2 gap-3 lg:grid-cols-4"><div v-for="i in 4" :key="i" class="skeleton h-24 rounded-2xl" /></div>
       </div>
 
-      <EmptyState v-else-if="!trip" icon="lock" :title="$t('sharedTrip.invalidTitle')" :text="$t('sharedTrip.invalidText')">
+      <EmptyState v-else-if="!trip && viaLink" icon="lock" :title="$t('sharedTrip.invalidTitle')" :text="$t('sharedTrip.invalidText')">
         <RouterLink to="/register" class="btn btn-dark btn-sm">{{ $t('sharedTrip.discover') }}</RouterLink>
+      </EmptyState>
+      <!-- /t/:id: de reis bestaat niet of is niet openbaar; met een account zie je hem misschien wel. -->
+      <EmptyState v-else-if="!trip" icon="lock" :title="$t('sharedTrip.privateTitle')" :text="$t('sharedTrip.privateText')">
+        <RouterLink :to="{ name: 'login', query: { redirect: `/trips/${route.params.id}` } }" class="btn btn-dark btn-sm">{{ $t('sharedTrip.login') }}</RouterLink>
       </EmptyState>
 
       <template v-else>
-        <p class="mb-3 inline-flex items-center gap-2 text-xs font-bold text-muted"><Icon name="link" :size="14" /> {{ $t('sharedTrip.sharedVia') }}</p>
+        <p v-if="viaLink" class="mb-3 inline-flex items-center gap-2 text-xs font-bold text-muted"><Icon name="link" :size="14" /> {{ $t('sharedTrip.sharedVia') }}</p>
         <TripHero :trip="trip" :link-owner="auth.isAuthenticated">
           <template #actions>
             <button type="button" class="btn btn-secondary btn-sm" @click="exportIcs"><Icon name="calendar" :size="16" /> {{ $t('sharedTrip.calendar') }}</button>
@@ -79,6 +83,7 @@ import TripMap from '@/components/trip/TripMap.vue'
 import StopGroups from '@/components/trip/StopGroups.vue'
 import ItineraryDays from '@/components/trip/ItineraryDays.vue'
 import * as publicApi from '@/api/publicApi'
+import * as tripsApi from '@/api/tripsApi'
 import { useAuthStore } from '@/stores/auth'
 import { buildTripIcs, downloadTextFile, safeFileName } from '@/utils/ics'
 
@@ -86,6 +91,8 @@ const { t } = useI18n()
 const route = useRoute()
 const auth = useAuthStore()
 
+// Twee ingangen: /share/:token (deel-link, ook voor privéreizen) en /t/:id (openbare reis zonder account).
+const viaLink = computed(() => !!route.params.token)
 const trip = ref(null)
 const loading = ref(true)
 const tab = ref('overzicht')
@@ -102,7 +109,7 @@ function exportIcs() {
 
 onMounted(async () => {
   try {
-    trip.value = await publicApi.getSharedTrip(route.params.token)
+    trip.value = viaLink.value ? await publicApi.getSharedTrip(route.params.token) : await tripsApi.getTripById(route.params.id)
     document.title = `${trip.value.title} · ExploreMe`
   } catch {
     trip.value = null

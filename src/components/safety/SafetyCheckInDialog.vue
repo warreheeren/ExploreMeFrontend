@@ -26,7 +26,7 @@
 
       <!-- Noodcontact -->
       <fieldset class="rounded-2xl border border-line p-3">
-        <legend class="px-1 text-sm font-extrabold text-ink">{{ $t('safety.form.contact') }}</legend>
+        <legend class="px-1 text-sm font-bold text-ink">{{ $t('safety.form.contact') }}</legend>
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label for="safety-contact-name" class="label">{{ $t('safety.form.contactName') }}</label>

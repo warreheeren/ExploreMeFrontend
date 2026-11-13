@@ -7,7 +7,7 @@
           <CoverImage :src="trip?.coverImageUrl ? thumbUrl(trip.coverImageUrl) : ''" :seed="trip?.title || tripId" />
         </span>
         <span class="min-w-0">
-          <span class="block truncate text-sm font-extrabold text-ink hover:underline">{{ trip?.title || $t('common.loading') }}</span>
+          <span class="block truncate text-sm font-bold text-ink hover:underline">{{ trip?.title || $t('common.loading') }}</span>
           <span class="block truncate text-xs text-muted">{{ participantNames }}</span>
         </span>
       </RouterLink>

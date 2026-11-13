@@ -4,7 +4,7 @@
       <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-700"><Icon name="clock" :size="18" /></span>
       <div class="min-w-0 flex-1">
         <p class="eyebrow-accent">{{ $t('memories.eyebrow') }}</p>
-        <h2 class="mt-0.5 text-base font-extrabold leading-snug text-ink">
+        <h2 class="mt-0.5 text-base font-bold leading-snug text-ink">
           {{ headline.place
             ? $t('memories.headlinePlace', { n: headline.yearsAgo, place: headline.place }, headline.yearsAgo)
             : $t('memories.headlinePost', { n: headline.yearsAgo }, headline.yearsAgo) }}

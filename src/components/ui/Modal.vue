@@ -18,7 +18,7 @@
           <div v-if="title || $slots.header" class="flex shrink-0 items-start justify-between gap-3 border-b border-line px-5 py-4">
             <slot name="header">
               <div class="min-w-0">
-                <h2 :id="titleId" class="text-base font-extrabold text-ink">{{ title }}</h2>
+                <h2 :id="titleId" class="text-base font-bold text-ink">{{ title }}</h2>
                 <p v-if="subtitle" class="mt-0.5 text-sm text-muted">{{ subtitle }}</p>
               </div>
             </slot>

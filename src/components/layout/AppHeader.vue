@@ -21,16 +21,17 @@
           v-for="item in navItems"
           :key="item.to"
           :to="item.to"
-          class="hidden h-10 w-10 items-center justify-center rounded-xl transition md:inline-flex"
+          class="hidden h-10 w-10 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition md:inline-flex xl:w-auto xl:px-3"
           :class="item.active ? 'bg-accent-50 text-accent-700' : 'text-body hover:bg-gray-100 hover:text-ink'"
           :aria-label="item.label"
           :aria-current="item.active ? 'page' : undefined"
           :title="item.label"
         >
           <span class="relative">
-            <Icon :name="item.icon" :size="22" />
+            <Icon :name="item.icon" :size="20" />
             <span v-if="item.badge" class="badge absolute -right-2.5 -top-2">{{ item.badge > 99 ? '99+' : item.badge }}</span>
           </span>
+          <span class="hidden xl:inline" aria-hidden="true">{{ item.label }}</span>
         </RouterLink>
 
         <!-- Mobiel: zoeken + berichten -->
@@ -91,7 +92,7 @@
             <RouterLink :to="`/u/${auth.userName}`" class="flex items-center gap-3 border-b border-line px-4 pb-3 pt-2 hover:bg-gray-50" role="menuitem" @click="accountOpen = false">
               <Avatar :src="auth.profilePhotoUrl" :name="auth.displayName" size="md" />
               <span class="min-w-0">
-                <span class="block truncate text-sm font-extrabold text-ink">{{ auth.displayName }}</span>
+                <span class="block truncate text-sm font-bold text-ink">{{ auth.displayName }}</span>
                 <span class="block truncate text-xs text-muted">{{ $t('nav.viewProfile') }}</span>
               </span>
             </RouterLink>
@@ -100,13 +101,13 @@
                 <Icon name="mail" :size="18" /> <span class="flex-1">{{ $t('nav.invites') }}</span>
                 <span v-if="counts.invites" class="badge">{{ counts.invites }}</span>
               </RouterLink>
-              <RouterLink to="/postcards" class="menu-item" role="menuitem" @click="accountOpen = false">
+              <RouterLink v-if="features.postcards" to="/postcards" class="menu-item" role="menuitem" @click="accountOpen = false">
                 <Icon name="send" :size="18" /> {{ $t('postcards.title') }}
               </RouterLink>
               <RouterLink to="/lists" class="menu-item" role="menuitem" @click="accountOpen = false">
                 <Icon name="list" :size="18" /> {{ $t('nav.lists') }}
               </RouterLink>
-              <RouterLink to="/challenges" class="menu-item" role="menuitem" @click="accountOpen = false">
+              <RouterLink v-if="features.challenges" to="/challenges" class="menu-item" role="menuitem" @click="accountOpen = false">
                 <Icon name="flag" :size="18" /> {{ $t('challenges.title') }}
               </RouterLink>
               <RouterLink v-if="auth.isAdmin" to="/admin" class="menu-item" role="menuitem" @click="accountOpen = false">
@@ -136,7 +137,7 @@
       <div v-if="mobileSearchOpen" class="fixed inset-0 z-[90] flex flex-col bg-surface px-4 pb-4 pt-3 md:hidden">
         <div class="mb-3 flex items-center gap-2">
           <button type="button" class="btn-icon -ml-2" :aria-label="$t('common.back')" @click="mobileSearchOpen = false"><Icon name="arrow-left" :size="20" /></button>
-          <p class="text-base font-extrabold">{{ $t('nav.search') }}</p>
+          <p class="text-base font-bold">{{ $t('nav.search') }}</p>
         </div>
         <GlobalSearch panel autofocus class="min-h-0 flex-1" @navigate="mobileSearchOpen = false" />
       </div>
@@ -159,6 +160,7 @@ import NotificationsPanel from './NotificationsPanel.vue'
 import SafetyStatusChip from '../safety/SafetyStatusChip.vue'
 import SafetyCheckInDialog from '../safety/SafetyCheckInDialog.vue'
 import { useSafetyStore } from '@/stores/safety'
+import { features } from '@/config/features'
 import { useAuthStore } from '@/stores/auth'
 import { useNotificationsStore } from '@/stores/notifications'
 import { useCountsStore } from '@/stores/counts'
@@ -195,9 +197,9 @@ const navItems = computed(() => [
   { to: '/', label: t('nav.timeline'), icon: 'home', active: route.name === 'home' },
   { to: '/trips', label: t('nav.trips'), icon: 'map', active: String(route.name || '').startsWith('trip') && route.name !== 'trip-chat' },
   { to: '/discover', label: t('nav.discover'), icon: 'compass', active: route.name === 'discover' || route.name === 'place' },
-  { to: '/buddies', label: t('buddies.title'), icon: 'users', active: route.name === 'buddies' },
+  features.buddies && { to: '/buddies', label: t('buddies.title'), icon: 'users', active: route.name === 'buddies' },
   { to: '/messages', label: t('nav.messages'), icon: 'chat', active: String(route.name || '').startsWith('message') || route.name === 'trip-chat', badge: counts.messages },
-])
+].filter(Boolean))
 
 function toggleNotifications() {
   notifOpen.value = !notifOpen.value

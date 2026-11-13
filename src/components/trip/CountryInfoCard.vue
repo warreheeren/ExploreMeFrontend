@@ -7,7 +7,7 @@
       :aria-label="$t('countryInfo.toggle', { country: info.name })"
       @click="open = !open"
     >
-      <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-xs font-extrabold text-accent-700">{{ info.code }}</span>
+      <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-xs font-bold text-accent-700">{{ info.code }}</span>
       <span class="min-w-0 flex-1">
         <span class="flex min-w-0 items-center gap-2">
           <span class="card-title truncate">{{ info.name }}</span>

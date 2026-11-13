@@ -7,6 +7,7 @@
       <Icon name="bookmark" :size="16" />
     </button>
     <RouterLink
+      v-if="features.nearby"
       :to="{ name: 'nearby', query: { lat: stop.latitude, lng: stop.longitude, name: stop.name } }"
       class="btn-icon btn-icon-sm"
       :aria-label="$t('nearby.openFor', { name: stop.name })"
@@ -40,6 +41,7 @@
 </template>
 
 <script setup>
+import { features } from '@/config/features'
 import { defineAsyncComponent, ref } from 'vue'
 import Icon from '../ui/Icon.vue'
 

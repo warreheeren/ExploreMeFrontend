@@ -25,7 +25,7 @@
             <CoverImage :src="thumbUrl(trip.coverImageUrl)" :seed="trip.id" />
           </span>
           <span class="min-w-0 flex-1">
-            <span class="block truncate text-sm font-extrabold text-ink">{{ trip.title }}</span>
+            <span class="block truncate text-sm font-bold text-ink">{{ trip.title }}</span>
             <span class="block truncate text-xs font-semibold text-muted">{{ formatDateRange(trip.startDate, trip.endDate) }}</span>
             <span v-if="trip.userName !== auth.userName" class="block truncate text-xs text-muted">{{ $t('trips.upcoming.with', { name: trip.displayName }) }}</span>
           </span>

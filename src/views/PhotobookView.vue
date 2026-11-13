@@ -46,7 +46,7 @@
         <div class="absolute inset-0"><CoverImage :src="trip.coverImageUrl" :seed="trip.id" eager /></div>
         <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
         <div class="absolute inset-x-0 bottom-0 p-[6%]">
-          <p v-if="trip.country" class="text-xs font-extrabold uppercase tracking-[0.18em] opacity-85">{{ trip.country }}</p>
+          <p v-if="trip.country" class="text-xs font-bold uppercase tracking-[0.18em] opacity-85">{{ trip.country }}</p>
           <h1 class="mt-2 text-4xl font-extrabold leading-tight tracking-tight text-balance">{{ trip.title }}</h1>
           <p class="mt-2 text-sm font-semibold opacity-90">{{ formatDateRange(trip.startDate, trip.endDate) }}</p>
           <p v-if="crewNames" class="mt-1 text-sm opacity-80">{{ crewNames }}</p>
@@ -84,7 +84,7 @@
           <!-- Alleen tekst -->
           <div v-if="page.kind === 'text'" class="min-h-0 flex-1 overflow-hidden px-[4%] pb-[3%]" :class="landscape ? 'columns-2 gap-8' : ''">
             <article v-for="e in day.entries" :key="e.id" class="mb-4 break-inside-avoid-column">
-              <h3 v-if="e.title" class="text-base font-extrabold">{{ e.title }}</h3>
+              <h3 v-if="e.title" class="text-base font-bold">{{ e.title }}</h3>
               <p class="whitespace-pre-line text-[13px] leading-relaxed text-body">{{ e.text }}</p>
               <p class="mt-1 text-[11px] font-semibold text-muted">— {{ e.authorDisplayName }}</p>
             </article>
@@ -94,7 +94,7 @@
           <div v-else class="flex min-h-0 flex-1 gap-[2%] px-[4%] pb-[3%]" :class="landscape ? 'flex-row' : 'flex-col'">
             <div v-if="page.withText" class="shrink-0 overflow-hidden" :class="landscape ? 'w-[32%]' : 'max-h-[35%]'">
               <article v-for="e in day.entries" :key="e.id" class="mb-3">
-                <h3 v-if="e.title" class="text-base font-extrabold">{{ e.title }}</h3>
+                <h3 v-if="e.title" class="text-base font-bold">{{ e.title }}</h3>
                 <p class="whitespace-pre-line text-[13px] leading-relaxed text-body">{{ e.text }}</p>
               </article>
             </div>

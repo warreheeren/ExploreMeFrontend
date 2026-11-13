@@ -2,7 +2,7 @@
   <div v-if="checkIn" class="space-y-3">
     <div class="flex items-start justify-between gap-3">
       <div class="min-w-0">
-        <p class="text-sm font-extrabold text-ink">{{ $t('safety.status.dueAt', { time: dueLabel }) }}</p>
+        <p class="text-sm font-bold text-ink">{{ $t('safety.status.dueAt', { time: dueLabel }) }}</p>
         <p class="mt-0.5 line-clamp-2 text-sm text-body">{{ checkIn.description }}</p>
       </div>
       <span class="chip shrink-0 font-extrabold tabular-nums" :class="stateClass">{{ state === 'overdue' ? $t('safety.chip.overdue') : countdown }}</span>
@@ -20,7 +20,7 @@
     <div class="rounded-2xl border border-line p-3">
       <div class="flex items-start justify-between gap-3">
         <div>
-          <p class="text-sm font-extrabold text-ink">{{ $t('safety.location.title') }}</p>
+          <p class="text-sm font-bold text-ink">{{ $t('safety.location.title') }}</p>
           <p class="text-xs text-muted">{{ $t('safety.location.hint') }}</p>
         </div>
         <Toggle :model-value="safety.sharingLocation" :label="$t('safety.location.title')" @update:model-value="safety.setSharing($event)" />

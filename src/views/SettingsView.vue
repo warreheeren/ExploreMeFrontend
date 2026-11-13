@@ -82,7 +82,7 @@
         </form>
 
         <form class="space-y-3 border-t border-line pt-5" @submit.prevent="changePassword">
-          <h3 class="text-sm font-extrabold text-ink">{{ $t('settings.account.passwordTitle') }}</h3>
+          <h3 class="text-sm font-bold text-ink">{{ $t('settings.account.passwordTitle') }}</h3>
           <div>
             <label for="set-cur" class="label">{{ $t('settings.account.current') }}</label>
             <input id="set-cur" v-model="pw.current" type="password" class="input" autocomplete="current-password" />
@@ -116,14 +116,14 @@
         <h2 id="settings-data" class="card-title">{{ $t('settings.data.title') }}</h2>
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div class="flex-1">
-            <p class="text-sm font-extrabold text-ink">{{ $t('settings.data.exportTitle') }}</p>
+            <p class="text-sm font-bold text-ink">{{ $t('settings.data.exportTitle') }}</p>
             <p class="text-sm text-muted">{{ $t('settings.data.exportText') }}</p>
           </div>
           <button type="button" class="btn btn-secondary" :disabled="exporting" @click="exportData"><Icon name="download" :size="16" /> {{ exporting ? $t('settings.data.exporting') : $t('settings.data.export') }}</button>
         </div>
         <div class="flex flex-col gap-3 border-t border-line pt-4 sm:flex-row sm:items-center">
           <div class="flex-1">
-            <p class="text-sm font-extrabold text-red-600">{{ $t('settings.data.deleteTitle') }}</p>
+            <p class="text-sm font-bold text-red-600">{{ $t('settings.data.deleteTitle') }}</p>
             <p class="text-sm text-muted">{{ $t('settings.data.deleteText') }}</p>
           </div>
           <button type="button" class="btn btn-danger-ghost" @click="deleteOpen = true"><Icon name="trash" :size="16" /> {{ $t('settings.data.delete') }}</button>
@@ -144,7 +144,7 @@
       <section class="card card-pad mb-5 sm:p-6">
         <div class="flex items-start gap-4">
           <span class="flex-1">
-            <span class="block text-sm font-extrabold text-ink">{{ $t('settings.privacy.private') }}</span>
+            <span class="block text-sm font-bold text-ink">{{ $t('settings.privacy.private') }}</span>
             <span class="mt-0.5 block text-sm text-muted">{{ $t('settings.privacy.privateText') }}</span>
           </span>
           <Toggle :model-value="auth.isPrivate" :disabled="savingPrivacy" :label="$t('settings.privacy.private')" @update:model-value="setPrivate" />
@@ -163,7 +163,7 @@
             <RouterLink :to="`/u/${r.userName}`" class="flex min-w-0 flex-1 items-center gap-3">
               <Avatar :src="r.profilePhotoUrl" :name="r.displayName" size="md" />
               <span class="min-w-0">
-                <span class="block truncate text-sm font-extrabold text-ink">{{ r.displayName }}</span>
+                <span class="block truncate text-sm font-bold text-ink">{{ r.displayName }}</span>
                 <span class="block truncate text-xs text-muted">@{{ r.userName }} · {{ timeAgo(r.createdAtUtc) }}</span>
               </span>
             </RouterLink>
@@ -182,7 +182,7 @@
         <div class="flex items-start gap-4">
           <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-800"><Icon name="bell" :size="18" /></span>
           <div class="flex-1">
-            <p class="text-sm font-extrabold text-ink">{{ $t('settings.notifications.pushTitle') }}</p>
+            <p class="text-sm font-bold text-ink">{{ $t('settings.notifications.pushTitle') }}</p>
             <p class="mt-0.5 text-sm text-muted">{{ pushStatusText }}</p>
             <button v-if="pushEnabled" type="button" class="btn btn-ghost btn-sm -ml-3 mt-1" @click="testPush"><Icon name="send" :size="14" /> {{ $t('settings.notifications.test') }}</button>
           </div>
@@ -198,7 +198,7 @@
         <div v-if="!prefs" class="space-y-2 px-5 pb-5"><div v-for="i in 5" :key="i" class="skeleton h-10 rounded-xl" /></div>
         <table v-else class="w-full text-sm">
           <thead>
-            <tr class="border-y border-line bg-gray-50 text-xs font-extrabold uppercase tracking-wide text-muted">
+            <tr class="border-y border-line bg-gray-50 text-xs font-bold uppercase tracking-wide text-muted">
               <th class="px-5 py-2.5 text-left sm:px-6">{{ $t('settings.notifications.category') }}</th>
               <th v-for="ch in CHANNELS" :key="ch" class="w-16 px-1 py-2.5 text-center sm:w-20">{{ $t(`settings.notifications.channels.${ch}`) }}</th>
             </tr>
@@ -228,7 +228,7 @@
       <section v-if="prefs" class="card card-pad sm:p-6">
         <div class="flex items-start gap-4">
           <span class="flex-1">
-            <span class="block text-sm font-extrabold text-ink">{{ $t('settings.notifications.digest') }}</span>
+            <span class="block text-sm font-bold text-ink">{{ $t('settings.notifications.digest') }}</span>
             <span class="mt-0.5 block text-sm text-muted">{{ $t('settings.notifications.digestText') }}</span>
           </span>
           <Toggle v-model="prefs.weeklyDigest" :disabled="!auth.emailVerified" :label="$t('settings.notifications.digest')" @update:model-value="savePrefs" />
@@ -252,7 +252,7 @@
             @click="prefsStore.setTheme(opt.value)"
           >
             <span class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-ink"><Icon :name="opt.icon" :size="17" /></span>
-            <span class="text-sm font-extrabold text-ink">{{ $t(`settings.display.themes.${opt.value}`) }}</span>
+            <span class="text-sm font-bold text-ink">{{ $t(`settings.display.themes.${opt.value}`) }}</span>
           </button>
         </div>
       </section>
@@ -271,8 +271,8 @@
             :class="locale === lang.code ? 'border-ink bg-gray-50' : 'border-line hover:border-line-strong'"
             @click="changeLanguage(lang.code)"
           >
-            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-xs font-extrabold uppercase text-ink">{{ lang.code }}</span>
-            <span class="text-sm font-extrabold text-ink">{{ lang.name }}</span>
+            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-xs font-bold uppercase text-ink">{{ lang.code }}</span>
+            <span class="text-sm font-bold text-ink">{{ lang.name }}</span>
           </button>
         </div>
       </section>

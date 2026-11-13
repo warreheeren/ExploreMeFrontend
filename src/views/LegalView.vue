@@ -17,7 +17,7 @@
 
         <!-- Rechten van betrokkenen: rechtstreeks naar de bestaande export-/verwijderflow in Instellingen. -->
         <section v-if="doc === 'rights'" class="mt-6 rounded-2xl border border-line p-4 sm:p-5" aria-labelledby="legal-actions">
-          <h2 id="legal-actions" class="text-sm font-extrabold text-ink">{{ $t('legal.rights.actions.title') }}</h2>
+          <h2 id="legal-actions" class="text-sm font-bold text-ink">{{ $t('legal.rights.actions.title') }}</h2>
           <div v-if="auth.isAuthenticated" class="mt-3 flex flex-wrap gap-2">
             <RouterLink :to="DATA_SETTINGS" class="btn btn-secondary btn-sm"><Icon name="download" :size="15" /> {{ $t('legal.rights.actions.export') }}</RouterLink>
             <RouterLink :to="DATA_SETTINGS" class="btn btn-danger-ghost btn-sm"><Icon name="trash" :size="15" /> {{ $t('legal.rights.actions.delete') }}</RouterLink>
@@ -32,7 +32,7 @@
         </section>
 
         <section v-for="(s, i) in sections" :key="i" class="mt-6">
-          <h2 class="text-base font-extrabold text-ink">{{ i + 1 }}. {{ $rt(s.title) }}</h2>
+          <h2 class="text-base font-bold text-ink">{{ i + 1 }}. {{ $rt(s.title) }}</h2>
           <p class="mt-1.5 text-[15px] leading-relaxed text-body">{{ $rt(s.body) }}</p>
           <ul v-if="s.items?.length" class="mt-2 list-disc space-y-1.5 pl-5 text-[15px] leading-relaxed text-body marker:text-muted">
             <li v-for="(item, j) in s.items" :key="j">{{ $rt(item) }}</li>
@@ -41,7 +41,7 @@
 
         <!-- Cookiebeleid: overzicht van lokale opslag; tabel vanaf sm, gestapelde kaartjes op een telefoon. -->
         <section v-if="doc === 'cookies'" class="mt-8" aria-labelledby="legal-storage">
-          <h2 id="legal-storage" class="text-base font-extrabold text-ink">{{ $t('legal.cookies.table.caption') }}</h2>
+          <h2 id="legal-storage" class="text-base font-bold text-ink">{{ $t('legal.cookies.table.caption') }}</h2>
           <div class="mt-3 hidden overflow-hidden rounded-2xl border border-line sm:block">
             <table class="w-full text-left text-sm">
               <caption class="sr-only">{{ $t('legal.cookies.table.caption') }}</caption>

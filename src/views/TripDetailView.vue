@@ -20,7 +20,9 @@
 
       <TripHero :trip="trip">
         <template #actions>
+          <!-- Eén hoofdactie: tijdens de reis "Vandaag", anders bewerken (voor deelnemers). -->
           <RouterLink v-if="showToday" :to="`/trips/${trip.id}/today`" class="btn btn-dark btn-sm"><Icon name="sun" :size="16" /> {{ $t('today.button') }}</RouterLink>
+          <RouterLink v-else-if="trip.canEdit" :to="`/trips/${trip.id}/edit`" class="btn btn-dark btn-sm"><Icon name="edit" :size="16" /> {{ $t('trip.actions.edit') }}</RouterLink>
           <button
             type="button"
             class="btn btn-secondary btn-sm"
@@ -40,20 +42,21 @@
             <Icon name="bookmark" :size="16" :filled="trip.bookmarkedByMe" /> {{ trip.bookmarkedByMe ? $t('trip.actions.saved') : $t('trip.actions.save') }}
           </button>
           <button type="button" class="btn btn-secondary btn-sm" @click="shareOpen = true"><Icon name="share" :size="16" /> {{ $t('trip.actions.share') }}</button>
-          <RouterLink v-if="trip.canEdit" :to="`/messages/trip/${trip.id}`" class="btn btn-secondary btn-sm"><Icon name="chat" :size="16" /> {{ $t('planning.chat.open') }}</RouterLink>
           <TripAssistant :trip="trip" />
-          <RouterLink v-if="recapMode !== 'none'" :to="`/trips/${trip.id}/recap`" class="btn btn-secondary btn-sm"><Icon name="sparkle" :size="16" /> {{ $t(recapMode === 'finished' ? 'tripExtras.recap.open' : 'tripExtras.recap.openSoFar') }}</RouterLink>
-          <OfflineTripButton :trip="trip" />
 
           <div v-click-outside="() => (menuOpen = false)" class="relative">
             <button type="button" class="btn-icon btn-icon-sm border border-line-strong bg-surface" :aria-label="$t('trip.actions.more')" :aria-expanded="menuOpen" @click="menuOpen = !menuOpen">
               <Icon name="more" :size="18" />
             </button>
             <div v-if="menuOpen" class="menu right-0 top-full mt-2 w-64" role="menu">
-              <RouterLink v-if="trip.canEdit" :to="`/trips/${trip.id}/edit`" class="menu-item" role="menuitem"><Icon name="edit" :size="16" /> {{ $t('trip.actions.edit') }}</RouterLink>
+              <RouterLink v-if="trip.canEdit" :to="`/messages/trip/${trip.id}`" class="menu-item" role="menuitem"><Icon name="chat" :size="16" /> {{ $t('planning.chat.open') }}</RouterLink>
+              <RouterLink v-if="recapMode !== 'none'" :to="`/trips/${trip.id}/recap`" class="menu-item" role="menuitem"><Icon name="sparkle" :size="16" /> {{ $t(recapMode === 'finished' ? 'tripExtras.recap.open' : 'tripExtras.recap.openSoFar') }}</RouterLink>
+              <OfflineTripButton :trip="trip" variant="menu" />
+              <div class="menu-sep" />
+              <RouterLink v-if="trip.canEdit && showToday" :to="`/trips/${trip.id}/edit`" class="menu-item" role="menuitem"><Icon name="edit" :size="16" /> {{ $t('trip.actions.edit') }}</RouterLink>
               <button v-if="trip.canEdit && aiStatus.enabled" type="button" class="menu-item" role="menuitem" @click="openBookingImport"><Icon name="sparkle" :size="16" /> {{ $t('bookingImport.open') }}</button>
               <RouterLink :to="`/trips/${trip.id}/print`" class="menu-item" role="menuitem"><Icon name="printer" :size="16" /> {{ $t('trip.actions.print') }}</RouterLink>
-              <RouterLink :to="`/trips/${trip.id}/photobook`" class="menu-item" role="menuitem"><Icon name="book" :size="16" /> {{ $t('photobook.open') }}</RouterLink>
+              <RouterLink v-if="features.photobook" :to="`/trips/${trip.id}/photobook`" class="menu-item" role="menuitem"><Icon name="book" :size="16" /> {{ $t('photobook.open') }}</RouterLink>
               <button type="button" class="menu-item" role="menuitem" @click="exportIcs"><Icon name="calendar" :size="16" /> {{ $t('trip.actions.ics') }}</button>
               <button type="button" class="menu-item" role="menuitem" @click="cloneTrip"><Icon name="copy" :size="16" /> {{ $t('tripExtras.copy.action') }}</button>
               <div class="menu-sep" />
@@ -65,64 +68,84 @@
         </template>
       </TripHero>
 
-      <!-- Reisgenoten -->
-      <section v-if="trip.isOwner || trip.collaborators.length" class="card card-pad mt-5" aria-labelledby="crew-title">
-        <div class="mb-3 flex items-center justify-between gap-3">
-          <h2 id="crew-title" class="card-title">{{ $t('trip.crew.title') }} <span class="font-bold text-muted">{{ acceptedCollaborators.length + 1 }}</span></h2>
-          <button v-if="trip.isOwner" type="button" class="btn btn-secondary btn-sm" @click="inviteOpen = true"><Icon name="plus" :size="14" /> {{ $t('trip.crew.invite') }}</button>
-        </div>
-        <ul class="flex flex-wrap gap-2">
-          <li>
-            <RouterLink :to="`/u/${trip.userName}`" class="inline-flex h-10 items-center gap-2 rounded-full border border-line bg-surface pl-1 pr-3 hover:border-line-strong">
-              <Avatar :src="trip.profilePhotoUrl" :name="trip.displayName" size="sm" />
-              <span class="text-sm font-bold text-ink">{{ trip.displayName }}</span>
-              <span class="chip chip-accent h-5 px-2 text-[10px]">{{ $t('trip.crew.owner') }}</span>
-            </RouterLink>
-          </li>
-          <li v-for="c in acceptedCollaborators" :key="c.userName" class="inline-flex h-10 items-center gap-2 rounded-full border border-line bg-surface pl-1 pr-1.5">
-            <RouterLink :to="`/u/${c.userName}`" class="inline-flex items-center gap-2 pr-1.5">
-              <Avatar :src="c.profilePhotoUrl" :name="c.displayName" size="sm" />
-              <span class="text-sm font-bold text-ink hover:underline">{{ c.displayName }}</span>
-            </RouterLink>
-            <button v-if="trip.isOwner" type="button" class="btn-icon h-7 w-7 hover:text-red-600" :aria-label="$t('trip.crew.removeAria', { name: c.displayName })" @click="removeCollaborator(c)">
-              <Icon name="x" :size="14" />
-            </button>
-          </li>
-          <li v-for="c in pendingCollaborators" :key="c.userName" class="inline-flex h-10 items-center gap-2 rounded-full border border-dashed border-line-strong bg-gray-50 pl-1 pr-1.5">
-            <Avatar :src="c.profilePhotoUrl" :name="c.displayName" size="sm" class="opacity-70" />
-            <span class="text-sm font-semibold text-body">{{ c.displayName }}</span>
-            <span class="text-xs font-semibold text-muted">{{ $t('trip.crew.invited') }}</span>
-            <button type="button" class="btn-icon h-7 w-7 hover:text-red-600" :aria-label="$t('trip.crew.revokeAria', { name: c.displayName })" @click="removeCollaborator(c)">
-              <Icon name="x" :size="14" />
-            </button>
-          </li>
-        </ul>
-      </section>
-
-      <TripStats :trip="trip" :route="tripRoute" show-footprint :footprint="footprint" :footprint-loading="footprintLoading" :footprint-failed="footprintFailed" class="mt-5" />
-
-      <WeatherStrip v-if="trip.stops.length" :trip-id="trip.id" :version="stopsVersion" class="mt-5" @loaded="onWeatherLoaded" />
 
       <!-- Tabs -->
-      <div class="sticky top-16 z-30 -mx-4 mt-6 bg-ground/95 px-4 backdrop-blur sm:-mx-6 sm:px-6 md:top-16">
-        <nav ref="tabsRef" class="tabs" :aria-label="$t('trip.tabs.aria')" role="tablist">
+      <!-- Vier hoofdtabs; de onderdelen van de actieve groep staan er als chips onder (?tab= blijft het onderdeel). -->
+      <div class="sticky top-16 z-30 -mx-4 mt-4 bg-ground/95 px-4 backdrop-blur sm:-mx-6 sm:px-6">
+        <nav class="tabs" :aria-label="$t('trip.tabs.aria')" role="tablist">
           <button
-            v-for="t in tabs"
+            v-for="g in groups"
+            :key="g.id"
+            type="button"
+            role="tab"
+            class="tab flex-1 justify-center sm:flex-none sm:justify-start"
+            :class="activeGroup?.id === g.id ? 'tab-active' : ''"
+            :aria-selected="activeGroup?.id === g.id"
+            @click="setGroup(g)"
+          >
+            <Icon :name="g.icon" :size="16" class="hidden sm:block" /> {{ g.label }}
+            <span v-if="g.count" class="text-xs font-bold text-muted">{{ g.count }}</span>
+          </button>
+        </nav>
+        <div v-if="activeGroup && activeGroup.items.length > 1" ref="tabsRef" class="flex gap-1.5 overflow-x-auto py-2.5 scrollbar-none" role="tablist" :aria-label="activeGroup.label">
+          <button
+            v-for="t in activeGroup.items"
             :key="t.id"
             type="button"
             role="tab"
-            class="tab"
-            :class="tab === t.id ? 'tab-active' : ''"
+            class="chip-toggle h-8 shrink-0"
+            :class="tab === t.id ? 'chip-toggle-active' : ''"
             :aria-selected="tab === t.id"
             @click="setTab(t.id)"
           >
-            <Icon :name="t.icon" :size="16" /> {{ t.label }}
-            <span v-if="t.count" class="text-xs font-extrabold text-muted">{{ t.count }}</span>
+            <Icon :name="t.icon" :size="14" /> {{ t.label }}
+            <span v-if="t.count" class="font-bold opacity-70">{{ t.count }}</span>
           </button>
-        </nav>
+        </div>
       </div>
 
-      <div class="mt-5">
+      <div class="mt-4">
+        <!-- Overzicht begint met wie er meegaat, de cijfers en het weer (v-show: het weer voedt ook het dagschema). -->
+        <div v-show="tab === 'overzicht'" class="mb-5 space-y-5">
+          <!-- Reisgenoten -->
+          <section v-if="trip.isOwner || trip.collaborators.length" class="card card-pad" aria-labelledby="crew-title">
+            <div class="mb-3 flex items-center justify-between gap-3">
+              <h2 id="crew-title" class="card-title">{{ $t('trip.crew.title') }} <span class="font-bold text-muted">{{ acceptedCollaborators.length + 1 }}</span></h2>
+              <button v-if="trip.isOwner" type="button" class="btn btn-secondary btn-sm" @click="inviteOpen = true"><Icon name="plus" :size="14" /> {{ $t('trip.crew.invite') }}</button>
+            </div>
+            <ul class="flex flex-wrap gap-2">
+              <li>
+                <RouterLink :to="`/u/${trip.userName}`" class="inline-flex h-10 items-center gap-2 rounded-full border border-line bg-surface pl-1 pr-3 hover:border-line-strong">
+                  <Avatar :src="trip.profilePhotoUrl" :name="trip.displayName" size="sm" />
+                  <span class="text-sm font-bold text-ink">{{ trip.displayName }}</span>
+                  <span class="chip chip-accent h-5 px-2 text-[10px]">{{ $t('trip.crew.owner') }}</span>
+                </RouterLink>
+              </li>
+              <li v-for="c in acceptedCollaborators" :key="c.userName" class="inline-flex h-10 items-center gap-2 rounded-full border border-line bg-surface pl-1 pr-1.5">
+                <RouterLink :to="`/u/${c.userName}`" class="inline-flex items-center gap-2 pr-1.5">
+                  <Avatar :src="c.profilePhotoUrl" :name="c.displayName" size="sm" />
+                  <span class="text-sm font-bold text-ink hover:underline">{{ c.displayName }}</span>
+                </RouterLink>
+                <button v-if="trip.isOwner" type="button" class="btn-icon h-7 w-7 hover:text-red-600" :aria-label="$t('trip.crew.removeAria', { name: c.displayName })" @click="removeCollaborator(c)">
+                  <Icon name="x" :size="14" />
+                </button>
+              </li>
+              <li v-for="c in pendingCollaborators" :key="c.userName" class="inline-flex h-10 items-center gap-2 rounded-full border border-dashed border-line-strong bg-gray-50 pl-1 pr-1.5">
+                <Avatar :src="c.profilePhotoUrl" :name="c.displayName" size="sm" class="opacity-70" />
+                <span class="text-sm font-semibold text-body">{{ c.displayName }}</span>
+                <span class="text-xs font-semibold text-muted">{{ $t('trip.crew.invited') }}</span>
+                <button type="button" class="btn-icon h-7 w-7 hover:text-red-600" :aria-label="$t('trip.crew.revokeAria', { name: c.displayName })" @click="removeCollaborator(c)">
+                  <Icon name="x" :size="14" />
+                </button>
+              </li>
+            </ul>
+          </section>
+
+          <TripStats :trip="trip" :route="tripRoute" show-footprint :footprint="footprint" :footprint-loading="footprintLoading" :footprint-failed="footprintFailed" />
+
+          <WeatherStrip v-if="trip.stops.length" :trip-id="trip.id" :version="stopsVersion" @loaded="onWeatherLoaded" />
+        </div>
+
         <!-- Overzicht & dagschema delen één kaart (blijft gemount) -->
         <div v-show="tab === 'overzicht' || tab === 'dagschema'" class="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)]">
           <div class="order-2 min-w-0 lg:order-1">
@@ -180,7 +203,7 @@
         <div v-if="tab === 'dagboek'" class="space-y-5">
           <TripJournal :trip="trip" :can-write="trip.canEdit" @tracks-imported="onTracksImported" />
           <!-- Tijdcapsules zijn altijd privé voor de deelnemers. -->
-          <TimeCapsules v-if="trip.canEdit" :trip="trip" class="mx-auto max-w-2xl" />
+          <TimeCapsules v-if="trip.canEdit && features.timeCapsules" :trip="trip" class="mx-auto max-w-2xl" />
         </div>
 
         <TripAlbum v-if="tab === 'album'" :trip="trip" />
@@ -273,6 +296,7 @@ import { useAiStatus } from '@/composables/useAiStatus'
 import RouteReplay from '@/components/trip/RouteReplay.vue'
 import OfflineTripButton from '@/components/trip/OfflineTripButton.vue'
 import { recapState } from '@/utils/recap'
+import { features } from '@/config/features'
 import { isTripRunning } from '@/utils/today'
 import { useI18n } from 'vue-i18n'
 import * as tripsApi from '@/api/tripsApi'
@@ -463,6 +487,29 @@ function setTab(id) {
   router.replace({ query: { ...route.query, tab: id === 'overzicht' ? undefined : id } })
 }
 
+// De elf onderdelen in vier groepen. Een groep zonder zichtbare onderdelen (kijkers zien "samen" niet) valt weg.
+const TAB_GROUPS = [
+  { id: 'plan', icon: 'map', labelKey: 'trip.groups.plan', tabs: ['overzicht', 'dagschema'] },
+  { id: 'samen', icon: 'users', labelKey: 'trip.groups.together', tabs: ['budget', 'paklijst', 'stemmen', 'documenten'] },
+  { id: 'herinneringen', icon: 'camera', labelKey: 'trip.groups.memories', tabs: ['dagboek', 'album', 'posts'] },
+  { id: 'info', icon: 'globe', labelKey: 'trip.groups.info', tabs: ['praktisch', 'reacties'] },
+]
+const groups = computed(() => TAB_GROUPS
+  .map((g) => {
+    const items = tabs.value.filter((x) => g.tabs.includes(x.id))
+    return { id: g.id, icon: g.icon, label: t(g.labelKey), items, count: items.reduce((n, x) => n + (x.count || 0), 0) || null }
+  })
+  .filter((g) => g.items.length))
+const activeGroup = computed(() => groups.value.find((g) => g.items.some((x) => x.id === tab.value)) || groups.value[0] || null)
+
+// Terug naar een groep = terug naar het onderdeel waar je daar het laatst was.
+const lastTabOfGroup = {}
+function setGroup(group) {
+  if (group.id === activeGroup.value?.id) return
+  const remembered = lastTabOfGroup[group.id]
+  setTab(group.items.some((x) => x.id === remembered) ? remembered : group.items[0].id)
+}
+
 const commentApi = {
   list: () => tripsApi.getTripComments(trip.value.id),
   add: (text, parentId) => tripsApi.addTripComment(trip.value.id, text, parentId),
@@ -623,11 +670,16 @@ async function removeCollaborator(c) {
 const tabsRef = ref(null)
 
 function revealActiveTab() {
-  nextTick(() => tabsRef.value?.querySelector('.tab-active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' }))
+  nextTick(() => {
+    const row = tabsRef.value
+    const chip = row?.querySelector('.chip-toggle-active')
+    if (chip) row.scrollTo({ left: Math.max(0, chip.offsetLeft - row.clientWidth / 2 + chip.offsetWidth / 2) })
+  })
 }
 
 watch(tab, (t) => {
   if (t === 'posts') loadPosts()
+  if (activeGroup.value) lastTabOfGroup[activeGroup.value.id] = t
   revealActiveTab()
 })
 watch(trip, (t, prev) => { if (t && !prev) revealActiveTab() })

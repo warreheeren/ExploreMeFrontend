@@ -35,7 +35,7 @@
 
     <div v-else class="space-y-7">
       <section v-for="group in groups" :key="group.day || 'none'" :aria-label="group.day ? formatFullDate(group.day) : $t('album.noDay')">
-        <h3 class="mb-3 text-sm font-extrabold text-ink">{{ group.day ? formatFullDate(group.day) : $t('album.noDay') }}</h3>
+        <h3 class="mb-3 text-sm font-bold text-ink">{{ group.day ? formatFullDate(group.day) : $t('album.noDay') }}</h3>
         <div class="space-y-4">
           <div v-for="stop in group.stops" :key="stop.stopId || 'none'">
             <p class="mb-2 flex items-center gap-2 text-xs font-bold text-muted">

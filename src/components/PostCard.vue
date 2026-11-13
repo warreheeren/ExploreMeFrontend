@@ -1,5 +1,5 @@
 <template>
-  <article class="card overflow-hidden">
+  <article class="card card-bleed overflow-hidden">
     <!-- Kop -->
     <header class="flex items-start gap-3 px-4 pb-3 pt-3.5">
       <RouterLink :to="`/u/${post.userName}`" class="shrink-0" :aria-label="$t('posts.profileOf', { name: post.displayName })">
@@ -7,7 +7,7 @@
       </RouterLink>
       <div class="min-w-0 flex-1">
         <div class="flex flex-wrap items-baseline gap-x-1.5">
-          <RouterLink :to="`/u/${post.userName}`" class="truncate text-sm font-extrabold text-ink hover:underline">{{ post.displayName }}</RouterLink>
+          <RouterLink :to="`/u/${post.userName}`" class="truncate text-sm font-bold text-ink hover:underline">{{ post.displayName }}</RouterLink>
           <span class="text-xs font-medium text-muted">@{{ post.userName }} · <time :datetime="post.createdAtUtc">{{ timeAgo(post.createdAtUtc) }}</time></span>
         </div>
         <RouterLink
@@ -90,7 +90,7 @@
     <div class="flex items-center gap-1 px-2.5 pt-2">
       <button
         type="button"
-        class="flex h-9 items-center gap-1.5 rounded-full px-2.5 text-sm font-extrabold transition hover:bg-gray-100"
+        class="flex h-9 items-center gap-1.5 rounded-full px-2.5 text-sm font-bold transition hover:bg-gray-100"
         :class="post.likedByMe ? 'text-accent-700' : 'text-ink'"
         :aria-pressed="post.likedByMe"
         :aria-label="post.likedByMe ? $t('posts.unlike') : $t('posts.like')"
@@ -101,7 +101,7 @@
       </button>
       <button
         type="button"
-        class="flex h-9 items-center gap-1.5 rounded-full px-2.5 text-sm font-extrabold text-ink transition hover:bg-gray-100"
+        class="flex h-9 items-center gap-1.5 rounded-full px-2.5 text-sm font-bold text-ink transition hover:bg-gray-100"
         :aria-expanded="commentsOpen"
         :aria-label="$t('posts.comments')"
         @click="commentsOpen = !commentsOpen"

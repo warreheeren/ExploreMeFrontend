@@ -3,7 +3,7 @@
     <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-muted">
       <Icon :name="icon" :size="22" />
     </div>
-    <p class="text-sm font-extrabold text-ink">{{ title }}</p>
+    <p class="text-sm font-bold text-ink">{{ title }}</p>
     <p v-if="text" class="mx-auto mt-1 max-w-sm text-sm text-muted">{{ text }}</p>
     <div v-if="$slots.default" class="mt-4 flex flex-wrap justify-center gap-2">
       <slot />

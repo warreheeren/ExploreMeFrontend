@@ -10,7 +10,7 @@
               <Icon v-else name="list" :size="18" />
             </span>
             <span class="min-w-0 flex-1">
-              <span class="block truncate text-sm font-extrabold text-ink">{{ l.name }}</span>
+              <span class="block truncate text-sm font-bold text-ink">{{ l.name }}</span>
               <span class="block text-xs text-muted">{{ $t('lists.places', { n: l.itemCount }) }} · {{ l.isPublic ? $t('common.public') : $t('common.private') }}</span>
             </span>
             <span class="flex h-6 w-6 items-center justify-center rounded-full border-2 transition" :class="l.containsStop ? 'border-accent-700 bg-accent-700 text-white' : 'border-line-strong'">

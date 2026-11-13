@@ -3,7 +3,7 @@
     <header class="flex items-center gap-3">
       <RouterLink :to="`/u/${post.userName}`" class="shrink-0"><Avatar :src="post.profilePhotoUrl" :name="post.displayName" size="md" /></RouterLink>
       <div class="min-w-0 flex-1">
-        <RouterLink :to="`/u/${post.userName}`" class="block truncate text-sm font-extrabold text-ink hover:underline">{{ post.displayName }}</RouterLink>
+        <RouterLink :to="`/u/${post.userName}`" class="block truncate text-sm font-bold text-ink hover:underline">{{ post.displayName }}</RouterLink>
         <p class="truncate text-xs text-muted">{{ timeAgo(post.createdAtUtc) }}</p>
       </div>
       <span v-if="post.isClosed" class="chip chip-muted h-6">{{ $t('buddies.card.closed') }}</span>
@@ -11,7 +11,7 @@
     </header>
 
     <button type="button" class="mt-3 flex-1 text-left" :aria-label="$t('buddies.card.open')" @click="$emit('open', post)">
-      <p class="flex items-center gap-2 text-base font-extrabold text-ink">
+      <p class="flex items-center gap-2 text-base font-bold text-ink">
         <span v-if="flag" class="text-lg leading-none" aria-hidden="true">{{ flag }}</span>
         <span class="truncate">{{ post.country }}<template v-if="post.region"> · {{ post.region }}</template></span>
       </p>

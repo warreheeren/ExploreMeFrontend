@@ -182,7 +182,7 @@
                   <button type="button" class="btn btn-primary btn-sm" :disabled="sharing" @click.stop="shareImage">
                     <Icon name="share" :size="14" /> {{ sharing ? $t('tripExtras.recap.sharing') : $t('tripExtras.recap.share') }}
                   </button>
-                  <RouterLink :to="`/trips/${recap.tripId}/photobook`" class="btn btn-secondary btn-sm" @click.stop><Icon name="book" :size="14" /> {{ $t('photobook.open') }}</RouterLink>
+                  <RouterLink v-if="features.photobook" :to="`/trips/${recap.tripId}/photobook`" class="btn btn-secondary btn-sm" @click.stop><Icon name="book" :size="14" /> {{ $t('photobook.open') }}</RouterLink>
                   <button type="button" class="btn btn-secondary btn-sm" @click.stop="restart"><Icon name="refresh" :size="14" /> {{ $t('tripExtras.recap.again') }}</button>
                 </div>
               </div>
@@ -200,6 +200,7 @@
 </template>
 
 <script setup>
+import { features } from '@/config/features'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'

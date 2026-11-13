@@ -5,10 +5,10 @@
       <header class="flex items-center gap-3 border-b border-line bg-gray-50/70 px-4 py-3">
         <span class="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-xl border border-line bg-surface leading-none">
           <span class="text-[9px] font-extrabold uppercase tracking-wider text-accent-700">{{ $t('trip.itinerary.day') }}</span>
-          <span class="text-base font-extrabold text-ink">{{ day.dayNumber }}</span>
+          <span class="text-base font-bold text-ink">{{ day.dayNumber }}</span>
         </span>
         <div class="min-w-0">
-          <p class="text-sm font-extrabold text-ink">{{ formatFullDate(day.date) }}</p>
+          <p class="text-sm font-bold text-ink">{{ formatFullDate(day.date) }}</p>
           <p class="text-xs font-semibold text-muted">{{ $t('trip.itinerary.stops', day.stops.length) }}</p>
           <ul v-if="holidaysOn(day).length" class="mt-1.5 flex flex-wrap gap-1.5">
             <li v-for="h in holidaysOn(day)" :key="`${h.countryCode}-${h.localName}`" class="chip h-auto whitespace-normal bg-amber-50 py-0.5 text-amber-800" :title="h.localName !== h.name ? h.localName : undefined">

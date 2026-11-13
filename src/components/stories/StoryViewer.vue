@@ -46,7 +46,7 @@
           <div class="mt-3 flex items-center gap-2.5">
             <RouterLink :to="`/u/${group.userName}`" class="shrink-0" @pointerdown.stop @click="close"><Avatar :src="group.profilePhotoUrl" :name="group.displayName" size="sm" /></RouterLink>
             <div class="min-w-0 flex-1">
-              <p class="truncate text-sm font-extrabold">{{ group.displayName }} <span class="font-semibold text-white/75">· {{ timeAgo(story.createdAtUtc) }}</span></p>
+              <p class="truncate text-sm font-bold">{{ group.displayName }} <span class="font-semibold text-white/75">· {{ timeAgo(story.createdAtUtc) }}</span></p>
               <p v-if="story.placeName || story.tripTitle" class="flex items-center gap-1 truncate text-xs font-semibold text-white/80">
                 <template v-if="story.placeName"><Icon name="pin" :size="12" /> {{ story.placeName }}</template>
                 <template v-if="story.placeName && story.tripTitle"> · </template>
@@ -86,7 +86,7 @@
         <!-- Kijkers (alleen eigen story) -->
         <div v-if="viewersOpen" class="absolute inset-x-0 bottom-0 max-h-[60%] overflow-y-auto rounded-t-3xl bg-surface p-4 text-ink safe-bottom" @pointerdown.stop>
           <div class="mb-2 flex items-center justify-between">
-            <p class="text-sm font-extrabold">{{ $t('stories.viewer.viewersTitle') }}</p>
+            <p class="text-sm font-bold">{{ $t('stories.viewer.viewersTitle') }}</p>
             <button type="button" class="btn-icon btn-icon-sm" :aria-label="$t('stories.viewer.close')" @click="closeViewers"><Icon name="x" :size="18" /></button>
           </div>
           <p v-if="viewersLoading" class="py-4 text-center"><Spinner /></p>

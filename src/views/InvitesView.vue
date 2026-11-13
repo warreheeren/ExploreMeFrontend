@@ -14,7 +14,7 @@
           <CoverImage :src="thumbUrl(inv.tripCoverImageUrl)" :seed="inv.tripId" />
         </RouterLink>
         <div class="min-w-0 flex-1">
-          <RouterLink :to="`/trips/${inv.tripId}`" class="block truncate text-base font-extrabold text-ink hover:underline">{{ inv.tripTitle }}</RouterLink>
+          <RouterLink :to="`/trips/${inv.tripId}`" class="block truncate text-base font-bold text-ink hover:underline">{{ inv.tripTitle }}</RouterLink>
           <p class="mt-1 flex items-center gap-2 text-sm text-body">
             <Avatar :src="inv.ownerProfilePhotoUrl" :name="inv.ownerDisplayName" size="xs" />
             <span><span class="font-bold">{{ inv.ownerDisplayName }}</span> {{ $t('misc.invites.invitesYou') }}</span>

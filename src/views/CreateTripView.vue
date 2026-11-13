@@ -79,11 +79,11 @@
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <label class="flex cursor-pointer items-start gap-3 rounded-2xl border p-3.5 transition" :class="form.isPublic ? 'border-ink bg-gray-50' : 'border-line hover:border-line-strong'">
               <input v-model="form.isPublic" type="radio" :value="true" class="mt-0.5 h-4 w-4 border-line-strong text-accent-700 focus:ring-accent-500" />
-              <span><span class="flex items-center gap-1.5 text-sm font-extrabold text-ink"><Icon name="globe" :size="15" /> {{ $t('common.public') }}</span><span class="text-xs text-muted">{{ $t('editor.visibility.publicText') }}</span></span>
+              <span><span class="flex items-center gap-1.5 text-sm font-bold text-ink"><Icon name="globe" :size="15" /> {{ $t('common.public') }}</span><span class="text-xs text-muted">{{ $t('editor.visibility.publicText') }}</span></span>
             </label>
             <label class="flex cursor-pointer items-start gap-3 rounded-2xl border p-3.5 transition" :class="!form.isPublic ? 'border-ink bg-gray-50' : 'border-line hover:border-line-strong'">
               <input v-model="form.isPublic" type="radio" :value="false" class="mt-0.5 h-4 w-4 border-line-strong text-accent-700 focus:ring-accent-500" />
-              <span><span class="flex items-center gap-1.5 text-sm font-extrabold text-ink"><Icon name="lock" :size="15" /> {{ $t('common.private') }}</span><span class="text-xs text-muted">{{ $t('editor.visibility.privateText') }}</span></span>
+              <span><span class="flex items-center gap-1.5 text-sm font-bold text-ink"><Icon name="lock" :size="15" /> {{ $t('common.private') }}</span><span class="text-xs text-muted">{{ $t('editor.visibility.privateText') }}</span></span>
             </label>
           </div>
           <p v-if="isEdit && !isOwner" class="hint">{{ $t('editor.visibility.ownerOnly') }}</p>
@@ -125,7 +125,7 @@
               @dragstart="onDragStart($event, stop)"
               @dragend="onDragEnd"
             ><Icon name="grip" :size="16" /></span>
-            <span class="flex h-7 min-w-[28px] items-center justify-center rounded-full px-1.5 text-xs font-extrabold text-white" :style="{ background: stopTypeMeta(stop.type).color }">{{ idx + 1 }}</span>
+            <span class="flex h-7 min-w-[28px] items-center justify-center rounded-full px-1.5 text-xs font-bold text-white" :style="{ background: stopTypeMeta(stop.type).color }">{{ idx + 1 }}</span>
             <div class="flex flex-wrap gap-1" role="radiogroup" :aria-label="$t('editor.stops.typeLabel', { n: idx + 1 })">
               <button
                 v-for="t in STOP_TYPE_ORDER"

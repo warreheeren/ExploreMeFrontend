@@ -38,6 +38,7 @@ export default {
     removed: 'Travel companion removed',
     failed: 'That didn’t work.',
   },
+  groups: { plan: 'Route', together: 'Together', memories: 'Memories', info: 'Info' },
   tabs: {
     aria: 'Sections of the trip',
     overview: 'Overview',

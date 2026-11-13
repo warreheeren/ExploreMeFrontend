@@ -26,7 +26,7 @@
         <Icon name="star" :size="px" :stroke-width="0" filled :class="i <= (modelValue || 0) ? 'text-rating' : 'text-gray-200'" />
       </button>
     </template>
-    <span v-if="showValue" class="ml-1 text-xs font-extrabold tabular-nums text-rating-text">
+    <span v-if="showValue" class="ml-1 text-xs font-bold tabular-nums text-rating-text">
       {{ displayValue }}<span v-if="count != null" class="font-semibold text-muted"> ({{ count }})</span>
     </span>
   </div>

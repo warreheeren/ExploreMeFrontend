@@ -5,7 +5,7 @@
       <button v-if="!composing" type="button" class="flex w-full items-center gap-3 text-left" @click="startCompose()">
         <span class="flex h-10 w-10 items-center justify-center rounded-full bg-accent-50 text-accent-800"><Icon name="book" :size="18" /></span>
         <span class="flex-1">
-          <span class="block text-sm font-extrabold text-ink">{{ $t('planning.journal.write') }}</span>
+          <span class="block text-sm font-bold text-ink">{{ $t('planning.journal.write') }}</span>
           <span class="block text-xs text-muted">{{ $t('planning.journal.writeHint') }}</span>
         </span>
         <Icon name="plus" :size="18" class="text-muted" />
@@ -74,7 +74,7 @@
             <header class="flex items-start gap-3">
               <RouterLink :to="`/u/${e.authorUserName}`"><Avatar :src="e.authorProfilePhotoUrl" :name="e.authorDisplayName" size="sm" /></RouterLink>
               <div class="min-w-0 flex-1">
-                <h3 v-if="e.title" class="text-base font-extrabold text-ink">{{ e.title }}</h3>
+                <h3 v-if="e.title" class="text-base font-bold text-ink">{{ e.title }}</h3>
                 <p class="text-xs font-semibold text-muted">
                   {{ e.authorDisplayName }} · {{ timeAgo(e.createdAtUtc) }}<template v-if="e.updatedAtUtc"> · {{ $t('planning.journal.edited') }}</template>
                   <template v-if="e.mood"> · {{ moodEmoji(e.mood) }} {{ $t(`planning.journal.moods.${e.mood}`) }}</template>

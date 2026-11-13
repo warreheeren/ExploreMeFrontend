@@ -12,7 +12,7 @@
       <ol class="mb-8 flex items-center gap-2" :aria-label="$t('onboarding.progress')">
         <li v-for="(s, i) in steps" :key="s" class="flex flex-1 items-center gap-2">
           <span
-            class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-extrabold"
+            class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold"
             :class="i < step ? 'bg-accent-700 text-white' : i === step ? 'bg-ink text-surface' : 'bg-gray-200 text-muted'"
             :aria-current="i === step ? 'step' : undefined"
           >

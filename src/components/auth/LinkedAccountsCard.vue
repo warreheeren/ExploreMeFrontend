@@ -9,9 +9,9 @@
     <div v-if="loading" class="space-y-2"><div v-for="i in 2" :key="i" class="skeleton h-12 rounded-xl" /></div>
     <ul v-else-if="linked.length" class="-mx-2 divide-y divide-line">
       <li v-for="l in linked" :key="l.provider" class="flex items-center gap-3 px-2 py-3">
-        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-extrabold text-ink" aria-hidden="true">{{ providerName(l.provider).charAt(0) }}</span>
+        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-ink" aria-hidden="true">{{ providerName(l.provider).charAt(0) }}</span>
         <span class="min-w-0 flex-1">
-          <span class="block text-sm font-extrabold text-ink">{{ providerName(l.provider) }}</span>
+          <span class="block text-sm font-bold text-ink">{{ providerName(l.provider) }}</span>
           <span class="block truncate text-xs text-muted">{{ l.email || $t('externalAuth.linked.noEmail') }}</span>
         </span>
         <button

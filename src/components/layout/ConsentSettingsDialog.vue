@@ -5,7 +5,7 @@
     <ul class="mt-4 divide-y divide-line rounded-2xl border border-line">
       <li v-for="cat in categories" :key="cat.id" class="flex items-start gap-4 p-4">
         <span class="min-w-0 flex-1">
-          <span :id="`consent-cat-${cat.id}`" class="block text-sm font-extrabold text-ink">{{ $t(`consent.dialog.categories.${cat.id}.title`) }}</span>
+          <span :id="`consent-cat-${cat.id}`" class="block text-sm font-bold text-ink">{{ $t(`consent.dialog.categories.${cat.id}.title`) }}</span>
           <span :id="`consent-cat-${cat.id}-text`" class="mt-0.5 block text-sm leading-relaxed text-muted">
             {{ $t(`consent.dialog.categories.${cat.id}.text`) }}
             <template v-if="cat.id === 'analytics'">

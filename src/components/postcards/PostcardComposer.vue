@@ -24,7 +24,7 @@
             <div v-if="recipient" class="flex items-center gap-3 rounded-2xl border border-line px-3 py-2">
               <Avatar :src="recipient.profilePhotoUrl" :name="recipient.displayName" size="sm" />
               <span class="min-w-0 flex-1">
-                <span class="block truncate text-sm font-extrabold text-ink">{{ recipient.displayName }}</span>
+                <span class="block truncate text-sm font-bold text-ink">{{ recipient.displayName }}</span>
                 <span class="block truncate text-xs text-muted">@{{ recipient.userName }}</span>
               </span>
               <button type="button" class="btn-icon btn-icon-sm" :aria-label="$t('postcards.composer.changeRecipient')" @click="recipient = null"><Icon name="x" :size="16" /></button>

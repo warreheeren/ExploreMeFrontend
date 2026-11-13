@@ -25,7 +25,7 @@
         <div class="flex items-center gap-3 px-1">
           <Avatar :src="c.isIncoming ? c.senderProfilePhotoUrl : c.recipientProfilePhotoUrl" :name="c.isIncoming ? c.senderDisplayName : recipientName(c)" size="sm" />
           <div class="min-w-0 flex-1">
-            <p class="truncate text-sm font-extrabold text-ink">
+            <p class="truncate text-sm font-bold text-ink">
               <template v-if="c.isIncoming">{{ $t('postcards.from', { name: c.senderDisplayName }) }}</template>
               <template v-else>{{ $t('postcards.to', { name: recipientName(c) }) }}</template>
             </p>

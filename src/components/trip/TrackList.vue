@@ -2,7 +2,7 @@
   <section class="card card-pad">
     <header class="flex flex-wrap items-center justify-between gap-3">
       <div class="min-w-0">
-        <h2 class="flex items-center gap-2 text-sm font-extrabold text-ink"><Icon name="route" :size="16" class="text-muted" /> {{ $t('tracks.title') }}</h2>
+        <h2 class="flex items-center gap-2 text-sm font-bold text-ink"><Icon name="route" :size="16" class="text-muted" /> {{ $t('tracks.title') }}</h2>
         <p v-if="canImport" class="text-xs text-muted">{{ $t('tracks.hint') }}</p>
       </div>
       <TrackImportButton v-if="canImport" :trip-id="tripId" @imported="(e) => emit('imported', e)" />
@@ -27,7 +27,7 @@
             <button type="button" class="btn-icon btn-icon-sm" :aria-label="$t('common.cancel')" @click="editingId = null"><Icon name="x" :size="15" /></button>
           </form>
           <template v-else>
-            <button type="button" class="block max-w-full truncate text-left text-sm font-extrabold text-ink hover:underline" :aria-label="$t('tracks.showOnMap', { name: tr.name })" @click="emit('select', tr)">{{ tr.name }}</button>
+            <button type="button" class="block max-w-full truncate text-left text-sm font-bold text-ink hover:underline" :aria-label="$t('tracks.showOnMap', { name: tr.name })" @click="emit('select', tr)">{{ tr.name }}</button>
             <p class="truncate text-xs text-muted">
               {{ formatDate(tr.startedAtUtc || tr.createdAtUtc) }} · {{ trackStats(tr) }}
               <template v-if="tr.kind === 'Route'"> · {{ $t('tracks.kind.route') }}</template>

@@ -78,7 +78,7 @@
         <!-- Privé-account -->
         <section v-if="!profile.canViewContent" class="card card-pad flex flex-col items-center gap-2 py-10 text-center">
           <span class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-muted"><Icon name="lock" :size="22" /></span>
-          <p class="text-sm font-extrabold text-ink">{{ $t('profile.privateTitle') }}</p>
+          <p class="text-sm font-bold text-ink">{{ $t('profile.privateTitle') }}</p>
           <p class="max-w-sm text-sm text-muted">{{ profile.followRequestedByMe ? $t('profile.privateRequested') : $t('profile.privateText', { name: profile.displayName }) }}</p>
         </section>
 
@@ -93,7 +93,7 @@
           <!-- Badges, wereldkaart en challenges (mobiel) -->
           <BadgesPanel class="lg:hidden" :user-name="profile.userName" />
           <WorldMap class="lg:hidden" :user-name="profile.userName" :display-name="profile.displayName" :is-own="isOwnProfile" @loaded="onCountriesLoaded" />
-          <CompletedChallenges class="lg:hidden" :user-name="profile.userName" :is-own="isOwnProfile" />
+          <CompletedChallenges v-if="features.challenges" class="lg:hidden" :user-name="profile.userName" :is-own="isOwnProfile" />
 
           <!-- Tabs -->
           <nav class="tabs" role="tablist" :aria-label="$t('profile.contentTabs')">
@@ -145,7 +145,7 @@
       <div class="sticky top-24 space-y-5">
         <WorldMap :user-name="profile.userName" :display-name="profile.displayName" :is-own="isOwnProfile" @loaded="onCountriesLoaded" />
         <BadgesPanel :user-name="profile.userName" />
-        <CompletedChallenges :user-name="profile.userName" :is-own="isOwnProfile" />
+        <CompletedChallenges v-if="features.challenges" :user-name="profile.userName" :is-own="isOwnProfile" />
         <section v-if="countries.length" class="card">
           <h3 class="card-title px-4 pb-2 pt-4">{{ $t('profile.tripsPerCountry') }}</h3>
           <ul class="divide-y divide-line">
@@ -170,6 +170,7 @@
 </template>
 
 <script setup>
+import { features } from '@/config/features'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'

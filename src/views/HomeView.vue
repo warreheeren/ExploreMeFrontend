@@ -1,8 +1,8 @@
 <template>
   <div class="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
     <!-- Feed -->
-    <div class="mx-auto w-full max-w-2xl space-y-5">
-      <header>
+    <div class="mx-auto flex w-full max-w-2xl flex-col gap-5">
+      <header class="hidden sm:block">
         <p class="eyebrow-accent">{{ greeting }}</p>
         <h1 class="page-title mt-0.5">{{ $t('home.hello', { name: firstName }) }}</h1>
       </header>
@@ -11,10 +11,11 @@
       <ActiveTripBanner ref="activeRef" />
 
       <!-- Stories van wie je volgt + "vandaag x jaar geleden" -->
-      <StoriesBar />
-      <MemoriesCard />
+      <StoriesBar v-if="features.stories" />
 
-      <PostComposer ref="composerRef" @created="onCreated" />
+      <PostComposer ref="composerRef" compact @created="onCreated" />
+
+      <MemoriesCard />
 
       <!-- Mobiel: aankomende reizen bovenaan -->
       <UpcomingTrips class="lg:hidden" :take="2" />
@@ -64,12 +65,12 @@
           <ol v-else class="space-y-1">
             <li v-for="(trip, i) in trending" :key="trip.id">
               <RouterLink :to="`/trips/${trip.id}`" class="-mx-2 flex items-center gap-3 rounded-xl p-2 transition hover:bg-gray-50">
-                <span class="w-4 text-center text-sm font-extrabold text-muted">{{ i + 1 }}</span>
-                <span class="h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                  <img v-if="trip.coverImageUrl" :src="thumbUrl(trip.coverImageUrl)" alt="" class="h-full w-full object-cover" loading="lazy" />
+                <span class="w-4 text-center text-sm font-bold text-muted">{{ i + 1 }}</span>
+                <span class="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                  <CoverImage :src="thumbUrl(trip.coverImageUrl)" alt="" :seed="trip.id" />
                 </span>
                 <span class="min-w-0 flex-1">
-                  <span class="block truncate text-sm font-extrabold text-ink">{{ trip.title }}</span>
+                  <span class="block truncate text-sm font-bold text-ink">{{ trip.title }}</span>
                   <span class="block truncate text-xs text-muted">{{ trip.country }} · {{ trip.displayName }}</span>
                 </span>
                 <span class="inline-flex items-center gap-1 text-xs font-bold text-muted"><Icon name="heart" :size="13" /> {{ trip.likeCount }}</span>
@@ -83,6 +84,7 @@
 </template>
 
 <script setup>
+import { features } from '@/config/features'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import PostCard from '@/components/PostCard.vue'
@@ -93,6 +95,7 @@ import StoriesBar from '@/components/stories/StoriesBar.vue'
 import MemoriesCard from '@/components/memories/MemoriesCard.vue'
 import ActiveTripBanner from '@/components/trip/ActiveTripBanner.vue'
 import EmptyState from '@/components/ui/EmptyState.vue'
+import CoverImage from '@/components/ui/CoverImage.vue'
 import Icon from '@/components/ui/Icon.vue'
 import Spinner from '@/components/ui/Spinner.vue'
 import { useInfiniteList } from '@/composables/useInfiniteList'

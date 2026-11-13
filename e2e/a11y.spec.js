@@ -51,6 +51,12 @@ test('login', async ({ page }, testInfo) => {
   await scan(page, testInfo, 'login')
 })
 
+test('landingspagina', async ({ page }, testInfo) => {
+  await page.goto('/')
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  await scan(page, testInfo, 'landing')
+})
+
 test.describe('cookiebanner', () => {
   test.use({ seedConsent: false })
 

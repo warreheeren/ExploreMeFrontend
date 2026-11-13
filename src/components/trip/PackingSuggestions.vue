@@ -2,7 +2,7 @@
   <section v-if="loading || suggestions.length" class="border-b border-line px-4 py-4 sm:px-5" aria-labelledby="packing-suggestions-title">
     <div class="flex flex-wrap items-center justify-between gap-2">
       <div class="min-w-0">
-        <h4 id="packing-suggestions-title" class="inline-flex items-center gap-1.5 text-sm font-extrabold text-ink"><Icon name="sparkle" :size="16" class="text-accent-700" /> {{ $t('tripExtras.packing.title') }}</h4>
+        <h4 id="packing-suggestions-title" class="inline-flex items-center gap-1.5 text-sm font-bold text-ink"><Icon name="sparkle" :size="16" class="text-accent-700" /> {{ $t('tripExtras.packing.title') }}</h4>
         <p class="text-xs text-muted">{{ $t('tripExtras.packing.subtitle') }}</p>
       </div>
       <button v-if="suggestions.length > 1" type="button" class="btn btn-secondary btn-sm" :disabled="busy" @click="addAll">

@@ -179,5 +179,7 @@ export default defineConfig({
     environment: 'jsdom',
     include: ['src/**/*.test.js'],
     setupFiles: ['src/test/setup.js'],
+    // Uitgeschakelde functies (src/config/features.js) blijven in de tests aan, zodat hun code gedekt blijft.
+    env: { VITE_FEATURES: 'all' },
   },
 })

@@ -42,7 +42,8 @@
         </div>
       </footer>
 
-      <MobileTabBar @create="createOpen = true" @home-click="onHomeClick" />
+      <MobileTabBar @create="createOpen = true" @more="moreOpen = true" @home-click="onHomeClick" />
+      <MoreSheet v-model="moreOpen" @logout="logout" />
       <CreateSheet v-model="createOpen" @post="newPostFromSheet" />
     </template>
 
@@ -61,6 +62,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import MobileTabBar from '@/components/layout/MobileTabBar.vue'
 import CreateSheet from '@/components/layout/CreateSheet.vue'
+import MoreSheet from '@/components/layout/MoreSheet.vue'
 import ToastHost from '@/components/ToastHost.vue'
 import ConfirmHost from '@/components/ConfirmHost.vue'
 import Icon from '@/components/ui/Icon.vue'
@@ -96,6 +98,7 @@ const layout = computed(() => route.meta.layout || 'app')
 // Via het pad (niet route.meta), want de eerste route is bij de setup nog niet opgelost.
 const isEmbed = window.location.pathname.startsWith('/embed/')
 const createOpen = ref(false)
+const moreOpen = ref(false)
 
 // ---------- sessie: realtime + polling ----------
 const unsubscribers = []

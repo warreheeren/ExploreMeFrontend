@@ -1,5 +1,5 @@
 <template>
-  <section class="card card-pad" :aria-label="$t('posts.newPost')">
+  <section class="group card card-pad" :aria-label="$t('posts.newPost')">
     <div class="flex gap-3">
       <Avatar :src="auth.profilePhotoUrl" :name="auth.displayName" size="md" class="hidden sm:inline-flex" />
       <div class="min-w-0 flex-1">
@@ -7,7 +7,7 @@
           ref="captionRef"
           v-model="caption"
           multiline
-          :rows="2"
+          :rows="compact ? 1 : 2"
           :maxlength="2200"
           :placeholder="placeholder || $t('posts.composerPlaceholder')"
           :aria-label="$t('posts.captionLabel')"
@@ -56,7 +56,8 @@
         <p v-if="error" class="mt-2 text-sm font-semibold text-red-600">{{ error }}</p>
 
         <!-- Werkbalk -->
-        <div class="mt-3 flex items-center gap-1 border-t border-line pt-3">
+        <!-- Compact (tijdlijn): de werkbalk verschijnt pas bij focus of zodra er inhoud is. -->
+        <div class="mt-3 items-center gap-1 border-t border-line pt-3" :class="compact && !hasDraft ? 'hidden group-focus-within:flex' : 'flex'">
           <label class="btn btn-ghost btn-sm cursor-pointer">
             <Icon name="image" :size="16" />
             {{ $t('posts.photos') }}
@@ -130,6 +131,8 @@ const props = defineProps({
   /** Vooraf gevuld (bv. "Delen naar ExploreMe"): foto's en hoogstens één video worden bij het mounten geüpload. */
   initialFiles: { type: Array, default: () => [] },
   initialText: { type: String, default: '' },
+  /** Eén regel hoog tot je erin klikt: houdt de tijdlijn bovenaan compact. */
+  compact: { type: Boolean, default: false },
 })
 const emit = defineEmits(['created'])
 
@@ -165,6 +168,8 @@ const tripStops = ref([])
 const stopId = ref(null)
 
 const uploadingAny = computed(() => videoUploading.value || images.value.some((i) => i.uploading))
+// Er staat al iets klaar (tekst, media of een zelf gekozen reis): de werkbalk blijft dan zichtbaar.
+const hasDraft = computed(() => !!caption.value || images.value.length > 0 || !!video.value || videoUploading.value || (!!linkedTrip.value && !props.presetTripId))
 const canPost = computed(() => !posting.value && !uploadingAny.value && (caption.value.trim() || images.value.some((i) => i.url) || !!video.value))
 
 async function onFiles(e) {

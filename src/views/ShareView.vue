@@ -50,7 +50,7 @@
 
       <!-- Stap 1: actie kiezen -->
       <section v-if="!mode" aria-labelledby="share-actions-title">
-        <h2 id="share-actions-title" class="mb-3 text-sm font-extrabold text-ink">{{ $t('shareTarget.chooseAction') }}</h2>
+        <h2 id="share-actions-title" class="mb-3 text-sm font-bold text-ink">{{ $t('shareTarget.chooseAction') }}</h2>
         <p v-if="!actions.length" class="card card-pad text-sm text-muted">{{ $t('shareTarget.noActions') }}</p>
         <ul v-else class="grid gap-3 sm:grid-cols-2">
           <li v-for="action in actions" :key="action.id">

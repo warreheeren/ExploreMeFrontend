@@ -5,6 +5,8 @@ export default {
   invalidTitle: 'This link no longer works',
   invalidText: 'The owner may have revoked the share link.',
   discover: 'Discover ExploreMe',
+  privateTitle: 'This trip is not public',
+  privateText: 'Log in to see whether you have access.',
   sharedVia: 'Shared via a public link',
   calendar: 'Calendar',
   sections: 'Sections',

@@ -14,7 +14,7 @@
     <!-- De focusring hoort rond de kaart, niet rond de volle breedte van de (transparante) wrapper. -->
     <div class="mx-auto flex max-w-content flex-col gap-3 rounded-2xl border border-line bg-surface p-4 shadow-pop group-focus-visible:ring-2 group-focus-visible:ring-accent-500 sm:p-5 lg:flex-row lg:items-center lg:gap-6">
       <div class="min-w-0 flex-1">
-        <h2 id="consent-banner-title" class="flex items-center gap-2 text-sm font-extrabold text-ink">
+        <h2 id="consent-banner-title" class="flex items-center gap-2 text-sm font-bold text-ink">
           <Icon name="shield" :size="16" class="shrink-0 text-accent-700" /> {{ $t('consent.banner.title') }}
         </h2>
         <p id="consent-banner-text" class="mt-1 text-sm leading-relaxed text-body">

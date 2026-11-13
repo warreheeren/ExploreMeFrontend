@@ -2,13 +2,13 @@
   <!-- Nationaliteit(en) voor de visumregels in de landeninfo. Doel van de CTA "/settings#passport". -->
   <section id="passport" ref="root" class="card-pad space-y-4 border-t border-line sm:p-6" aria-labelledby="settings-passport">
     <div>
-      <h3 id="settings-passport" class="flex items-center gap-2 text-sm font-extrabold text-ink"><Icon name="globe" :size="16" class="text-muted" /> {{ $t('countryInfo.passportSettings.title') }}</h3>
+      <h3 id="settings-passport" class="flex items-center gap-2 text-sm font-bold text-ink"><Icon name="globe" :size="16" class="text-muted" /> {{ $t('countryInfo.passportSettings.title') }}</h3>
       <p class="mt-1 text-sm text-muted">{{ $t('countryInfo.passportSettings.intro', { max: MAX_PASSPORTS }) }}</p>
     </div>
 
     <ul v-if="selected.length" class="flex flex-wrap gap-2" aria-live="polite">
       <li v-for="code in selected" :key="code" class="chip chip-muted h-8">
-        <span class="text-xs font-extrabold text-muted">{{ code }}</span> {{ nameOf(code) }}
+        <span class="text-xs font-bold text-muted">{{ code }}</span> {{ nameOf(code) }}
         <button
           type="button"
           class="-mr-1 ml-0.5 rounded-full p-0.5 hover:text-ink"

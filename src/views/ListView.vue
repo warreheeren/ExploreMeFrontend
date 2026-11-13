@@ -38,7 +38,7 @@
             </button>
             <div class="min-w-0 flex-1">
               <p class="flex items-start gap-2">
-                <RouterLink :to="`/places/${item.stopId}`" class="min-w-0 flex-1 text-sm font-extrabold text-ink hover:underline">{{ item.name }}</RouterLink>
+                <RouterLink :to="`/places/${item.stopId}`" class="min-w-0 flex-1 text-sm font-bold text-ink hover:underline">{{ item.name }}</RouterLink>
                 <button v-if="list.isOwner" type="button" class="btn-icon btn-icon-sm -mr-1 -mt-1 hover:text-red-600" :aria-label="$t('lists.removeItem', { name: item.name })" @click="removeItem(item)">
                   <Icon name="x" :size="15" />
                 </button>

@@ -10,7 +10,7 @@
         <CoverImage :src="thumbUrl(trip.coverImageUrl)" :seed="trip.id" />
       </span>
       <span class="min-w-0 flex-1">
-        <span class="block truncate text-sm font-extrabold">{{ $t('today.banner.title', { day: dayOf(trip), title: trip.title }) }}</span>
+        <span class="block truncate text-sm font-bold">{{ $t('today.banner.title', { day: dayOf(trip), title: trip.title }) }}</span>
         <span class="block truncate text-xs opacity-80">{{ $t('today.banner.text') }}</span>
       </span>
       <Icon name="chevron-right" :size="18" class="shrink-0" />

@@ -13,7 +13,7 @@
 
     <article v-else class="mx-auto max-w-3xl bg-surface px-6 py-10 text-ink sm:my-6 sm:rounded-2xl sm:border sm:border-line sm:px-10 print:my-0 print:border-0 print:p-0">
       <header class="border-b-2 border-ink pb-5">
-        <p class="text-xs font-extrabold uppercase tracking-[0.12em] text-accent-700">{{ trip.country }}</p>
+        <p class="text-xs font-bold uppercase tracking-[0.12em] text-accent-700">{{ trip.country }}</p>
         <h1 class="mt-1 text-3xl font-extrabold tracking-tight">{{ trip.title }}</h1>
         <p class="mt-1 text-sm font-semibold text-body">{{ formatDateRange(trip.startDate, trip.endDate) }} · {{ $t('sharedTrip.print.days', days) }} · {{ $t('sharedTrip.print.by', { name: trip.displayName }) }}</p>
         <p v-if="trip.description" class="mt-3 whitespace-pre-line text-sm leading-relaxed text-body">{{ trip.description }}</p>
@@ -21,15 +21,15 @@
 
       <!-- Samenvatting -->
       <section class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div><p class="text-[11px] font-extrabold uppercase tracking-wider text-muted">{{ $t('sharedTrip.print.stops') }}</p><p class="text-xl font-extrabold">{{ trip.stops.length }}</p></div>
-        <div><p class="text-[11px] font-extrabold uppercase tracking-wider text-muted">{{ $t('sharedTrip.print.nights') }}</p><p class="text-xl font-extrabold">{{ totalNights }}</p></div>
-        <div><p class="text-[11px] font-extrabold uppercase tracking-wider text-muted">{{ $t('sharedTrip.print.crew') }}</p><p class="text-xl font-extrabold">{{ crew }}</p></div>
-        <div><p class="text-[11px] font-extrabold uppercase tracking-wider text-muted">{{ $t('sharedTrip.print.estimated') }}</p><p class="text-xl font-extrabold">{{ formatCurrency(cost) }}</p></div>
+        <div><p class="text-[11px] font-bold uppercase tracking-wider text-muted">{{ $t('sharedTrip.print.stops') }}</p><p class="text-xl font-extrabold">{{ trip.stops.length }}</p></div>
+        <div><p class="text-[11px] font-bold uppercase tracking-wider text-muted">{{ $t('sharedTrip.print.nights') }}</p><p class="text-xl font-extrabold">{{ totalNights }}</p></div>
+        <div><p class="text-[11px] font-bold uppercase tracking-wider text-muted">{{ $t('sharedTrip.print.crew') }}</p><p class="text-xl font-extrabold">{{ crew }}</p></div>
+        <div><p class="text-[11px] font-bold uppercase tracking-wider text-muted">{{ $t('sharedTrip.print.estimated') }}</p><p class="text-xl font-extrabold">{{ formatCurrency(cost) }}</p></div>
       </section>
 
       <!-- Overnachtingen -->
       <section v-if="hotels.length" class="mt-8 break-inside-avoid">
-        <h2 class="text-sm font-extrabold uppercase tracking-wider">{{ $t('sharedTrip.print.stays') }}</h2>
+        <h2 class="text-sm font-bold uppercase tracking-wider">{{ $t('sharedTrip.print.stays') }}</h2>
         <table class="mt-2 w-full text-sm">
           <thead>
             <tr class="border-b border-line text-left text-xs font-bold text-muted">
@@ -52,12 +52,12 @@
 
       <!-- Dag voor dag -->
       <section class="mt-8">
-        <h2 class="text-sm font-extrabold uppercase tracking-wider">{{ $t('sharedTrip.print.dayByDay') }}</h2>
+        <h2 class="text-sm font-bold uppercase tracking-wider">{{ $t('sharedTrip.print.dayByDay') }}</h2>
         <div v-for="day in itinerary" :key="day.dayNumber" class="mt-4 break-inside-avoid">
-          <h3 class="border-b border-line pb-1 text-base font-extrabold">{{ $t('sharedTrip.print.day', { n: day.dayNumber }) }} · {{ formatFullDate(day.date) }}</h3>
+          <h3 class="border-b border-line pb-1 text-base font-bold">{{ $t('sharedTrip.print.day', { n: day.dayNumber }) }} · {{ formatFullDate(day.date) }}</h3>
           <ol class="mt-2 space-y-2.5">
             <li v-for="s in day.stops" :key="s.id" class="flex gap-3 text-sm">
-              <span class="mt-0.5 w-24 shrink-0 text-[11px] font-extrabold uppercase tracking-wider" :style="{ color: stopTypeMeta(s.type).color }">{{ stopTypeMeta(s.type).singular }}</span>
+              <span class="mt-0.5 w-24 shrink-0 text-[11px] font-bold uppercase tracking-wider" :style="{ color: stopTypeMeta(s.type).color }">{{ stopTypeMeta(s.type).singular }}</span>
               <span class="min-w-0">
                 <span class="font-bold">{{ s.name }}</span>
                 <span v-if="details(s)" class="text-body"> · {{ details(s) }}</span>

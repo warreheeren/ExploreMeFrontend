@@ -96,7 +96,7 @@
               <Avatar :src="u.profilePhotoUrl" :name="u.displayName" size="md" />
               <span class="min-w-0">
                 <span class="flex flex-wrap items-center gap-1.5">
-                  <span class="truncate text-sm font-extrabold text-ink">{{ u.displayName }}</span>
+                  <span class="truncate text-sm font-bold text-ink">{{ u.displayName }}</span>
                   <span v-if="u.role === 'Admin'" class="chip chip-accent h-5 px-2 text-[10px]">{{ $t('admin.users.moderator') }}</span>
                   <span v-if="u.bannedAtUtc" class="chip h-5 bg-red-50 px-2 text-[10px] text-red-700">{{ $t('admin.users.banned') }}</span>
                 </span>
@@ -167,12 +167,12 @@
           <legend class="label">{{ $t('admin.resolve.what') }}</legend>
           <label v-for="a in resolveActions" :key="a.value" class="flex cursor-pointer items-start gap-3 rounded-2xl border p-3 transition" :class="resolveForm.action === a.value ? 'border-ink bg-gray-50' : 'border-line hover:border-line-strong'">
             <input v-model="resolveForm.action" type="radio" :value="a.value" class="mt-0.5 h-4 w-4 border-line-strong text-accent-700 focus:ring-accent-500" />
-            <span><span class="block text-sm font-extrabold text-ink">{{ a.label }}</span><span class="text-xs text-muted">{{ a.hint }}</span></span>
+            <span><span class="block text-sm font-bold text-ink">{{ a.label }}</span><span class="text-xs text-muted">{{ a.hint }}</span></span>
           </label>
         </fieldset>
         <label v-if="resolving.target?.exists && !resolving.target?.ownerBanned" class="flex items-start gap-3 rounded-2xl border border-line p-3">
           <input v-model="resolveForm.banUser" type="checkbox" class="checkbox mt-0.5" />
-          <span><span class="block text-sm font-extrabold text-ink">{{ $t('admin.resolve.ban', { user: resolving.target.ownerUserName }) }}</span><span class="text-xs text-muted">{{ $t('admin.resolve.banHint') }}</span></span>
+          <span><span class="block text-sm font-bold text-ink">{{ $t('admin.resolve.ban', { user: resolving.target.ownerUserName }) }}</span><span class="text-xs text-muted">{{ $t('admin.resolve.banHint') }}</span></span>
         </label>
         <div>
           <label for="resolve-note" class="label">{{ $t('admin.resolve.note') }} <span class="font-semibold text-muted">{{ $t('common.optional') }}</span></label>

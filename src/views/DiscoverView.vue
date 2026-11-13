@@ -3,19 +3,19 @@
     <PageHeader :title="$t('discover.title')" :subtitle="$t('discover.subtitle')" />
 
     <!-- Sociale extra's: ook op mobiel bereikbaar (daar staan ze niet in de tabbalk) -->
-    <nav class="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2" :aria-label="$t('buddies.eyebrow')">
-      <RouterLink to="/buddies" class="card flex items-center gap-3 p-3 transition hover:border-line-strong">
+    <nav v-if="features.buddies || features.challenges" class="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2" :aria-label="$t('buddies.eyebrow')">
+      <RouterLink v-if="features.buddies" to="/buddies" class="card flex items-center gap-3 p-3 transition hover:border-line-strong">
         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-700"><Icon name="users" :size="18" /></span>
         <span class="min-w-0 flex-1">
-          <span class="block text-sm font-extrabold text-ink">{{ $t('buddies.title') }}</span>
+          <span class="block text-sm font-bold text-ink">{{ $t('buddies.title') }}</span>
           <span class="block truncate text-xs text-muted">{{ $t('buddies.subtitle') }}</span>
         </span>
         <Icon name="chevron-right" :size="16" class="text-muted" />
       </RouterLink>
-      <RouterLink to="/challenges" class="card flex items-center gap-3 p-3 transition hover:border-line-strong">
+      <RouterLink v-if="features.challenges" to="/challenges" class="card flex items-center gap-3 p-3 transition hover:border-line-strong">
         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-700"><Icon name="flag" :size="18" /></span>
         <span class="min-w-0 flex-1">
-          <span class="block text-sm font-extrabold text-ink">{{ $t('challenges.title') }}</span>
+          <span class="block text-sm font-bold text-ink">{{ $t('challenges.title') }}</span>
           <span class="block truncate text-xs text-muted">{{ $t('challenges.subtitle') }}</span>
         </span>
         <Icon name="chevron-right" :size="16" class="text-muted" />
@@ -84,6 +84,7 @@
 </template>
 
 <script setup>
+import { features } from '@/config/features'
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import L from 'leaflet'

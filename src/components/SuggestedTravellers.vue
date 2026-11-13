@@ -18,7 +18,7 @@
           <Avatar :src="user.profilePhotoUrl" :name="user.displayName" :size="variant === 'card' ? 'md' : 'lg'" />
         </RouterLink>
         <div class="min-w-0 flex-1">
-          <RouterLink :to="`/u/${user.userName}`" class="block truncate text-sm font-extrabold text-ink hover:underline">{{ user.displayName }}</RouterLink>
+          <RouterLink :to="`/u/${user.userName}`" class="block truncate text-sm font-bold text-ink hover:underline">{{ user.displayName }}</RouterLink>
           <p class="truncate text-xs text-muted">@{{ user.userName }} · {{ $t('users.tripsCount', user.tripsCount) }}</p>
           <p v-if="variant === 'list' && user.bio" class="mt-0.5 line-clamp-2 text-xs text-body">{{ user.bio }}</p>
         </div>

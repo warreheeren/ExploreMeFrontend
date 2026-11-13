@@ -8,7 +8,7 @@
         <Icon :name="challenge.icon" :size="20" />
       </span>
       <div class="min-w-0 flex-1">
-        <h3 class="text-base font-extrabold leading-tight text-ink">{{ $t(`challenges.items.${challenge.key}.name`) }}</h3>
+        <h3 class="text-base font-bold leading-tight text-ink">{{ $t(`challenges.items.${challenge.key}.name`) }}</h3>
         <p class="mt-0.5 text-sm text-body">{{ $t(`challenges.items.${challenge.key}.description`) }}</p>
       </div>
     </header>

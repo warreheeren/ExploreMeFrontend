@@ -122,3 +122,36 @@ test('de publieke deelpagina werkt zonder login', async ({ page, request }, test
   await expect(page).toHaveURL(new RegExp(`/share/${shareToken}$`))
   await expect(page.getByRole('heading', { level: 1, name: trip.title })).toBeVisible()
 })
+
+test('bezoekers zien de landingspagina en kunnen een openbare reis lezen', async ({ page, request }, testInfo) => {
+  const { user } = accountFor(testInfo)
+  const { trip } = await firstTripOf(request, user)
+
+  // Geen sessie: "/" is de landingspagina, niet de login.
+  await page.goto('/')
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page.getByRole('heading', { level: 1, name: t.nlLanding.headline })).toBeVisible()
+  await expect(page.getByRole('link', { name: t.nlLanding.cta }).first()).toHaveAttribute('href', '/register')
+
+  // Een reislink van een lid opent voor bezoekers de leesweergave in plaats van de login.
+  await page.goto(`/trips/${trip.id}`)
+  await expect(page).toHaveURL(new RegExp(`/t/${trip.id}$`))
+  await expect(page.getByRole('heading', { level: 1, name: trip.title })).toBeVisible()
+})
+
+test('functies die uit staan zijn niet bereikbaar', async ({ page }, testInfo) => {
+  await login(page, accountFor(testInfo).user)
+  await page.goto('/buddies')
+  await expect(page.getByRole('link', { name: 'Reisbuddies' })).toHaveCount(0)
+  await expect(page.locator('main')).not.toContainText('Reisbuddies')
+})
+
+test('mobiel: het Meer-scherm geeft toegang tot uitnodigingen en instellingen', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'alleen de mobiele tabbalk heeft "Meer"')
+  await login(page, accountFor(testInfo).user)
+  await page.getByRole('button', { name: t.nlShell.tabs.more }).click()
+  const sheet = page.getByRole('dialog')
+  await expect(sheet.getByRole('link', { name: t.nlNav.settings })).toBeVisible()
+  await sheet.getByRole('link', { name: t.nlNav.invites }).click()
+  await expect(page).toHaveURL(/\/invites$/)
+})

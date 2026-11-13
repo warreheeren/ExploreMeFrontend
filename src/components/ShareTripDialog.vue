@@ -6,7 +6,7 @@
         <div class="flex items-start gap-3">
           <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-700"><Icon name="link" :size="18" /></span>
           <div class="min-w-0">
-            <h3 class="text-sm font-extrabold text-ink">{{ $t('share.publicTitle') }}</h3>
+            <h3 class="text-sm font-bold text-ink">{{ $t('share.publicTitle') }}</h3>
             <p class="mt-0.5 text-sm text-muted">{{ $t('share.publicText') }}</p>
           </div>
         </div>
@@ -28,11 +28,11 @@
       </section>
 
       <!-- Eigenaar: insluiten als kaart op een andere site (werkt via de deel-link) -->
-      <section v-if="trip.isOwner" class="border-t border-line pt-5">
+      <section v-if="trip.isOwner && features.embed" class="border-t border-line pt-5">
         <div class="flex items-start gap-3">
           <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-700"><Icon name="map" :size="18" /></span>
           <div class="min-w-0 flex-1">
-            <h3 class="text-sm font-extrabold text-ink">{{ $t('embed.title') }}</h3>
+            <h3 class="text-sm font-bold text-ink">{{ $t('embed.title') }}</h3>
             <p class="mt-0.5 text-sm text-muted">{{ shareUrl ? $t('embed.text') : $t('embed.needsLink') }}</p>
           </div>
           <button v-if="shareUrl && !embedOpen" type="button" class="btn btn-secondary btn-sm shrink-0" @click="embedOpen = true">{{ $t('embed.open') }}</button>
@@ -83,7 +83,7 @@
 
       <!-- Interne link voor ingelogde gebruikers -->
       <section :class="trip.isOwner ? 'border-t border-line pt-5' : ''">
-        <h3 class="text-sm font-extrabold text-ink">{{ $t('share.internalTitle') }}</h3>
+        <h3 class="text-sm font-bold text-ink">{{ $t('share.internalTitle') }}</h3>
         <p class="mt-0.5 text-sm text-muted">
           {{ trip.isPublic ? $t('share.internalPublic') : $t('share.internalPrivate') }}
         </p>
@@ -97,6 +97,7 @@
 </template>
 
 <script setup>
+import { features } from '@/config/features'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Modal from './ui/Modal.vue'

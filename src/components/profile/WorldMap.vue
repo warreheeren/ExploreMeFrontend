@@ -7,7 +7,7 @@
       </div>
       <div class="text-right">
         <p class="text-2xl font-extrabold leading-none tabular-nums text-ink">{{ countryCount }}</p>
-        <p class="text-[10px] font-extrabold uppercase tracking-wider text-muted">{{ $t('worldmap.outOf', { n: WORLD_COUNTRIES }) }}</p>
+        <p class="text-[10px] font-bold uppercase tracking-wider text-muted">{{ $t('worldmap.outOf', { n: WORLD_COUNTRIES }) }}</p>
       </div>
     </header>
 

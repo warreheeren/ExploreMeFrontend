@@ -24,7 +24,7 @@
           <button type="button" class="flex w-full items-center gap-3 px-5 py-2.5 text-left transition hover:bg-gray-50 disabled:opacity-60" :disabled="busyUserName === user.userName" @click="$emit('select', user)">
             <Avatar :src="user.profilePhotoUrl" :name="user.displayName" size="md" />
             <span class="min-w-0 flex-1">
-              <span class="block truncate text-sm font-extrabold text-ink">{{ user.displayName }}</span>
+              <span class="block truncate text-sm font-bold text-ink">{{ user.displayName }}</span>
               <span class="block truncate text-xs text-muted">@{{ user.userName }}</span>
             </span>
             <span class="btn btn-secondary btn-sm">{{ busyUserName === user.userName ? $t('users.busy') : actionLabel || $t('users.choose') }}</span>

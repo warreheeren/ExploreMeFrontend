@@ -6,7 +6,9 @@ export default {
     trips: 'Reizen',
     discover: 'Ontdek',
     profile: 'Profiel',
+    more: 'Meer',
   },
+  more: { title: 'Meer' },
   create: {
     title: 'Wat wil je delen?',
     post: 'Nieuwe post',

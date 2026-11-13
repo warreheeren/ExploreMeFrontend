@@ -54,7 +54,7 @@
       <div class="rounded-2xl border border-line p-3">
         <div class="flex items-start justify-between gap-3">
           <div>
-            <p class="text-sm font-extrabold text-ink">{{ $t('stories.create.shareLocation') }}</p>
+            <p class="text-sm font-bold text-ink">{{ $t('stories.create.shareLocation') }}</p>
             <p class="text-xs text-muted">{{ $t('stories.create.shareLocationHint') }}</p>
           </div>
           <Toggle :model-value="shareLocation" :label="$t('stories.create.shareLocation')" @update:model-value="onToggleLocation" />
@@ -71,7 +71,7 @@
         <!-- Native app, reis bezig: de positie op de achtergrond blijven bijwerken (opt-in). -->
         <div v-if="canKeepLive && shareLocation && location" class="mt-3 flex items-start justify-between gap-3 border-t border-line pt-3">
           <div>
-            <p class="text-sm font-extrabold text-ink">{{ $t('nativeApp.live.keepUpdating') }}</p>
+            <p class="text-sm font-bold text-ink">{{ $t('nativeApp.live.keepUpdating') }}</p>
             <p class="text-xs text-muted">{{ $t('nativeApp.live.keepUpdatingHint') }}</p>
           </div>
           <Toggle v-model="keepLive" :label="$t('nativeApp.live.keepUpdating')" />

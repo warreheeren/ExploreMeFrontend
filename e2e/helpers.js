@@ -6,8 +6,11 @@ import enSettings from '../src/i18n/locales/en/settings.js'
 import nlTrip from '../src/i18n/locales/nl/trip.js'
 import nlEditor from '../src/i18n/locales/nl/editor.js'
 import nlMessages from '../src/i18n/locales/nl/messages.js'
+import nlLanding from '../src/i18n/locales/nl/landing.js'
+import nlShell from '../src/i18n/locales/nl/shell.js'
+import nlNav from '../src/i18n/locales/nl/nav.js'
 
-export const t = { nlSettings, enSettings, nlTrip, nlEditor, nlMessages }
+export const t = { nlSettings, enSettings, nlTrip, nlEditor, nlMessages, nlLanding, nlShell, nlNav }
 
 /** Seed-wachtwoord van alle demo-accounts (DataSeeder). */
 export const PASSWORD = 'Password123!'

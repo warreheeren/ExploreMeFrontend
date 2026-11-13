@@ -10,7 +10,7 @@
     <p v-else-if="entries.length <= 1 && !entries.some((e) => !e.isMe)" class="mb-3 text-sm text-muted">{{ $t('challenges.leaderboardEmpty') }}</p>
     <ol v-if="!loading && entries.length" class="divide-y divide-line">
       <li v-for="e in entries" :key="e.userName" class="flex items-center gap-3 py-2.5" :class="e.isMe ? 'font-extrabold' : ''">
-        <span class="w-6 text-center text-sm font-extrabold tabular-nums text-muted">{{ e.rank }}</span>
+        <span class="w-6 text-center text-sm font-bold tabular-nums text-muted">{{ e.rank }}</span>
         <RouterLink :to="`/u/${e.userName}`" @click="$emit('update:modelValue', false)"><Avatar :src="e.profilePhotoUrl" :name="e.displayName" size="sm" /></RouterLink>
         <span class="min-w-0 flex-1">
           <span class="block truncate text-sm text-ink">{{ e.displayName }} <span v-if="e.isMe" class="text-xs font-bold text-accent-700">({{ $t('challenges.you') }})</span></span>

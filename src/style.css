@@ -4,7 +4,8 @@
 
 /* ===================================================================
    ExploreMe — stijlrichting A "Nordic Minimal"
-   Eén accent (teal), hairline-randen, geen gradients, Manrope.
+   Eén accent (teal), hairline-randen, geen gradients. Manrope voor de interface, Fraunces (schreef) voor titels.
+   Gewichten: 800 alleen voor cijfers en nadruk, 700 voor namen en kaarttitels, 600 voor knoppen/tabs/labels.
    =================================================================== */
 
 /* ---------- Kleurtokens (RGB-tripletten) ---------- */
@@ -115,18 +116,26 @@ html.dark {
     @apply p-4 sm:p-5;
   }
   .card-title {
-    @apply text-base font-extrabold tracking-tight text-ink;
+    @apply text-base font-bold tracking-tight text-ink;
+  }
+  /* Feed op mobiel: de kaart loopt van rand tot rand (de pagina heeft daar 1rem marge), zodat foto's de volle breedte krijgen. */
+  .card-bleed {
+    @apply -mx-4 rounded-none border-x-0 sm:mx-0 sm:rounded-2xl sm:border-x;
   }
 
   /* ---------- Typografie ---------- */
   .eyebrow {
-    @apply text-[11px] font-extrabold uppercase tracking-[0.1em] text-muted;
+    @apply text-[11px] font-bold uppercase tracking-[0.1em] text-muted;
   }
   .eyebrow-accent {
-    @apply text-[11px] font-extrabold uppercase tracking-[0.08em] text-accent-700;
+    @apply text-[11px] font-bold uppercase tracking-[0.08em] text-accent-700;
   }
   .page-title {
-    @apply text-2xl font-extrabold tracking-tight text-ink sm:text-[28px];
+    @apply font-display text-[26px] font-semibold leading-tight tracking-tight text-ink sm:text-[32px];
+  }
+  /* Titel in de schreef: reisnamen en andere koppen die karakter mogen hebben. */
+  .title-display {
+    @apply font-display font-semibold tracking-tight text-ink;
   }
   .link {
     @apply font-bold text-accent-700 transition hover:text-accent-800 hover:underline;
@@ -134,7 +143,7 @@ html.dark {
 
   /* ---------- Knoppen ---------- */
   .btn {
-    @apply inline-flex h-10 shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex h-10 shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-sm {
     @apply h-8 gap-1.5 px-3 text-xs;
@@ -169,7 +178,7 @@ html.dark {
 
   /* ---------- Formulieren ---------- */
   .label {
-    @apply mb-1.5 block text-xs font-bold text-body;
+    @apply mb-1.5 block text-xs font-semibold text-body;
   }
   .hint {
     @apply mt-1.5 text-xs text-muted;
@@ -194,7 +203,7 @@ html.dark {
 
   /* ---------- Chips & badges ---------- */
   .chip {
-    @apply inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-xs font-bold;
+    @apply inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-xs font-semibold;
   }
   .chip-muted {
     @apply bg-gray-100 text-body;
@@ -224,7 +233,7 @@ html.dark {
     display: none;
   }
   .tab {
-    @apply -mb-px inline-flex h-11 shrink-0 items-center gap-2 border-b-2 border-transparent px-3 text-sm font-bold text-muted transition hover:text-ink;
+    @apply -mb-px inline-flex h-11 shrink-0 items-center gap-2 border-b-2 border-transparent px-3 text-sm font-semibold text-muted transition hover:text-ink;
   }
   .tab-active {
     @apply border-accent-700 text-ink;
@@ -235,7 +244,7 @@ html.dark {
     @apply absolute z-50 min-w-[13rem] overflow-hidden rounded-2xl border border-line bg-surface py-1.5 shadow-pop;
   }
   .menu-item {
-    @apply flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-semibold text-body transition hover:bg-gray-50 hover:text-ink;
+    @apply flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium text-body transition hover:bg-gray-50 hover:text-ink;
   }
   .menu-item-danger {
     @apply text-red-600 hover:bg-red-50 hover:text-red-700;

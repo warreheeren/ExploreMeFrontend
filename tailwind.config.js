@@ -14,6 +14,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ['"Manrope Variable"', 'Manrope', 'ui-sans-serif', 'system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
+        // Alleen voor titels: reisnamen, paginakoppen, de landingspagina.
+        display: ['"Fraunces Variable"', 'Fraunces', 'ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'serif'],
       },
       colors: {
         // Stijlrichting A "Nordic Minimal"

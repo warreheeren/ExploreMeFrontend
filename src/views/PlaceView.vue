@@ -28,7 +28,7 @@
             <div class="mt-5 flex flex-wrap gap-2">
               <button type="button" class="btn btn-dark btn-sm" @click="saveOpen = true"><Icon name="bookmark" :size="14" /> {{ $t('places.save') }}</button>
               <a :href="osmLink" target="_blank" rel="noopener" class="btn btn-secondary btn-sm"><Icon name="external" :size="14" /> {{ $t('places.openMap') }}</a>
-              <RouterLink :to="{ name: 'nearby', query: { lat: place.latitude, lng: place.longitude, name: place.name } }" class="btn btn-secondary btn-sm"><Icon name="locate" :size="14" /> {{ $t('nearby.open') }}</RouterLink>
+              <RouterLink v-if="features.nearby" :to="{ name: 'nearby', query: { lat: place.latitude, lng: place.longitude, name: place.name } }" class="btn btn-secondary btn-sm"><Icon name="locate" :size="14" /> {{ $t('nearby.open') }}</RouterLink>
             </div>
           </div>
           <TripMap :stops="[mapStop]" :show-route="false" :numbered="false" height-class="h-[220px] md:h-full md:min-h-[260px]" />
@@ -105,7 +105,7 @@
       </div>
 
       <!-- Vragen en antwoorden -->
-      <PlaceQuestions class="mt-8" :stop-id="place.stopId" />
+      <PlaceQuestions v-if="features.placeQa" class="mt-8" :stop-id="place.stopId" />
 
       <SaveToListDialog v-model="saveOpen" :stop="{ id: place.stopId, name: place.name }" />
 
@@ -120,6 +120,7 @@
 </template>
 
 <script setup>
+import { features } from '@/config/features'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import EmptyState from '@/components/ui/EmptyState.vue'

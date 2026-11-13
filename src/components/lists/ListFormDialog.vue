@@ -11,7 +11,7 @@
       </div>
       <label class="flex items-start gap-3 rounded-2xl border border-line p-3">
         <input v-model="form.isPublic" type="checkbox" class="checkbox mt-0.5" />
-        <span><span class="block text-sm font-extrabold text-ink">{{ $t('lists.publicLabel') }}</span><span class="text-xs text-muted">{{ $t('lists.form.publicHint') }}</span></span>
+        <span><span class="block text-sm font-bold text-ink">{{ $t('lists.publicLabel') }}</span><span class="text-xs text-muted">{{ $t('lists.form.publicHint') }}</span></span>
       </label>
     </form>
     <template #footer>

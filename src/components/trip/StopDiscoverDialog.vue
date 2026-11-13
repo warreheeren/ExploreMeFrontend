@@ -46,7 +46,7 @@
             </span>
             <div class="min-w-0 flex-1">
               <p v-if="e.category" class="eyebrow">{{ e.category }}</p>
-              <h3 class="line-clamp-2 text-sm font-extrabold text-ink">{{ e.name }}</h3>
+              <h3 class="line-clamp-2 text-sm font-bold text-ink">{{ e.name }}</h3>
               <p class="mt-0.5 text-xs font-semibold text-muted">
                 <span v-if="e.dayNumber">{{ $t('stopDiscover.events.day', { n: e.dayNumber }) }} · </span>{{ eventWhen(e) }}
               </p>
@@ -85,7 +85,7 @@
         <a :href="links.getYourGuide" target="_blank" rel="noopener noreferrer sponsored" class="flex items-center gap-3 rounded-2xl border border-line bg-surface p-4 transition hover:bg-gray-50">
           <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-700"><Icon name="ticket" :size="20" /></span>
           <span class="min-w-0 flex-1">
-            <span class="block text-sm font-extrabold text-ink">{{ $t('stopDiscover.tours.getYourGuide') }}</span>
+            <span class="block text-sm font-bold text-ink">{{ $t('stopDiscover.tours.getYourGuide') }}</span>
             <span class="block text-xs text-muted">{{ tourDate ? $t('stopDiscover.tours.getYourGuideText', { date: formatDate(tourDate) }) : $t('stopDiscover.tours.getYourGuideTextNoDate') }}</span>
           </span>
           <Icon name="external" :size="16" class="shrink-0 text-muted" />
@@ -93,7 +93,7 @@
         <a :href="links.viator" target="_blank" rel="noopener noreferrer sponsored" class="flex items-center gap-3 rounded-2xl border border-line bg-surface p-4 transition hover:bg-gray-50">
           <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-700"><Icon name="compass" :size="20" /></span>
           <span class="min-w-0 flex-1">
-            <span class="block text-sm font-extrabold text-ink">{{ $t('stopDiscover.tours.viator') }}</span>
+            <span class="block text-sm font-bold text-ink">{{ $t('stopDiscover.tours.viator') }}</span>
             <span class="block text-xs text-muted">{{ $t('stopDiscover.tours.viatorText') }}</span>
           </span>
           <Icon name="external" :size="16" class="shrink-0 text-muted" />

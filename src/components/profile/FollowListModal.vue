@@ -7,7 +7,7 @@
         <RouterLink :to="`/u/${u.userName}`" class="flex min-w-0 flex-1 items-center gap-3" @click="$emit('update:modelValue', false)">
           <Avatar :src="u.profilePhotoUrl" :name="u.displayName" size="md" />
           <span class="min-w-0">
-            <span class="block truncate text-sm font-extrabold text-ink">{{ u.displayName }}</span>
+            <span class="block truncate text-sm font-bold text-ink">{{ u.displayName }}</span>
             <span class="block truncate text-xs text-muted">@{{ u.userName }}</span>
           </span>
         </RouterLink>

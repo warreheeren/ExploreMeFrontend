@@ -5,6 +5,8 @@ export default {
   invalidTitle: 'Deze link werkt niet meer',
   invalidText: 'De eigenaar heeft de deel-link misschien ingetrokken.',
   discover: 'Ontdek ExploreMe',
+  privateTitle: 'Deze reis is niet openbaar',
+  privateText: 'Log in om te zien of je toegang hebt.',
   sharedVia: 'Gedeeld via een openbare link',
   calendar: 'Agenda',
   sections: 'Onderdelen',

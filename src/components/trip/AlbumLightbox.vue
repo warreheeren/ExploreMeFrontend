@@ -54,7 +54,7 @@
               <template v-if="photo.takenAtUtc"> · {{ $t('album.lightbox.takenAt', { date: formatDate(photo.takenAtUtc, { day: 'numeric', month: 'long', year: 'numeric' }) }) }}</template>
               <template v-if="photo.stopName"> · {{ photo.stopName }}</template>
             </p>
-            <RouterLink :to="postcardLink" class="btn btn-secondary btn-sm shrink-0"><Icon name="send" :size="14" /> {{ $t('postcards.fromAlbum') }}</RouterLink>
+            <RouterLink v-if="features.postcards" :to="postcardLink" class="btn btn-secondary btn-sm shrink-0"><Icon name="send" :size="14" /> {{ $t('postcards.fromAlbum') }}</RouterLink>
           </div>
 
           <form v-if="photo.canEdit" class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,200px)]" @submit.prevent="save">
@@ -83,6 +83,7 @@
 </template>
 
 <script setup>
+import { features } from '@/config/features'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Icon from '@/components/ui/Icon.vue'

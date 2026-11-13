@@ -24,7 +24,7 @@
       <span class="postcard-face postcard-back grid grid-cols-[minmax(0,1.25fr)_1px_minmax(0,1fr)] gap-3 bg-surface p-3 text-left sm:gap-4 sm:p-4">
         <span class="flex min-h-0 flex-col">
           <span class="postcard-message min-h-0 flex-1 overflow-y-auto whitespace-pre-line break-words pr-1 text-[13px] italic leading-relaxed text-body sm:text-sm">{{ card.message || $t('postcards.card.emptyMessage') }}</span>
-          <span v-if="card.senderDisplayName" class="mt-2 block truncate text-sm font-extrabold text-ink">— {{ card.senderDisplayName }}</span>
+          <span v-if="card.senderDisplayName" class="mt-2 block truncate text-sm font-bold text-ink">— {{ card.senderDisplayName }}</span>
         </span>
         <span class="bg-line" aria-hidden="true" />
         <span class="relative flex min-h-0 flex-col">

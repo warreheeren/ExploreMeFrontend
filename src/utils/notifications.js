@@ -1,5 +1,6 @@
 // Tekst, link en icoon per notificatietype (zie NotificationTypes.cs in de backend).
 import { t } from '@/i18n'
+import { isNotificationFeatureEnabled } from '@/config/features'
 
 const TEXT_KEYS = {
   like: 'like',
@@ -56,6 +57,8 @@ export function isSystemNotification(n) {
 
 export function notificationLink(n) {
   if (!n) return '/'
+  // Melding over een functie die uit staat (config/features.js): geen dode link.
+  if (!isNotificationFeatureEnabled(n.type)) return '/'
   switch (n.type) {
     case 'trip_invite': return '/invites'
     case 'follow':

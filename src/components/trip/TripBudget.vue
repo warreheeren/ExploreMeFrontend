@@ -69,10 +69,10 @@
             <li v-for="p in budget.participants" :key="p.userName" class="flex items-center gap-3 py-2.5 first:pt-0">
               <Avatar :src="p.profilePhotoUrl" :name="p.displayName" size="sm" />
               <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-extrabold text-ink">{{ p.displayName }}</p>
+                <p class="truncate text-sm font-bold text-ink">{{ p.displayName }}</p>
                 <p class="text-xs text-muted">{{ $t('budget.paidShare', { paid: money(p.paid), share: money(p.share) }) }}</p>
               </div>
-              <span class="text-sm font-extrabold tabular-nums" :class="p.balance > 0.004 ? 'text-accent-700' : p.balance < -0.004 ? 'text-red-600' : 'text-muted'">
+              <span class="text-sm font-bold tabular-nums" :class="p.balance > 0.004 ? 'text-accent-700' : p.balance < -0.004 ? 'text-red-600' : 'text-muted'">
                 {{ p.balance > 0.004 ? '+' : '' }}{{ money(p.balance) }}
               </span>
             </li>
@@ -127,11 +127,11 @@
             </a>
             <span v-else class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-body"><Icon :name="categoryMeta(e.category).icon" :size="18" /></span>
             <div class="min-w-0 flex-1">
-              <p class="truncate text-sm font-extrabold text-ink">{{ e.title }}</p>
+              <p class="truncate text-sm font-bold text-ink">{{ e.title }}</p>
               <p class="truncate text-xs text-muted">{{ formatDate(e.date) }} · {{ $t('budget.paidBy', { name: e.paidByDisplayName }) }}<template v-if="e.items?.length"> · {{ $t('budget.split.itemCount', e.items.length) }}</template><template v-if="e.note"> · {{ e.note }}</template></p>
             </div>
             <span class="text-right">
-              <span class="block text-sm font-extrabold tabular-nums text-ink">{{ formatCurrency(e.amount, e.currency) }}</span>
+              <span class="block text-sm font-bold tabular-nums text-ink">{{ formatCurrency(e.amount, e.currency) }}</span>
               <span v-if="e.currency !== budget.currency" class="block text-[11px] font-semibold tabular-nums text-muted">≈ {{ money(e.amountInBase) }}</span>
             </span>
             <div v-if="e.canEdit" class="flex">

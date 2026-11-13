@@ -2,7 +2,7 @@
   <!-- Betaalgegevens voor de betaal-QR bij afrekenen. Bewust niet in de auth-store/localStorage: alleen hier nodig. -->
   <form class="card-pad space-y-4 border-t border-line sm:p-6" aria-labelledby="settings-payment" @submit.prevent="save">
     <div>
-      <h3 id="settings-payment" class="flex items-center gap-2 text-sm font-extrabold text-ink"><Icon name="wallet" :size="16" class="text-muted" /> {{ $t('payQr.settings.title') }}</h3>
+      <h3 id="settings-payment" class="flex items-center gap-2 text-sm font-bold text-ink"><Icon name="wallet" :size="16" class="text-muted" /> {{ $t('payQr.settings.title') }}</h3>
       <p class="mt-1 text-sm text-muted">{{ $t('payQr.settings.intro') }}</p>
     </div>
 

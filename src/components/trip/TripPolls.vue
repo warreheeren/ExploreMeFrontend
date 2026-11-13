@@ -5,7 +5,7 @@
       <button v-if="!composing" type="button" class="flex w-full items-center gap-3 text-left" @click="startCompose">
         <span class="flex h-10 w-10 items-center justify-center rounded-full bg-accent-50 text-accent-800"><Icon name="vote" :size="18" /></span>
         <span class="flex-1">
-          <span class="block text-sm font-extrabold text-ink">{{ $t('planning.polls.new') }}</span>
+          <span class="block text-sm font-bold text-ink">{{ $t('planning.polls.new') }}</span>
           <span class="block text-xs text-muted">{{ $t('planning.polls.newHint') }}</span>
         </span>
         <Icon name="plus" :size="18" class="text-muted" />
@@ -46,7 +46,7 @@
     <article v-for="poll in polls" :key="poll.id" class="card card-pad sm:p-6">
       <header class="mb-3 flex items-start gap-3">
         <div class="min-w-0 flex-1">
-          <h3 class="text-base font-extrabold text-ink">{{ poll.question }}</h3>
+          <h3 class="text-base font-bold text-ink">{{ poll.question }}</h3>
           <p class="mt-0.5 text-xs font-semibold text-muted">
             {{ poll.createdByDisplayName }} · {{ timeAgo(poll.createdAtUtc) }}
             · {{ $t('planning.polls.voted', { n: poll.voterCount, total: poll.participantCount }) }}
@@ -83,7 +83,7 @@
               <span class="flex -space-x-1.5">
                 <Avatar v-for="v in opt.voters.slice(0, 3)" :key="v.userName" :src="v.profilePhotoUrl" :name="v.displayName" :size="22" ring :title="v.displayName" />
               </span>
-              <span class="w-10 text-right text-xs font-extrabold tabular-nums text-muted">{{ percent(poll, opt) }}%</span>
+              <span class="w-10 text-right text-xs font-bold tabular-nums text-muted">{{ percent(poll, opt) }}%</span>
             </span>
           </button>
         </li>

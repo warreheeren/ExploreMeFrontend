@@ -9,12 +9,12 @@
     <span class="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl" :class="stop.imageUrl ? 'bg-gray-100' : meta.soft">
       <img v-if="stop.imageUrl" :src="thumbUrl(stop.imageUrl)" alt="" class="h-full w-full object-cover" loading="lazy" />
       <span v-else class="flex h-full w-full items-center justify-center"><Icon :name="meta.icon" :size="20" /></span>
-      <span v-if="number" class="absolute left-1 top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-surface px-1 text-[10px] font-extrabold text-ink">{{ number }}</span>
+      <span v-if="number" class="absolute left-1 top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-surface px-1 text-[10px] font-bold text-ink">{{ number }}</span>
     </span>
 
     <span class="min-w-0 flex-1">
       <span class="flex flex-wrap items-center gap-x-2">
-        <span class="text-sm font-extrabold text-ink">{{ stop.name }}</span>
+        <span class="text-sm font-bold text-ink">{{ stop.name }}</span>
         <span v-if="badge" class="chip h-5 bg-ink px-2 text-[10px] text-surface">{{ badge }}</span>
       </span>
       <span v-if="stop.description" class="mt-0.5 line-clamp-2 block text-[13px] leading-snug text-body">{{ stop.description }}</span>

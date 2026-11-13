@@ -6,7 +6,7 @@
           <h3 class="card-title">{{ $t('checklist.title') }}</h3>
           <p class="text-xs font-semibold text-muted">{{ $t('checklist.subtitle') }}</p>
         </div>
-        <span class="text-sm font-extrabold tabular-nums text-ink">{{ doneCount }}/{{ items.length }}</span>
+        <span class="text-sm font-bold tabular-nums text-ink">{{ doneCount }}/{{ items.length }}</span>
       </div>
       <div class="mt-3 h-2 overflow-hidden rounded-full bg-gray-100" role="progressbar" :aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100" :aria-label="$t('checklist.progress')">
         <div class="h-full rounded-full bg-accent-700 transition-all" :style="{ width: `${progress}%` }" />

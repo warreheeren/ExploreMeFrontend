@@ -2,7 +2,7 @@
   <div v-if="safety.active" v-click-outside="() => (open = false)" class="relative">
     <button
       type="button"
-      class="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-extrabold tabular-nums transition"
+      class="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-bold tabular-nums transition"
       :class="chipClass"
       :aria-expanded="open"
       :aria-label="$t('safety.chip.aria', { time: countdown })"
@@ -14,7 +14,7 @@
     </button>
 
     <div v-if="open" class="fixed inset-x-4 top-[4.5rem] z-50 rounded-2xl border border-line bg-surface p-4 shadow-pop sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-96">
-      <p class="mb-3 flex items-center gap-2 text-sm font-extrabold text-ink"><Icon name="shield" :size="16" /> {{ $t('safety.title') }}</p>
+      <p class="mb-3 flex items-center gap-2 text-sm font-bold text-ink"><Icon name="shield" :size="16" /> {{ $t('safety.title') }}</p>
       <SafetyCheckInStatus @done="open = false" />
       <p class="mt-3 text-xs text-muted">{{ $t('safety.disclaimer') }}</p>
     </div>

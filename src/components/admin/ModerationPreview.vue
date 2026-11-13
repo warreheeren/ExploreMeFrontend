@@ -10,7 +10,7 @@
         <span v-if="!target.exists" class="chip h-5 bg-red-50 px-2 text-[10px] text-red-700">{{ $t('admin.preview.deleted') }}</span>
       </p>
       <template v-if="target.exists">
-        <p class="mt-1.5 text-sm font-extrabold text-ink" :class="compact ? 'line-clamp-1' : 'line-clamp-2'">{{ target.label }}</p>
+        <p class="mt-1.5 text-sm font-bold text-ink" :class="compact ? 'line-clamp-1' : 'line-clamp-2'">{{ target.label }}</p>
         <p v-if="target.text && target.text !== target.label && !compact" class="mt-1 line-clamp-3 whitespace-pre-line text-sm text-body">{{ target.text }}</p>
         <p class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-semibold text-muted">
           <RouterLink v-if="target.ownerUserName" :to="`/u/${target.ownerUserName}`" class="inline-flex items-center gap-1.5 hover:text-ink">

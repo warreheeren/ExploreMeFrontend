@@ -8,7 +8,7 @@
       <li v-for="c in challenges" :key="c.key" class="flex items-center gap-3 rounded-xl p-1.5">
         <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-accent-700 bg-accent-50 text-accent-800"><Icon :name="c.icon" :size="16" /></span>
         <span class="min-w-0 flex-1">
-          <span class="block truncate text-sm font-extrabold text-ink">{{ $t(`challenges.items.${c.key}.name`) }}</span>
+          <span class="block truncate text-sm font-bold text-ink">{{ $t(`challenges.items.${c.key}.name`) }}</span>
           <span v-if="c.completedAtUtc" class="block text-xs text-muted">{{ $t('challenges.completedOn', { date: formatLongDate(c.completedAtUtc) }) }}</span>
         </span>
       </li>

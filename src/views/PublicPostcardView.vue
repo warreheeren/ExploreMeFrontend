@@ -38,7 +38,7 @@
         <section v-if="!auth.isAuthenticated" class="card mt-10 flex flex-col items-start gap-4 p-6 sm:flex-row sm:items-center">
           <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-700"><Icon name="send" :size="22" /></span>
           <div class="flex-1">
-            <h2 class="text-base font-extrabold text-ink">{{ $t('postcards.public.ctaTitle') }}</h2>
+            <h2 class="text-base font-bold text-ink">{{ $t('postcards.public.ctaTitle') }}</h2>
             <p class="text-sm text-muted">{{ $t('postcards.public.ctaText') }}</p>
           </div>
           <RouterLink to="/register" class="btn btn-primary btn-sm">{{ $t('sharedTrip.register') }}</RouterLink>

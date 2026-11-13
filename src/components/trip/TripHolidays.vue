@@ -18,7 +18,7 @@
             <Icon name="calendar" :size="18" />
           </span>
           <div class="min-w-0 flex-1">
-            <p class="text-sm font-extrabold text-ink">{{ h.name }}</p>
+            <p class="text-sm font-bold text-ink">{{ h.name }}</p>
             <p class="text-xs font-semibold text-muted">
               {{ formatFullDate(h.date) }} · {{ h.countryName }}<span v-if="h.localName && h.localName !== h.name"> · {{ h.localName }}</span>
             </p>

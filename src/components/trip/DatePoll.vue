@@ -12,14 +12,14 @@
       <button v-if="!composing" type="button" class="flex w-full items-center gap-3 text-left" @click="startCompose">
         <span class="flex h-10 w-10 items-center justify-center rounded-full bg-accent-50 text-accent-800"><Icon name="calendar" :size="18" /></span>
         <span class="flex-1">
-          <span class="block text-sm font-extrabold text-ink">{{ poll ? $t('datePoll.again') : $t('datePoll.start') }}</span>
+          <span class="block text-sm font-bold text-ink">{{ poll ? $t('datePoll.again') : $t('datePoll.start') }}</span>
           <span class="block text-xs text-muted">{{ $t('datePoll.newHint') }}</span>
         </span>
         <Icon name="plus" :size="18" class="text-muted" />
       </button>
 
       <form v-else class="space-y-4" @submit.prevent="open">
-        <h3 class="text-base font-extrabold text-ink">{{ $t('datePoll.title') }}</h3>
+        <h3 class="text-base font-bold text-ink">{{ $t('datePoll.title') }}</h3>
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
             <label for="dp-from" class="label">{{ $t('datePoll.form.from') }}</label>
@@ -46,7 +46,7 @@
       <header class="mb-4 flex items-start gap-3">
         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-800"><Icon name="calendar" :size="18" /></span>
         <div class="min-w-0 flex-1">
-          <h3 class="text-base font-extrabold text-ink">{{ $t('datePoll.title') }} · {{ $t('datePoll.lengthDays', poll.lengthDays) }}</h3>
+          <h3 class="text-base font-bold text-ink">{{ $t('datePoll.title') }} · {{ $t('datePoll.lengthDays', poll.lengthDays) }}</h3>
           <p class="mt-0.5 text-xs font-semibold text-muted">
             {{ $t('datePoll.between', { range: formatDateRange(poll.rangeStart, poll.rangeEnd) }) }}
             · {{ $t('datePoll.byLine', { name: poll.createdByDisplayName }) }}
@@ -85,7 +85,7 @@
       <!-- Legenda -->
       <ul v-if="mode === 'mine'" class="mb-4 flex flex-wrap gap-x-4 gap-y-1 text-xs font-semibold text-body" role="list">
         <li v-for="a in ['Yes', 'Maybe', 'No']" :key="a" class="inline-flex items-center gap-1.5">
-          <span class="flex h-4 w-4 items-center justify-center rounded text-[10px] font-extrabold" :class="CELL[a]">{{ SYMBOL[a] }}</span>
+          <span class="flex h-4 w-4 items-center justify-center rounded text-[10px] font-bold" :class="CELL[a]">{{ SYMBOL[a] }}</span>
           {{ $t(`datePoll.legend.${LEGEND[a]}`) }}
         </li>
       </ul>
@@ -93,7 +93,7 @@
       <!-- Kalender -->
       <div class="grid grid-cols-1 gap-5 sm:grid-cols-2" :class="{ 'select-none': mode === 'mine' }">
         <div v-for="month in months" :key="month.key">
-          <p class="mb-1.5 text-sm font-extrabold capitalize text-ink">{{ monthLabel(month) }}</p>
+          <p class="mb-1.5 text-sm font-bold capitalize text-ink">{{ monthLabel(month) }}</p>
           <div class="grid grid-cols-7 gap-1 text-center">
             <span v-for="(w, i) in weekdays" :key="`w${i}`" class="text-[10px] font-bold uppercase text-muted" aria-hidden="true">{{ w }}</span>
             <template v-for="(cell, i) in month.cells" :key="cell?.key || `pad${i}`">
@@ -129,13 +129,13 @@
 
       <!-- Voorstellen -->
       <div class="mt-6 border-t border-line pt-4">
-        <h4 class="mb-3 text-sm font-extrabold text-ink">{{ $t('datePoll.suggestions.title') }}</h4>
+        <h4 class="mb-3 text-sm font-bold text-ink">{{ $t('datePoll.suggestions.title') }}</h4>
         <p v-if="!poll.suggestions.length" class="text-sm text-muted">{{ $t('datePoll.suggestions.empty') }}</p>
         <ol v-else class="space-y-3" role="list">
           <li v-for="(s, i) in poll.suggestions" :key="s.start" class="rounded-xl border border-line p-3.5" :class="{ 'border-accent-700': i === 0 }">
             <div class="flex flex-wrap items-center gap-2">
-              <span class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 text-xs font-extrabold text-ink">{{ i + 1 }}</span>
-              <span class="text-sm font-extrabold text-ink">{{ formatDateRange(s.start, s.end) }}</span>
+              <span class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 text-xs font-bold text-ink">{{ i + 1 }}</span>
+              <span class="text-sm font-bold text-ink">{{ formatDateRange(s.start, s.end) }}</span>
               <span class="text-xs font-semibold text-muted">{{ $t('datePoll.suggestions.score', { score: s.score, max: s.maxScore }) }}</span>
               <button v-if="poll.canDecide" type="button" class="btn btn-dark btn-sm ml-auto" :disabled="saving" @click="decide(s)">{{ $t('datePoll.suggestions.choose') }}</button>
             </div>
@@ -145,7 +145,7 @@
             <dl class="mt-2.5 space-y-1 text-xs">
               <div v-for="group in suggestionGroups(s)" :key="group.key" class="flex items-center gap-2">
                 <dt class="flex w-20 shrink-0 items-center gap-1 font-bold" :class="group.text">
-                  <span class="flex h-4 w-4 items-center justify-center rounded text-[10px] font-extrabold" :class="CELL[group.key]">{{ SYMBOL[group.key] }}</span>
+                  <span class="flex h-4 w-4 items-center justify-center rounded text-[10px] font-bold" :class="CELL[group.key]">{{ SYMBOL[group.key] }}</span>
                   {{ $t(`datePoll.legend.${LEGEND[group.key]}`) }}
                 </dt>
                 <dd class="flex min-w-0 flex-wrap items-center gap-1.5 text-body">

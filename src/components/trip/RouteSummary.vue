@@ -3,7 +3,7 @@
     <button type="button" class="flex w-full items-center gap-3 p-4 text-left" :aria-expanded="open" @click="open = !open">
       <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-50 text-accent-800"><Icon :name="headerIcon" :size="18" /></span>
       <span class="min-w-0 flex-1">
-        <span class="block text-sm font-extrabold text-ink">
+        <span class="block text-sm font-bold text-ink">
           <template v-if="route">{{ formatDistance(route.distanceMeters) }} · {{ formatDuration(route.durationSeconds) }} {{ onlyCar ? $t('planning.route.driving') : $t('planning.route.travelling') }}</template>
           <template v-else>{{ $t('planning.route.loading') }}</template>
         </span>
@@ -14,7 +14,7 @@
     <ol v-if="open && route" class="border-t border-line px-4 py-2">
       <li v-for="leg in route.legs" :key="leg.fromIndex" class="py-2 text-sm">
         <div class="flex items-center gap-3">
-          <span class="flex shrink-0 items-center gap-1 text-xs font-extrabold text-muted">
+          <span class="flex shrink-0 items-center gap-1 text-xs font-bold text-muted">
             <span class="flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 text-ink">{{ leg.fromIndex + 1 }}</span>
             <Icon :name="travelModeMeta(leg.mode).icon" :size="13" /><span class="sr-only">{{ travelModeMeta(leg.mode).label }}</span>
             <span class="flex h-5 w-5 items-center justify-center rounded-full bg-gray-100 text-ink">{{ leg.toIndex + 1 }}</span>
@@ -37,7 +37,7 @@
               <li
                 v-for="(part, i) in rideParts(leg)"
                 :key="i"
-                class="inline-flex max-w-[12rem] items-center gap-1 truncate rounded-md px-1.5 py-0.5 text-[11px] font-extrabold"
+                class="inline-flex max-w-[12rem] items-center gap-1 truncate rounded-md px-1.5 py-0.5 text-[11px] font-bold"
                 :class="part.color ? '' : 'bg-transit text-surface'"
                 :style="chipStyle(part.color)"
                 :title="$t('planning.route.transit.partTitle', { from: part.from, to: part.to })"

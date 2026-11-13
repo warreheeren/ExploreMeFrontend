@@ -78,7 +78,7 @@
           <RouterLink :to="`/u/${activeUserName}`" class="flex min-w-0 items-center gap-3">
             <Avatar :src="activeUser?.profilePhotoUrl" :name="activeUser?.displayName || activeUserName" size="md" />
             <span class="min-w-0">
-              <span class="block truncate text-sm font-extrabold text-ink hover:underline">{{ activeUser?.displayName || activeUserName }}</span>
+              <span class="block truncate text-sm font-bold text-ink hover:underline">{{ activeUser?.displayName || activeUserName }}</span>
               <span class="block truncate text-xs text-muted">@{{ activeUserName }}</span>
             </span>
           </RouterLink>
@@ -285,7 +285,9 @@ async function openConversation() {
       messagesApi.getConversation(activeUserName.value, 200),
       userApi.getProfile(activeUserName.value).catch(() => null),
     ])
-    messages.value = msgs
+    // Wie al typt en verstuurt terwijl het gesprek nog laadt, mag dat bericht niet kwijtraken.
+    const sentWhileLoading = messages.value.filter((m) => !msgs.some((x) => x.id === m.id))
+    messages.value = [...msgs, ...sentWhileLoading]
     activeUser.value = profile
     document.title = `${profile?.displayName || activeUserName.value} · ${t('messages.title')}`
     scrollToBottom()

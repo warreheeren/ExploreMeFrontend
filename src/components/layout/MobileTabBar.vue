@@ -28,10 +28,24 @@
         :class="item.active ? 'text-accent-700' : 'text-muted'"
         :aria-current="item.active ? 'page' : undefined"
       >
-        <Avatar v-if="item.avatar" :src="auth.profilePhotoUrl" :name="auth.displayName" :size="24" :class="item.active ? 'ring-2 ring-accent-700' : ''" />
-        <Icon v-else :name="item.icon" :size="22" />
+        <Icon :name="item.icon" :size="22" />
         {{ item.label }}
       </RouterLink>
+
+      <!-- Meer: profiel, uitnodigingen, lijsten, instellingen (op desktop het accountmenu) -->
+      <button
+        type="button"
+        class="flex flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-bold"
+        :class="moreActive ? 'text-accent-700' : 'text-muted'"
+        aria-haspopup="dialog"
+        @click="$emit('more')"
+      >
+        <span class="relative">
+          <Avatar :src="auth.profilePhotoUrl" :name="auth.displayName" :size="24" :class="moreActive ? 'ring-2 ring-accent-700' : ''" />
+          <span v-if="counts.invites || auth.pendingFollowRequests" class="dot-badge -right-1 -top-0.5" />
+        </span>
+        {{ $t('shell.tabs.more') }}
+      </button>
     </div>
   </nav>
 </template>
@@ -43,11 +57,13 @@ import { useI18n } from 'vue-i18n'
 import Icon from '../ui/Icon.vue'
 import Avatar from '../ui/Avatar.vue'
 import { useAuthStore } from '@/stores/auth'
+import { useCountsStore } from '@/stores/counts'
 
-defineEmits(['create', 'home-click'])
+defineEmits(['create', 'home-click', 'more'])
 
 const route = useRoute()
 const auth = useAuthStore()
+const counts = useCountsStore()
 const { t } = useI18n()
 
 const left = computed(() => [
@@ -56,6 +72,9 @@ const left = computed(() => [
 ])
 const right = computed(() => [
   { to: '/discover', label: t('shell.tabs.discover'), icon: 'compass', active: route.name === 'discover' },
-  { to: `/u/${auth.userName}`, label: t('shell.tabs.profile'), avatar: true, active: route.name === 'profile' && route.params.username === auth.userName },
 ])
+// Alles wat achter "Meer" zit licht die tab op.
+const moreActive = computed(() =>
+  ['invites', 'lists', 'list', 'settings', 'admin', 'postcards', 'challenges', 'buddies'].includes(route.name)
+  || (route.name === 'profile' && route.params.username === auth.userName))
 </script>

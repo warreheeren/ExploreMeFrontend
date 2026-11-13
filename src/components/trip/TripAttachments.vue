@@ -10,7 +10,7 @@
       <div class="flex flex-col items-center gap-3 text-center sm:flex-row sm:text-left">
         <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gray-100 text-body"><Icon name="paperclip" :size="22" /></span>
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-extrabold text-ink">{{ $t('planning.files.uploadTitle') }}</p>
+          <p class="text-sm font-bold text-ink">{{ $t('planning.files.uploadTitle') }}</p>
           <p class="text-xs text-muted">{{ $t('planning.files.uploadHint') }}</p>
         </div>
         <label class="btn btn-dark btn-sm cursor-pointer">
@@ -27,7 +27,7 @@
             <option v-for="s in stops" :key="s.id" :value="s.id">{{ s.name }}</option>
           </select>
           <input v-model="p.note" class="input h-9 sm:w-48" maxlength="300" :placeholder="$t('planning.files.note')" :disabled="p.progress > 0" />
-          <span v-if="p.progress > 0" class="w-12 text-right text-xs font-extrabold text-muted">{{ p.progress }}%</span>
+          <span v-if="p.progress > 0" class="w-12 text-right text-xs font-bold text-muted">{{ p.progress }}%</span>
           <button v-else type="button" class="btn-icon btn-icon-sm" :aria-label="$t('common.cancel')" @click="pending = pending.filter((x) => x !== p)"><Icon name="x" :size="15" /></button>
         </div>
         <div class="flex justify-end">
@@ -41,9 +41,9 @@
 
     <ul v-else class="card divide-y divide-line">
       <li v-for="a in items" :key="a.id" class="flex items-center gap-3 p-3.5">
-        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[10px] font-extrabold uppercase" :class="badgeClass(a)">{{ extension(a.fileName) }}</span>
+        <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[10px] font-bold uppercase" :class="badgeClass(a)">{{ extension(a.fileName) }}</span>
         <div class="min-w-0 flex-1">
-          <button type="button" class="block max-w-full truncate text-left text-sm font-extrabold text-ink hover:underline" @click="open(a)">{{ a.fileName }}</button>
+          <button type="button" class="block max-w-full truncate text-left text-sm font-bold text-ink hover:underline" @click="open(a)">{{ a.fileName }}</button>
           <p class="truncate text-xs text-muted">
             {{ formatFileSize(a.sizeBytes) }} · {{ a.uploadedByDisplayName }} · {{ timeAgo(a.createdAtUtc) }}
             <template v-if="a.tripStopName"> · <Icon name="pin" :size="11" class="inline" /> {{ a.tripStopName }}</template>

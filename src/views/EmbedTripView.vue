@@ -21,7 +21,7 @@
       <footer class="flex shrink-0 items-center gap-3 border-t border-line bg-surface px-3 py-2">
         <img v-if="trip.coverThumbUrl" :src="trip.coverThumbUrl" alt="" class="h-9 w-9 shrink-0 rounded-lg object-cover" />
         <div class="min-w-0 flex-1">
-          <p class="truncate text-sm font-extrabold text-ink">{{ trip.title }}</p>
+          <p class="truncate text-sm font-bold text-ink">{{ trip.title }}</p>
           <p class="truncate text-xs text-muted">
             {{ formatDateRange(trip.startDate, trip.endDate) }}<template v-if="trip.country"> · {{ trip.country }}</template> · {{ $t('embed.by', { name: trip.ownerDisplayName }) }}
           </p>

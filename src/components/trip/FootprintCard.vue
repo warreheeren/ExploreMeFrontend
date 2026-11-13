@@ -52,7 +52,7 @@
       <ul class="mt-2 grid grid-cols-3 gap-2">
         <li v-for="a in footprint.alternatives" :key="a.mode" class="rounded-xl border border-line px-2.5 py-2">
           <span class="flex items-center gap-1.5 text-xs font-semibold text-muted"><Icon :name="travelModeMeta(a.mode).icon" :size="14" /> {{ travelModeMeta(a.mode).label }}</span>
-          <span class="mt-0.5 block text-sm font-extrabold tabular-nums text-ink">{{ formatCo2(a.kgCo2e) }}</span>
+          <span class="mt-0.5 block text-sm font-bold tabular-nums text-ink">{{ formatCo2(a.kgCo2e) }}</span>
         </li>
       </ul>
     </template>

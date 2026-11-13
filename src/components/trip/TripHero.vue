@@ -14,7 +14,7 @@
         <span v-if="countdown" class="chip h-6 bg-ink text-surface">{{ countdown }}</span>
         <span v-if="trip.copyCount" class="chip chip-accent h-6"><Icon name="copy" :size="12" /> {{ $t('tripExtras.copy.count', { n: trip.copyCount }) }}</span>
       </div>
-      <h1 class="mt-1.5 text-2xl font-extrabold leading-tight tracking-tight text-ink text-balance sm:text-[32px]">{{ trip.title }}</h1>
+      <h1 class="title-display mt-1.5 text-[28px] leading-[1.1] text-balance sm:text-[40px]">{{ trip.title }}</h1>
       <p v-if="trip.copiedFrom" class="mt-1.5 inline-flex flex-wrap items-center gap-1 text-sm text-muted">
         <Icon name="copy" :size="14" />
         <i18n-t keypath="tripExtras.copy.basedOn" tag="span">

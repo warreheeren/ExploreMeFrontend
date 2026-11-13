@@ -11,7 +11,7 @@
       <li v-for="p in providers" :key="p.provider" class="flex flex-col gap-3 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-center" :data-provider="p.provider">
         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-ink"><Icon name="calendar" :size="18" /></span>
         <div class="min-w-0 flex-1">
-          <p class="text-sm font-extrabold text-ink">{{ $t(`calendarSync.providers.${p.provider}`) }}</p>
+          <p class="text-sm font-bold text-ink">{{ $t(`calendarSync.providers.${p.provider}`) }}</p>
           <p class="truncate text-xs text-muted">{{ statusLine(p) }}</p>
           <p v-if="p.error === 'reauth'" class="mt-1 flex items-start gap-1 text-xs font-semibold text-red-600" role="alert">
             <Icon name="alert" :size="13" class="mt-px shrink-0" /> {{ $t('calendarSync.reauth') }}

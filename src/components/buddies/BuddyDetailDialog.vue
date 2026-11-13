@@ -6,7 +6,7 @@
       <header class="flex items-center gap-3">
         <RouterLink :to="`/u/${post.userName}`"><Avatar :src="post.profilePhotoUrl" :name="post.displayName" size="md" /></RouterLink>
         <div class="min-w-0 flex-1">
-          <RouterLink :to="`/u/${post.userName}`" class="block truncate text-sm font-extrabold text-ink hover:underline">{{ post.displayName }}</RouterLink>
+          <RouterLink :to="`/u/${post.userName}`" class="block truncate text-sm font-bold text-ink hover:underline">{{ post.displayName }}</RouterLink>
           <p class="text-xs text-muted">{{ timeAgo(post.createdAtUtc) }}</p>
         </div>
         <span v-if="post.matchesMyPlans" class="chip chip-accent h-6"><Icon name="sparkle" :size="12" /> {{ $t('buddies.card.match') }}</span>

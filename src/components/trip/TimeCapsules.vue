@@ -11,7 +11,7 @@
     <!-- Schrijven -->
     <button v-if="!composing" type="button" class="flex w-full items-center gap-3 rounded-2xl border border-dashed border-line-strong px-4 py-3 text-left hover:border-ink" @click="startCompose">
       <span class="flex-1">
-        <span class="block text-sm font-extrabold text-ink">{{ $t('capsule.write') }}</span>
+        <span class="block text-sm font-bold text-ink">{{ $t('capsule.write') }}</span>
         <span class="block text-xs text-muted">{{ $t('capsule.writeHint') }}</span>
       </span>
       <Icon name="plus" :size="18" class="text-muted" />
@@ -96,7 +96,7 @@
             <header class="flex items-center gap-3">
               <Avatar :src="c.authorProfilePhotoUrl" :name="c.authorDisplayName" size="sm" />
               <div class="min-w-0 flex-1">
-                <p class="text-sm font-extrabold text-ink">{{ $t('capsule.from', { name: c.authorDisplayName }) }}</p>
+                <p class="text-sm font-bold text-ink">{{ $t('capsule.from', { name: c.authorDisplayName }) }}</p>
                 <p class="text-xs font-semibold text-muted">{{ $t('capsule.openedOn', { date: formatMoment(c.openAtUtc) }) }}</p>
               </div>
               <Icon v-if="c.audience === 'Self'" name="lock" :size="14" class="text-muted" :aria-label="$t('capsule.forSelf')" />

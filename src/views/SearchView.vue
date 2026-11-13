@@ -63,7 +63,7 @@
             </span>
             <span class="min-w-0 flex-1">
               <span class="flex items-center gap-2">
-                <span class="truncate text-sm font-extrabold text-ink">{{ item.title }}</span>
+                <span class="truncate text-sm font-bold text-ink">{{ item.title }}</span>
                 <span class="chip chip-muted shrink-0">{{ $t(`search.kind.${item.kind}`) }}</span>
               </span>
               <span v-if="item.subtitle" class="block truncate text-xs font-medium text-muted">

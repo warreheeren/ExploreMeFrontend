@@ -19,7 +19,7 @@
             <header class="flex shrink-0 items-start gap-3 border-b border-line px-4 py-3.5">
               <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-700"><Icon name="sparkle" :size="18" /></span>
               <div class="min-w-0 flex-1">
-                <h2 :id="titleId" class="text-base font-extrabold text-ink">{{ $t('ai.assistant.title') }}</h2>
+                <h2 :id="titleId" class="text-base font-bold text-ink">{{ $t('ai.assistant.title') }}</h2>
                 <p class="truncate text-xs text-muted">{{ trip.title }}</p>
               </div>
               <button v-if="messages.length" type="button" class="btn btn-ghost btn-sm" :disabled="asking" @click="clear">{{ $t('ai.assistant.clear') }}</button>

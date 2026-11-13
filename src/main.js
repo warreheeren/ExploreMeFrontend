@@ -1,4 +1,6 @@
 import '@fontsource-variable/manrope'
+// Schreef voor titels (reisnamen, paginakoppen): gewicht + optische grootte.
+import '@fontsource-variable/fraunces/opsz.css'
 import './style.css'
 
 import { createApp } from 'vue'

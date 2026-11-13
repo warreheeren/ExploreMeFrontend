@@ -16,7 +16,7 @@
     </div>
     <div class="p-4">
       <p class="flex items-center gap-2">
-        <span class="min-w-0 flex-1 truncate text-[15px] font-extrabold text-ink group-hover:underline">{{ list.name }}</span>
+        <span class="min-w-0 flex-1 truncate text-[15px] font-bold text-ink group-hover:underline">{{ list.name }}</span>
         <Icon v-if="!list.isPublic" name="lock" :size="14" class="text-muted" :aria-label="$t('common.private')" />
       </p>
       <p v-if="list.description" class="mt-0.5 line-clamp-2 text-sm text-body">{{ list.description }}</p>

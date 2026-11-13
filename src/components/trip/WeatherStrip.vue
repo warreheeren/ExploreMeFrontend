@@ -16,9 +16,9 @@
         :class="isToday(d.date) ? 'border-accent-700 bg-accent-50' : 'border-line'"
         :title="`${d.locationName} · ${$t(`planning.weather.codes.${weatherInfo(d.weatherCode).key}`)}`"
       >
-        <span class="text-[11px] font-extrabold uppercase tracking-wide text-muted">{{ formatDate(d.date, { weekday: 'short', day: 'numeric' }) }}</span>
+        <span class="text-[11px] font-bold uppercase tracking-wide text-muted">{{ formatDate(d.date, { weekday: 'short', day: 'numeric' }) }}</span>
         <Icon :name="weatherInfo(d.weatherCode).icon" :size="26" class="my-1.5 text-ink" />
-        <span class="text-sm font-extrabold tabular-nums text-ink">{{ Math.round(d.tempMax) }}° <span class="font-bold text-muted">{{ Math.round(d.tempMin) }}°</span></span>
+        <span class="text-sm font-bold tabular-nums text-ink">{{ Math.round(d.tempMax) }}° <span class="font-bold text-muted">{{ Math.round(d.tempMin) }}°</span></span>
         <span class="mt-0.5 flex items-center gap-1 text-[11px] font-semibold text-muted">
           <Icon name="drop" :size="11" />
           <template v-if="d.precipitationProbability != null">{{ d.precipitationProbability }}%</template>

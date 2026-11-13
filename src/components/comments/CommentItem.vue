@@ -7,7 +7,7 @@
     <div class="min-w-0 flex-1">
       <template v-if="!editing">
         <div class="inline-block max-w-full rounded-2xl rounded-tl-md bg-gray-100 px-3.5 py-2">
-          <RouterLink :to="`/u/${comment.userName}`" class="block text-xs font-extrabold text-ink hover:underline">
+          <RouterLink :to="`/u/${comment.userName}`" class="block text-xs font-bold text-ink hover:underline">
             {{ comment.displayName }}
           </RouterLink>
           <p class="mt-0.5 text-sm leading-snug text-ink"><MentionText :text="translated ?? comment.text" /></p>

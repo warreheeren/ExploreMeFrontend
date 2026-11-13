@@ -1,9 +1,10 @@
 <template>
   <button
     type="button"
-    class="btn btn-secondary btn-sm"
-    :class="saved ? 'border-accent-700 text-accent-700' : ''"
-    :aria-pressed="saved"
+    :class="[variant === 'menu' ? 'menu-item disabled:opacity-50' : 'btn btn-secondary btn-sm', saved ? (variant === 'menu' ? 'text-accent-700' : 'border-accent-700 text-accent-700') : '']"
+    :role="variant === 'menu' ? 'menuitemcheckbox' : undefined"
+    :aria-checked="variant === 'menu' ? saved : undefined"
+    :aria-pressed="variant === 'menu' ? undefined : saved"
     :disabled="busy || (!saved && !online)"
     :title="saved ? $t('tripExtras.offline.savedAt', { date: savedAtLabel }) : $t('tripExtras.offline.hint')"
     @click="saved ? remove() : save()"
@@ -27,6 +28,8 @@ import { parseTimestamp, timeAgo } from '@/utils/date'
 
 const props = defineProps({
   trip: { type: Object, required: true },
+  // 'menu': als regel in een uitklapmenu (reispagina) in plaats van als losse knop.
+  variant: { type: String, default: 'button' },
 })
 
 const { t } = useI18n()

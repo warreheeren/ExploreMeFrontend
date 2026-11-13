@@ -13,7 +13,7 @@
         <span class="eyebrow-accent">{{ flag }} {{ trip.country || $t('trips.card.unknownCountry') }}</span>
         <span class="text-xs font-semibold text-muted">{{ dateRange }} · {{ $t('trips.card.days', days) }}</span>
       </div>
-      <h3 class="line-clamp-2 text-lg font-extrabold leading-snug tracking-tight text-ink">{{ trip.title }}</h3>
+      <h3 class="title-display line-clamp-2 text-xl leading-snug">{{ trip.title }}</h3>
 
       <div v-if="typeChips.length" class="flex flex-wrap gap-1.5">
         <StopTypeChip v-for="c in typeChips" :key="c.type" :type="c.type" :count="c.count" />
