@@ -1,0 +1,75 @@
+# nginx-config voor de ExploreMe-frontend. ${API_UPSTREAM} wordt bij het starten ingevuld (envsubst).
+server {
+  listen 80;
+  server_name _;
+  root /usr/share/nginx/html;
+  index index.html;
+
+  client_max_body_size 30m;
+  server_tokens off;
+
+  gzip on;
+  gzip_types text/plain text/css application/javascript application/json image/svg+xml application/manifest+json;
+  gzip_min_length 1024;
+
+  # API, uploads/thumbnails en SignalR naar de backend (die zet zelf zijn beveiligingsheaders).
+  location /api/ {
+    proxy_pass ${API_UPSTREAM};
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location /uploads/ {
+    proxy_pass ${API_UPSTREAM};
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location /hubs/ {
+    proxy_pass ${API_UPSTREAM};
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 3600s;
+    # Het token staat in de query-string (WebSockets kunnen geen header zetten): niet loggen.
+    access_log off;
+  }
+
+  # Service worker en manifest nooit lang cachen, anders blijven gebruikers op een oude versie hangen.
+  location = /sw.js { include /etc/nginx/snippets/security-headers.conf; add_header Cache-Control "no-cache"; try_files $uri =404; }
+  location = /app-sw.js { include /etc/nginx/snippets/security-headers.conf; add_header Cache-Control "no-cache"; try_files $uri =404; }
+  location = /theme-init.js { include /etc/nginx/snippets/security-headers.conf; add_header Cache-Control "no-cache"; try_files $uri =404; }
+  location = /manifest.webmanifest { include /etc/nginx/snippets/security-headers.conf; add_header Cache-Control "no-cache"; try_files $uri =404; }
+
+  # Gehashte assets mogen een jaar in de cache.
+  location /assets/ {
+    include /etc/nginx/snippets/security-headers.conf;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+    try_files $uri =404;
+  }
+
+  # Insluitbare reiskaart: de enige pagina die andere sites in een iframe mogen laden.
+  # Dezelfde headers als security-headers.conf, maar zonder X-Frame-Options en met frame-ancestors *.
+  # try_files zonder fallback-URI: index.html wordt hier geserveerd (een interne redirect naar "/" zou de DENY-headers krijgen).
+  location /embed/ {
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=()" always;
+    add_header Content-Security-Policy "frame-ancestors *" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header Cache-Control "no-cache";
+    try_files /index.html =404;
+  }
+
+  # Single-page app: onbekende paden naar index.html.
+  location / {
+    include /etc/nginx/snippets/security-headers.conf;
+    add_header Cache-Control "no-cache";
+    try_files $uri $uri/ /index.html;
+  }
+}

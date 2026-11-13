@@ -1,0 +1,22 @@
+export default {
+  open: 'Fotoboek',
+  routeTitle: 'Fotoboek',
+  documentTitle: 'Fotoboek',
+  backToTrip: 'Terug naar reis',
+  format: 'Papierformaat',
+  formats: {
+    'a4-landscape': 'A4 liggend',
+    'a5-portrait': 'A5 staand',
+  },
+  perPage: "Foto's per pagina",
+  includeText: 'Dagboektekst',
+  savePdf: 'Opslaan als PDF',
+  preparing: "Foto's en kaart laden…",
+  loadFailed: 'Het fotoboek kon niet geladen worden.',
+  emptyHint: "Nog geen foto's of dagboek: voeg foto's toe aan het album of schrijf in het dagboek, dan krijgt elke dag een eigen pagina.",
+  mapTitle: 'De route',
+  stops: '{n} stop | {n} stops',
+  day: 'Dag {n}',
+  closingEyebrow: 'Jullie reis in cijfers',
+  madeWith: 'Gemaakt met ExploreMe',
+}

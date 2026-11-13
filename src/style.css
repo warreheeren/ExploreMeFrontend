@@ -1,0 +1,467 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===================================================================
+   ExploreMe — stijlrichting A "Nordic Minimal"
+   Eén accent (teal), hairline-randen, geen gradients, Manrope.
+   =================================================================== */
+
+/* ---------- Kleurtokens (RGB-tripletten) ---------- */
+:root {
+  color-scheme: light;
+  --c-ground: 244 246 248;
+  --c-surface: 255 255 255;
+  --c-line: 229 231 235;
+  --c-line-strong: 209 213 219;
+  --c-ink: 17 24 39;
+  --c-body: 55 65 81;
+  /* Iets donkerder dan gray-500: haalt WCAG AA (4,5:1) ook op ground en gray-100, niet alleen op wit. */
+  --c-muted: 100 108 120;
+  --c-gray-50: 249 250 251;
+  --c-gray-100: 243 244 246;
+  --c-gray-200: 229 231 235;
+  --c-gray-300: 209 213 219;
+  --c-gray-400: 156 163 175;
+  --c-gray-500: 107 114 128;
+  --c-gray-600: 75 85 99;
+  --c-gray-700: 55 65 81;
+  --c-gray-800: 31 41 55;
+  --c-gray-900: 17 24 39;
+  --c-accent-50: 240 253 250;
+  --c-accent-100: 204 251 241;
+  --c-accent-200: 153 246 228;
+  --c-accent-300: 94 234 212;
+  --c-accent-400: 45 212 191;
+  --c-accent-500: 20 184 166;
+  --c-accent-600: 13 148 136;
+  --c-accent-700: 15 118 110;
+  --c-accent-800: 17 94 89;
+  --c-accent-900: 19 78 74;
+  --c-rating-text: 180 83 9;
+  --c-shadow: 17 24 39;
+  /* OV-stukken (trein/bus) op de routekaart. */
+  --c-transit: 79 70 229;
+}
+
+/* Donkere modus: neutraal leisteen, teal blijft het enige accent. */
+html.dark {
+  color-scheme: dark;
+  --c-ground: 11 15 20;
+  --c-surface: 21 26 33;
+  --c-line: 42 49 59;
+  --c-line-strong: 58 66 78;
+  --c-ink: 236 239 243;
+  --c-body: 203 209 217;
+  --c-muted: 148 156 168;
+  --c-gray-50: 28 34 42;
+  --c-gray-100: 35 42 51;
+  --c-gray-200: 46 54 65;
+  --c-gray-300: 64 73 86;
+  --c-gray-400: 100 110 124;
+  --c-gray-500: 140 149 162;
+  --c-gray-600: 170 178 190;
+  --c-gray-700: 203 209 217;
+  --c-gray-800: 226 230 235;
+  --c-gray-900: 241 243 246;
+  --c-accent-50: 16 44 42;
+  --c-accent-100: 19 64 60;
+  --c-accent-200: 21 94 88;
+  --c-accent-300: 94 234 212;
+  --c-accent-400: 45 212 191;
+  --c-accent-500: 20 184 166;
+  --c-accent-600: 20 160 147;
+  --c-accent-700: 13 148 136;
+  --c-accent-800: 94 234 212;
+  --c-accent-900: 153 246 228;
+  --c-rating-text: 251 191 36;
+  --c-shadow: 0 0 0;
+  --c-transit: 129 140 248;
+}
+
+@layer base {
+  html {
+    @apply bg-ground text-ink antialiased;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-ground font-sans text-ink;
+  }
+
+  ::selection {
+    @apply bg-accent-100 text-accent-900;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent-500 ring-offset-2 ring-offset-surface;
+  }
+
+  button,
+  a,
+  [role='button'] {
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+  }
+}
+
+@layer components {
+  /* ---------- Kaarten ---------- */
+  .card {
+    @apply rounded-2xl border border-line bg-surface;
+  }
+  .card-pad {
+    @apply p-4 sm:p-5;
+  }
+  .card-title {
+    @apply text-base font-extrabold tracking-tight text-ink;
+  }
+
+  /* ---------- Typografie ---------- */
+  .eyebrow {
+    @apply text-[11px] font-extrabold uppercase tracking-[0.1em] text-muted;
+  }
+  .eyebrow-accent {
+    @apply text-[11px] font-extrabold uppercase tracking-[0.08em] text-accent-700;
+  }
+  .page-title {
+    @apply text-2xl font-extrabold tracking-tight text-ink sm:text-[28px];
+  }
+  .link {
+    @apply font-bold text-accent-700 transition hover:text-accent-800 hover:underline;
+  }
+
+  /* ---------- Knoppen ---------- */
+  .btn {
+    @apply inline-flex h-10 shrink-0 select-none items-center justify-center gap-2 whitespace-nowrap rounded-full px-4 text-sm font-bold transition disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-sm {
+    @apply h-8 gap-1.5 px-3 text-xs;
+  }
+  .btn-lg {
+    @apply h-12 px-6 text-[15px];
+  }
+  .btn-primary {
+    @apply bg-accent-700 text-white hover:bg-accent-800;
+  }
+  .btn-dark {
+    @apply bg-ink text-surface hover:opacity-90;
+  }
+  .btn-secondary {
+    @apply border border-line-strong bg-surface text-ink hover:bg-gray-50;
+  }
+  .btn-ghost {
+    @apply text-body hover:bg-gray-100 hover:text-ink;
+  }
+  .btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700;
+  }
+  .btn-danger-ghost {
+    @apply text-red-600 hover:bg-red-50;
+  }
+  .btn-icon {
+    @apply inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-body transition hover:bg-gray-100 hover:text-ink disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-icon-sm {
+    @apply h-8 w-8;
+  }
+
+  /* ---------- Formulieren ---------- */
+  .label {
+    @apply mb-1.5 block text-xs font-bold text-body;
+  }
+  .hint {
+    @apply mt-1.5 text-xs text-muted;
+  }
+  .input {
+    @apply h-11 w-full rounded-xl border border-line-strong bg-surface px-3.5 text-sm text-ink transition placeholder:text-muted focus:border-accent-700 focus:outline-none focus:ring-2 focus:ring-accent-100 disabled:bg-gray-50 disabled:text-muted;
+  }
+  .textarea {
+    @apply w-full resize-none rounded-xl border border-line-strong bg-surface px-3.5 py-2.5 text-sm leading-relaxed text-ink transition placeholder:text-muted focus:border-accent-700 focus:outline-none focus:ring-2 focus:ring-accent-100;
+  }
+  .select {
+    @apply input appearance-none bg-no-repeat pr-9;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right 0.75rem center;
+  }
+  .checkbox {
+    @apply h-4 w-4 rounded border-line-strong text-accent-700 focus:ring-accent-500;
+  }
+  .search-pill {
+    @apply h-10 w-full rounded-full border border-transparent bg-gray-100 pl-10 pr-4 text-sm font-medium text-ink transition placeholder:text-muted focus:border-accent-700 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-accent-100;
+  }
+
+  /* ---------- Chips & badges ---------- */
+  .chip {
+    @apply inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-xs font-bold;
+  }
+  .chip-muted {
+    @apply bg-gray-100 text-body;
+  }
+  .chip-accent {
+    @apply bg-accent-50 text-accent-800;
+  }
+  .chip-toggle {
+    @apply chip border border-line-strong bg-surface text-body transition hover:border-ink hover:text-ink;
+  }
+  .chip-toggle-active {
+    @apply border-ink bg-ink text-surface hover:text-surface;
+  }
+  .badge {
+    @apply inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-extrabold leading-none text-white;
+  }
+  .dot-badge {
+    @apply absolute right-1.5 top-1.5 h-2 w-2 rounded-full border-2 border-surface bg-red-600;
+  }
+
+  /* ---------- Tabs ---------- */
+  .tabs {
+    @apply flex gap-1 overflow-x-auto border-b border-line;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .tab {
+    @apply -mb-px inline-flex h-11 shrink-0 items-center gap-2 border-b-2 border-transparent px-3 text-sm font-bold text-muted transition hover:text-ink;
+  }
+  .tab-active {
+    @apply border-accent-700 text-ink;
+  }
+
+  /* ---------- Menu's ---------- */
+  .menu {
+    @apply absolute z-50 min-w-[13rem] overflow-hidden rounded-2xl border border-line bg-surface py-1.5 shadow-pop;
+  }
+  .menu-item {
+    @apply flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-semibold text-body transition hover:bg-gray-50 hover:text-ink;
+  }
+  .menu-item-danger {
+    @apply text-red-600 hover:bg-red-50 hover:text-red-700;
+  }
+  .menu-sep {
+    @apply my-1.5 border-t border-line;
+  }
+
+  /* ---------- Overig ---------- */
+  .skeleton {
+    @apply animate-pulse rounded-lg bg-gray-100;
+  }
+  .stat-tile {
+    @apply rounded-2xl border border-line bg-surface p-4;
+  }
+  .stat-value {
+    @apply text-2xl font-extrabold tracking-tight text-ink tabular-nums;
+  }
+  .stat-label {
+    @apply mt-0.5 text-xs font-semibold text-muted;
+  }
+  .divider {
+    @apply border-t border-line;
+  }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(17, 24, 39, 0.15) transparent;
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  /* Statusbalk/notch: Capacitor (Android edge-to-edge) zet --safe-area-inset-top, browsers env(). */
+  .safe-top {
+    padding-top: max(var(--safe-area-inset-top, 0px), env(safe-area-inset-top));
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* ---------- Mobile app-gevoel ---------- */
+@media (max-width: 767px) {
+  html {
+    overflow-x: hidden;
+    max-width: 100%;
+    overscroll-behavior-y: none;
+  }
+  /* clip i.p.v. hidden: hidden op html én body maakt body een eigen (niet-scrollbare) scrollcontainer; met
+     overscroll-behavior none loopt een veeg daar dood en scrollt de pagina niet (Android WebView/Chrome). */
+  body {
+    overflow-x: clip;
+    max-width: 100%;
+  }
+
+  /* iOS zoomt in op inputs < 16px. */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* ---------- Print ---------- */
+@page {
+  margin: 16mm;
+}
+@media print {
+  .print-hidden {
+    display: none !important;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+}
+
+/* ---------- Leaflet ---------- */
+/* Tailwind preflight breekt tile/marker positionering. */
+.leaflet-container img,
+.leaflet-container img.leaflet-tile {
+  max-width: none !important;
+  max-height: none !important;
+  width: auto;
+  height: auto;
+}
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.leaflet-container {
+  font-family: inherit;
+  background: #eef2f6;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 14px;
+  box-shadow: 0 16px 40px -16px rgba(17, 24, 39, 0.35);
+}
+.leaflet-popup-content {
+  margin: 12px 14px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.leaflet-control-zoom a {
+  color: #111827 !important;
+}
+.stop-pin {
+  background: transparent;
+  border: 0;
+}
+/* Live positie van een reisgenoot: avatar met pulserende teal ring. */
+.live-pin {
+  background: transparent;
+  border: 0;
+}
+.live-pin-avatar {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 9999px;
+  border: 3px solid rgb(var(--c-accent-600));
+  background: rgb(var(--c-accent-100));
+  color: rgb(var(--c-accent-800));
+  font-size: 13px;
+  font-weight: 800;
+}
+.live-pin-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.live-pin-pulse {
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  background: rgb(var(--c-accent-500) / 0.35);
+  animation: live-pin-pulse 1.8s ease-out infinite;
+}
+@keyframes live-pin-pulse {
+  0% { transform: scale(0.7); opacity: 0.9; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-pin-pulse { animation: none; opacity: 0.4; }
+}
+
+
+/* ---------- Donkere modus: aanvullingen ---------- */
+/* Teal-knop: in het donker zou de lichte 800-tint met witte tekst onleesbaar zijn. */
+html.dark .btn-primary:hover {
+  background-color: rgb(15 118 110);
+}
+/* Zachte statuskleuren (meldingen, stopsoorten) gedempt op een donkere achtergrond. */
+html.dark .bg-red-50 { background-color: rgb(127 29 29 / 0.28); }
+html.dark .bg-orange-50,
+html.dark .bg-orange-50\/60 { background-color: rgb(124 45 18 / 0.28); }
+html.dark .bg-amber-50 { background-color: rgb(120 53 15 / 0.28); }
+html.dark .bg-violet-50,
+html.dark .bg-violet-50\/60 { background-color: rgb(76 29 149 / 0.3); }
+html.dark .bg-emerald-50,
+html.dark .bg-emerald-50\/60 { background-color: rgb(6 78 59 / 0.32); }
+html.dark .bg-blue-50 { background-color: rgb(30 58 138 / 0.3); }
+html.dark .text-red-600,
+html.dark .text-red-700 { color: rgb(248 113 113); }
+html.dark .text-orange-700 { color: rgb(251 146 60); }
+html.dark .text-violet-700 { color: rgb(167 139 250); }
+html.dark .text-emerald-700 { color: rgb(52 211 153); }
+html.dark .text-blue-700 { color: rgb(96 165 250); }
+html.dark .hover\:bg-red-50:hover { background-color: rgb(127 29 29 / 0.28); }
+html.dark .text-amber-800 { color: rgb(251 191 36); }
+html.dark .hover\:bg-amber-100:hover { background-color: rgb(120 53 15 / 0.45); }
+
+/* Kaarten: tegels donkerder (omgekeerd + teruggedraaide tint), popups in de huisstijl. */
+html.dark .leaflet-container {
+  background: #1b2128;
+}
+html.dark .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9) saturate(0.6);
+}
+html.dark .leaflet-popup-content-wrapper,
+html.dark .leaflet-popup-tip {
+  background: rgb(var(--c-surface));
+  color: rgb(var(--c-ink));
+}
+html.dark .leaflet-control-zoom a,
+html.dark .leaflet-bar a {
+  background: rgb(var(--c-surface)) !important;
+  color: rgb(var(--c-ink)) !important;
+  border-color: rgb(var(--c-line)) !important;
+}
+html.dark .leaflet-control-attribution {
+  background: rgb(var(--c-surface) / 0.8) !important;
+  color: rgb(var(--c-muted));
+}
+html.dark .leaflet-control-attribution a {
+  color: rgb(var(--c-accent-700));
+}
+
+@media print {
+  html.dark {
+    --c-ground: 255 255 255;
+    --c-surface: 255 255 255;
+    --c-ink: 17 24 39;
+    --c-body: 55 65 81;
+    --c-muted: 107 114 128;
+    --c-line: 229 231 235;
+  }
+}

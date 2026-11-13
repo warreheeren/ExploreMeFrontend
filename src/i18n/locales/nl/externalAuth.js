@@ -1,0 +1,20 @@
+export default {
+  continueApple: 'Doorgaan met Apple',
+  or: 'of',
+  signingIn: 'Bezig met inloggen…',
+  failed: 'Inloggen mislukt. Probeer het opnieuw.',
+  unavailable: 'Inloggen met {provider} is nu niet beschikbaar. Probeer het later opnieuw.',
+  linked: {
+    title: 'Gekoppelde accounts',
+    text: 'Log in met Google of Apple in plaats van je wachtwoord.',
+    none: 'Nog geen accounts gekoppeld.',
+    noEmail: 'Geen e-mailadres gedeeld',
+    add: 'Account koppelen',
+    unlink: 'Ontkoppelen',
+    unlinkLabel: '{provider} ontkoppelen',
+    linked: '{provider} is gekoppeld.',
+    unlinked: '{provider} is ontkoppeld.',
+    confirmTitle: '{provider} ontkoppelen?',
+    confirmText: 'Je kunt daarna niet meer met {provider} inloggen tot je het opnieuw koppelt.',
+  },
+}

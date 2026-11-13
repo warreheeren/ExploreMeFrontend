@@ -1,0 +1,19 @@
+{
+  "appId": "app.exploreme",
+  "appName": "ExploreMe",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "useLegacyBridge": true
+  },
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    },
+    "CapacitorShareTarget": {
+      "appGroupId": "group.app.exploreme"
+    }
+  }
+}

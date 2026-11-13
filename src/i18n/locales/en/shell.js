@@ -1,0 +1,34 @@
+export default {
+  quickMenu: 'Quick menu',
+  createSomething: 'Create something new',
+  tabs: {
+    home: 'Home',
+    trips: 'Trips',
+    discover: 'Discover',
+    profile: 'Profile',
+  },
+  create: {
+    title: 'What would you like to share?',
+    post: 'New post',
+    postHint: 'Share a photo or update with your followers',
+    trip: 'New trip',
+    tripHint: 'Plan a route with hotels, food and activities',
+  },
+  search: {
+    placeholder: 'Search travellers, trips or countries',
+    label: 'Search',
+    recent: 'Recent',
+    clear: 'Clear',
+    noResults: 'Nothing found for “{query}”.',
+    minChars: 'Type at least two letters.',
+    users: 'Travellers',
+    trips: 'Trips',
+    countries: 'Countries',
+    tripCount: '{n} trip | {n} trips',
+    kind: {
+      user: 'Traveller',
+      trip: 'Trip',
+      country: 'Country',
+    },
+  },
+}

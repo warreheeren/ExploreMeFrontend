@@ -1,0 +1,22 @@
+export default {
+  routeTitle: 'Trip map',
+  mapAria: 'Map of the trip',
+  by: 'by {name}',
+  viewOnExploreMe: 'View on ExploreMe',
+  newTab: '(opens in a new tab)',
+  goneTitle: 'This trip is no longer shared',
+  goneText: 'The owner revoked the share link or the trip no longer exists.',
+  // Share dialog
+  title: 'Embed on your website',
+  open: 'Embed',
+  text: 'Show the route and stops as an interactive map on your blog or website.',
+  needsLink: 'Embedding uses the public share link. Create one first.',
+  height: 'Height',
+  theme: 'Theme',
+  themes: { auto: 'Automatic', light: 'Light', dark: 'Dark' },
+  preview: 'Preview',
+  code: 'Embed code',
+  copyCode: 'Copy code',
+  codeCopied: 'Embed code copied',
+  revokeNote: 'If you revoke the share link, the embedded map disappears too (within five minutes).',
+}

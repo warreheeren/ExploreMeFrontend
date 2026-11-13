@@ -1,0 +1,52 @@
+# Render Blueprint voor de ExploreMe-frontend als statische site.
+# Zet VITE_API_URL op de URL van de API-service (bv. https://exploreme-api.onrender.com).
+# Optioneel (statistieken, alleen na toestemming van de bezoeker): voeg in het dashboard VITE_ANALYTICS_PROVIDER
+# (plausible | umami) toe, met VITE_ANALYTICS_DOMAIN (Plausible) of VITE_ANALYTICS_WEBSITE_ID (Umami) en eventueel
+# VITE_ANALYTICS_SRC. De CSP-<meta> neemt de origin van het script bij de build vanzelf op.
+services:
+  - type: web
+    name: exploreme-web
+    runtime: static
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    autoDeploy: true
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+      - key: NODE_VERSION
+        value: '22'
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      # Beveiligingsheaders (de CSP zelf staat als <meta> in index.html; frame-ancestors kan alleen als header).
+      # Let op: deze /*-regels gelden ook voor /embed/*, dus de insluitbare kaart werkt niet in een iframe
+      # op een statische Render-site. Gebruik daarvoor de Docker/nginx-image (nginx.conf.template).
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Content-Security-Policy
+        value: frame-ancestors 'none'
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: geolocation=(self), camera=(self), microphone=(), payment=()
+      - path: /theme-init.js
+        name: Cache-Control
+        value: no-cache
+      - path: /sw.js
+        name: Cache-Control
+        value: no-cache
+      - path: /app-sw.js
+        name: Cache-Control
+        value: no-cache
+      - path: /assets/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable

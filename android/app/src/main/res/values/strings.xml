@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ExploreMe</string>
+    <string name="title_activity_main">ExploreMe</string>
+    <string name="package_name">app.exploreme</string>
+    <string name="custom_url_scheme">app.exploreme</string>
+    <!-- Kanaal van de vaste melding tijdens live locatie op de achtergrond (@capacitor-community/background-geolocation). -->
+    <string name="capacitor_background_geolocation_notification_channel_name">Live location</string>
+</resources>

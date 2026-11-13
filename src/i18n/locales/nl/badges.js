@@ -1,0 +1,23 @@
+export default {
+  title: 'Badges',
+  earned: '{n} van {total}',
+  level: 'niveau {n} van {max}',
+  notEarned: 'nog niet behaald',
+  maxed: 'Hoogste niveau behaald 🎉',
+  progress: '{value} van {target} voor het volgende niveau',
+  unavailable: 'Badges zijn nu niet beschikbaar.',
+  stats: { countries: 'Landen', continents: 'Continenten', km: 'Kilometer' },
+  items: {
+    explorer: { name: 'Wereldreiziger', description: 'Bezoek steeds meer landen: 1, 3, 5, 10 en 20.' },
+    continents: { name: 'Continenthopper', description: 'Reis op 2, 3 of 5 continenten.' },
+    trips: { name: 'Op pad', description: 'Maak reizen of reis mee: 1, 5, 10 en 25 reizen.' },
+    distance: { name: 'Kilometervreter', description: 'Afstand tussen je stops: 1.000 km tot een keer rond de aarde.' },
+    nights: { name: 'Nachtvlinder', description: 'Nachten onderweg: 7, 30 en 100.' },
+    foodie: { name: 'Fijnproever', description: 'Beoordeel foodspots: 5, 15 en 40.' },
+    companion: { name: 'Reisgenoot', description: 'Reizen samen met anderen: 1, 3 en 10.' },
+    storyteller: { name: 'Verteller', description: 'Dagboekupdates: 1, 10 en 30.' },
+    photographer: { name: 'Fotograaf', description: "Posts met foto's: 5, 25 en 100." },
+    planner: { name: 'Vroege vogel', description: 'Reizen minstens 60 dagen vooraf gepland: 1, 3 en 5.' },
+    green: { name: 'Groene reiziger', description: 'Afgelopen reizen van minstens 300 km, waarvan 80% met trein, bus, fiets of te voet: 1, 3 en 10.' },
+  },
+}

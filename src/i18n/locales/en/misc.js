@@ -1,0 +1,30 @@
+export default {
+  notFound: {
+    title: 'This page does not exist',
+    text: 'Maybe the link is outdated or there is a typo. Even the best travellers get lost sometimes.',
+    toTimeline: 'Go to your timeline',
+    toLogin: 'Go to log in',
+  },
+  post: {
+    back: 'Back',
+    goneTitle: 'This post no longer exists',
+    goneText: 'It may have been deleted by its author.',
+    toTimeline: 'Go to your timeline',
+  },
+  invites: {
+    title: 'Invitations',
+    subtitle: 'Trips you have been invited to as a travel companion.',
+    emptyTitle: 'No pending invitations',
+    emptyText: 'When someone invites you to a trip, it will appear here.',
+    discoverTrips: 'Discover trips',
+    invitesYou: 'invites you',
+    busy: 'Working…',
+    accept: 'Accept',
+    decline: 'Decline',
+    loadFailed: 'Could not load invitations.',
+    joined: 'You are travelling with {name}',
+    viewTrip: 'View trip',
+    declined: 'Invitation declined',
+    failed: 'That did not work.',
+  },
+}

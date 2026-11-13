@@ -1,0 +1,124 @@
+// Kernflows met de seed-accounts: inloggen/uitloggen, tijdlijn, reis-tabs, reis maken, bericht sturen,
+// taal/thema wisselen en de publieke deelpagina.
+// test/expect uit de fixtures: die zetten een cookiekeuze vooraf, zodat de banner geen knoppen bedekt.
+import { expect, test } from './fixtures.js'
+import { API_URL, accountFor, escapeRegExp, firstTripOf, login, t } from './helpers.js'
+
+test('inloggen en weer uitloggen', async ({ page }, testInfo) => {
+  const { user } = accountFor(testInfo)
+  await login(page, user)
+
+  await page.goto('/settings?tab=account')
+  await page.getByRole('button', { name: t.nlSettings.logout.title }).last().click()
+  await expect(page).toHaveURL(/\/login/)
+
+  // Uitgelogd: beschermde pagina's sturen terug naar de login.
+  await page.goto('/trips')
+  await expect(page).toHaveURL(/\/login\?redirect=/)
+})
+
+test('verkeerd wachtwoord toont een foutmelding', async ({ page }) => {
+  await page.goto('/login')
+  await page.locator('#login-user').fill('emma.reist')
+  await page.locator('#login-pass').fill('fout-wachtwoord')
+  await page.locator('form button[type="submit"]').click()
+  await expect(page.getByRole('alert')).toBeVisible()
+  await expect(page).toHaveURL(/\/login/)
+})
+
+test('de tijdlijn toont posts', async ({ page }, testInfo) => {
+  await login(page, accountFor(testInfo).user)
+  await expect(page.locator('main article').first()).toBeVisible()
+  expect(await page.locator('main article').count()).toBeGreaterThan(0)
+})
+
+test('reis-tabs wisselen en zijn deelbaar via ?tab=', async ({ page, request }, testInfo) => {
+  const { user } = accountFor(testInfo)
+  const { trip } = await firstTripOf(request, user)
+  await login(page, user)
+
+  await page.goto(`/trips/${trip.id}`)
+  await expect(page.getByRole('heading', { level: 1, name: trip.title })).toBeVisible()
+  const itinerary = page.getByRole('tab', { name: new RegExp(escapeRegExp(t.nlTrip.tabs.itinerary)) })
+  await itinerary.click()
+  await expect(page).toHaveURL(/[?&]tab=dagschema/)
+  await expect(itinerary).toHaveAttribute('aria-selected', 'true')
+
+  // Rechtstreeks openen met ?tab= selecteert meteen het juiste tabblad.
+  await page.goto(`/trips/${trip.id}?tab=posts`)
+  await expect(page.getByRole('tab', { name: new RegExp(escapeRegExp(t.nlTrip.tabs.posts)) })).toHaveAttribute('aria-selected', 'true')
+})
+
+test('een reis met een stop aanmaken', async ({ page }, testInfo) => {
+  await login(page, accountFor(testInfo).user)
+  const title = `E2E-reis ${Date.now()}`
+
+  await page.goto('/trips/new')
+  await page.locator('#trip-title').fill(title)
+  await page.locator('#trip-country').fill('Slovenië')
+  await page.locator('#trip-start').fill('2027-05-01')
+  await page.locator('#trip-end').fill('2027-05-05')
+
+  // Klik op de kaart voegt een stop toe; de naam vullen we zelf in (reverse geocoding kan traag zijn).
+  const map = page.locator('[role="application"]').first()
+  await map.scrollIntoViewIfNeeded()
+  await map.click()
+  const stopName = page.locator('[id^="stop-name-"]').first()
+  await expect(stopName).toBeVisible()
+  await stopName.fill('E2E-stop Bled')
+
+  await page.getByRole('button', { name: t.nlEditor.saveTrip }).click()
+  await expect(page).toHaveURL(/\/trips\/[0-9a-f-]{36}$/)
+  await expect(page.getByRole('heading', { level: 1, name: title })).toBeVisible()
+  await expect(page.getByText('E2E-stop Bled').first()).toBeVisible()
+})
+
+test('een privébericht sturen', async ({ page }, testInfo) => {
+  const { user, peer } = accountFor(testInfo)
+  await login(page, user)
+  const text = `Hallo vanuit de e2e-test ${Date.now()}`
+
+  await page.goto(`/messages/${peer}`)
+  const input = page.locator('#msg-input')
+  await input.fill(text)
+  await input.press('Enter')
+
+  // exact: de gesprekkenlijst toont het ook als voorbeeld ("Jij: …").
+  await expect(page.getByText(text, { exact: true })).toBeVisible()
+  await expect(page.getByText(t.nlMessages.notSent)).toHaveCount(0)
+  await expect(input).toHaveValue('')
+})
+
+test('taal naar Engels en thema naar donker in de instellingen', async ({ page }, testInfo) => {
+  await login(page, accountFor(testInfo).user)
+  await page.goto('/settings?tab=weergave')
+
+  await page.getByRole('radio', { name: 'English' }).click()
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+  await expect(page.getByRole('heading', { level: 1, name: t.enSettings.title })).toBeVisible()
+
+  await page.getByRole('radio', { name: t.enSettings.display.themes.dark }).click()
+  await expect(page.locator('html')).toHaveClass(/(^|\s)dark(\s|$)/)
+
+  // Blijft bewaard na herladen (per toestel).
+  await page.reload()
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+  await expect(page.locator('html')).toHaveClass(/(^|\s)dark(\s|$)/)
+
+  // Terugzetten: de taalkeuze wordt ook op de server bewaard (voor e-mails).
+  await page.getByRole('radio', { name: 'Nederlands' }).click()
+  await expect(page.locator('html')).toHaveAttribute('lang', 'nl')
+})
+
+test('de publieke deelpagina werkt zonder login', async ({ page, request }, testInfo) => {
+  const { user } = accountFor(testInfo)
+  const { token, trip } = await firstTripOf(request, user)
+  const res = await request.post(`${API_URL}/api/trips/${trip.id}/share`, { headers: { Authorization: `Bearer ${token}` } })
+  expect(res.ok()).toBeTruthy()
+  const { shareToken } = await res.json()
+
+  // Elke test krijgt een verse browsercontext: er is geen sessie, de pagina mag niet naar /login sturen.
+  await page.goto(`/share/${shareToken}`)
+  await expect(page).toHaveURL(new RegExp(`/share/${shareToken}$`))
+  await expect(page.getByRole('heading', { level: 1, name: trip.title })).toBeVisible()
+})

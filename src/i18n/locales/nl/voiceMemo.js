@@ -1,0 +1,21 @@
+export default {
+  label: 'Spraakmemo',
+  record: 'Opnemen',
+  stop: 'Stop',
+  uploadFile: 'Bestand kiezen',
+  remove: 'Spraakmemo verwijderen',
+  level: 'Geluidsniveau',
+  uploading: 'Spraakmemo uploaden… {pct}%',
+  play: 'Afspelen',
+  pause: 'Pauzeren',
+  position: 'Positie in de spraakmemo',
+  offline: 'Spraakmemo\'s opnemen kan alleen met internetverbinding.',
+  offlinePlayback: 'Spraakmemo – alleen online te beluisteren',
+  errors: {
+    unsupported: 'Je browser kan geen audio opnemen. Kies een bestand.',
+    denied: 'Geen toegang tot de microfoon. Sta het toe in de instellingen van je browser.',
+    failed: 'Opnemen lukte niet. Probeer het opnieuw.',
+    tooLarge: 'Een spraakmemo mag maximaal 5 MB zijn.',
+    tooLong: 'Een spraakmemo mag maximaal 3 minuten duren.',
+  },
+}

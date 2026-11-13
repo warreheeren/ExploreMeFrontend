@@ -1,0 +1,23 @@
+// Verblijven checken (fase 3): StaysCard, deeplinks Booking.com / Google Hotels, prijsindicaties.
+export default {
+  title: 'Verblijven checken',
+  intro: 'Zoek je overnachtingen op met je data en {adults} al ingevuld.',
+  introCopied: 'Je reis is gekopieerd met nieuwe data. Check of je verblijven nog vrij zijn en wat ze nu kosten.',
+  adultsLabel: 'Volwassenen',
+  adults: 'geen volwassenen | 1 volwassene | {n} volwassenen',
+  nights: '{n} nachten | 1 nacht | {n} nachten',
+  booking: 'Booking.com',
+  googleHotels: 'Google Hotels',
+  openAria: '{name} zoeken op {site}',
+  priceFrom: 'vanaf {price} / nacht',
+  via: 'via {provider}',
+  current: 'In je budget: {price} / nacht',
+  useInBudget: 'Gebruik in budget',
+  usedInBudget: 'Prijs per nacht van {name} staat nu in het budget.',
+  useFailed: 'Prijs bijwerken lukte niet.',
+  noDates: 'Vul check-in/out in om te zoeken',
+  addDates: 'Data invullen',
+  loading: 'Verblijven laden…',
+  copiedToast: 'Reis gekopieerd – check je verblijven',
+  affiliateNote: 'Links naar boekingssites kunnen affiliate-links zijn.',
+}

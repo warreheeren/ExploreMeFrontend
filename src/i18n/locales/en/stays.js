@@ -1,0 +1,23 @@
+// Check stays (phase 3): StaysCard, Booking.com / Google Hotels deep links, price indications.
+export default {
+  title: 'Check your stays',
+  intro: 'Look up your accommodation with your dates and {adults} already filled in.',
+  introCopied: 'Your trip was copied with new dates. Check whether your stays are still available and what they cost now.',
+  adultsLabel: 'Adults',
+  adults: 'no adults | 1 adult | {n} adults',
+  nights: '{n} nights | 1 night | {n} nights',
+  booking: 'Booking.com',
+  googleHotels: 'Google Hotels',
+  openAria: 'Search {name} on {site}',
+  priceFrom: 'from {price} / night',
+  via: 'via {provider}',
+  current: 'In your budget: {price} / night',
+  useInBudget: 'Use in budget',
+  usedInBudget: 'The price per night of {name} is now in the budget.',
+  useFailed: 'Could not update the price.',
+  noDates: 'Fill in check-in/out to search',
+  addDates: 'Add dates',
+  loading: 'Loading stays…',
+  copiedToast: 'Trip copied – check your stays',
+  affiliateNote: 'Links to booking sites may be affiliate links.',
+}

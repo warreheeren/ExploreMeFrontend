@@ -1,0 +1,23 @@
+export default {
+  title: 'Badges',
+  earned: '{n} of {total}',
+  level: 'level {n} of {max}',
+  notEarned: 'not earned yet',
+  maxed: 'Highest level reached 🎉',
+  progress: '{value} of {target} for the next level',
+  unavailable: 'Badges are unavailable right now.',
+  stats: { countries: 'Countries', continents: 'Continents', km: 'Kilometres' },
+  items: {
+    explorer: { name: 'Globetrotter', description: 'Visit more and more countries: 1, 3, 5, 10 and 20.' },
+    continents: { name: 'Continent hopper', description: 'Travel on 2, 3 or 5 continents.' },
+    trips: { name: 'On the road', description: 'Create or join trips: 1, 5, 10 and 25 trips.' },
+    distance: { name: 'Road warrior', description: 'Distance between your stops: 1,000 km up to once around the world.' },
+    nights: { name: 'Night owl', description: 'Nights on the road: 7, 30 and 100.' },
+    foodie: { name: 'Foodie', description: 'Rate food spots: 5, 15 and 40.' },
+    companion: { name: 'Travel buddy', description: 'Trips together with others: 1, 3 and 10.' },
+    storyteller: { name: 'Storyteller', description: 'Journal entries: 1, 10 and 30.' },
+    photographer: { name: 'Photographer', description: 'Posts with photos: 5, 25 and 100.' },
+    planner: { name: 'Early bird', description: 'Trips planned at least 60 days ahead: 1, 3 and 5.' },
+    green: { name: 'Green traveller', description: 'Finished trips of at least 300 km, 80% of it by train, bus, bike or on foot: 1, 3 and 10.' },
+  },
+}

@@ -1,0 +1,36 @@
+export default {
+  skip: 'Overslaan',
+  progress: 'Voortgang',
+  steps: {
+    profile: 'Profiel',
+    follow: 'Reizigers volgen',
+    done: 'Klaar',
+  },
+  profile: {
+    title: 'Welkom bij ExploreMe, {name}',
+    intro: 'Een foto en een korte bio helpen andere reizigers je te herkennen.',
+    otherPhoto: 'Andere foto',
+    choosePhoto: 'Foto kiezen',
+    uploading: 'Uploaden…',
+    displayName: 'Weergavenaam',
+    bio: 'Bio',
+    bioPlaceholder: 'Waar droom je van? Backpacker, foodie, bergbeklimmer…',
+    saving: 'Opslaan…',
+    next: 'Volgende',
+    saveFailed: 'Opslaan mislukt.',
+    fallbackName: 'reiziger',
+  },
+  follow: {
+    title: 'Volg een paar reizigers',
+    intro: 'Hun posts en reizen verschijnen in je tijdlijn. Je kunt later altijd meer mensen volgen.',
+    back: 'Terug',
+    continue: 'Verder',
+    continueCount: 'Verder ({n} gevolgd)',
+  },
+  done: {
+    title: 'Je bent klaar om te vertrekken',
+    intro: 'Plan je eerste reis met stops op de kaart, of kijk eerst rond in je tijdlijn.',
+    planTrip: 'Plan je eerste reis',
+    toTimeline: 'Naar je tijdlijn',
+  },
+}

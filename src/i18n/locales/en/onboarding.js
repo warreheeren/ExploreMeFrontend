@@ -1,0 +1,36 @@
+export default {
+  skip: 'Skip',
+  progress: 'Progress',
+  steps: {
+    profile: 'Profile',
+    follow: 'Follow travellers',
+    done: 'Done',
+  },
+  profile: {
+    title: 'Welcome to ExploreMe, {name}',
+    intro: 'A photo and a short bio help other travellers recognise you.',
+    otherPhoto: 'Change photo',
+    choosePhoto: 'Choose photo',
+    uploading: 'Uploading…',
+    displayName: 'Display name',
+    bio: 'Bio',
+    bioPlaceholder: 'What do you dream of? Backpacker, foodie, mountaineer…',
+    saving: 'Saving…',
+    next: 'Next',
+    saveFailed: 'Saving failed.',
+    fallbackName: 'traveller',
+  },
+  follow: {
+    title: 'Follow a few travellers',
+    intro: 'Their posts and trips will appear in your timeline. You can always follow more people later.',
+    back: 'Back',
+    continue: 'Continue',
+    continueCount: 'Continue ({n} followed)',
+  },
+  done: {
+    title: 'You are ready to set off',
+    intro: 'Plan your first trip with stops on the map, or have a look around your timeline first.',
+    planTrip: 'Plan your first trip',
+    toTimeline: 'Go to your timeline',
+  },
+}

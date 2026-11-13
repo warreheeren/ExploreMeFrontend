@@ -1,0 +1,30 @@
+export default {
+  notFound: {
+    title: 'Deze pagina bestaat niet',
+    text: 'Misschien is de link verouderd of heb je een typfout gemaakt. Zelfs de beste reizigers verdwalen weleens.',
+    toTimeline: 'Naar je tijdlijn',
+    toLogin: 'Naar inloggen',
+  },
+  post: {
+    back: 'Terug',
+    goneTitle: 'Deze post bestaat niet meer',
+    goneText: 'Misschien is hij verwijderd door de maker.',
+    toTimeline: 'Naar je tijdlijn',
+  },
+  invites: {
+    title: 'Uitnodigingen',
+    subtitle: 'Reizen waarvoor je als reisgenoot bent uitgenodigd.',
+    emptyTitle: 'Geen openstaande uitnodigingen',
+    emptyText: 'Als iemand je uitnodigt voor een reis, verschijnt die hier.',
+    discoverTrips: 'Ontdek reizen',
+    invitesYou: 'nodigt je uit',
+    busy: 'Bezig…',
+    accept: 'Accepteren',
+    decline: 'Weigeren',
+    loadFailed: 'Uitnodigingen laden mislukt.',
+    joined: 'Je reist mee met {name}',
+    viewTrip: 'Bekijk reis',
+    declined: 'Uitnodiging geweigerd',
+    failed: 'Dat lukte niet.',
+  },
+}

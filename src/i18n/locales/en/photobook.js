@@ -1,0 +1,22 @@
+export default {
+  open: 'Photo book',
+  routeTitle: 'Photo book',
+  documentTitle: 'Photo book',
+  backToTrip: 'Back to trip',
+  format: 'Paper size',
+  formats: {
+    'a4-landscape': 'A4 landscape',
+    'a5-portrait': 'A5 portrait',
+  },
+  perPage: 'Photos per page',
+  includeText: 'Journal text',
+  savePdf: 'Save as PDF',
+  preparing: 'Loading photos and map…',
+  loadFailed: 'The photo book could not be loaded.',
+  emptyHint: 'No photos or journal yet: add photos to the album or write in the journal, and every day gets its own page.',
+  mapTitle: 'The route',
+  stops: '{n} stop | {n} stops',
+  day: 'Day {n}',
+  closingEyebrow: 'Your trip in numbers',
+  madeWith: 'Made with ExploreMe',
+}

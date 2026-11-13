@@ -1,0 +1,21 @@
+export default {
+  label: 'Voice memo',
+  record: 'Record',
+  stop: 'Stop',
+  uploadFile: 'Choose file',
+  remove: 'Remove voice memo',
+  level: 'Sound level',
+  uploading: 'Uploading voice memo… {pct}%',
+  play: 'Play',
+  pause: 'Pause',
+  position: 'Position in the voice memo',
+  offline: 'You can only record voice memos while online.',
+  offlinePlayback: 'Voice memo – available online only',
+  errors: {
+    unsupported: 'Your browser cannot record audio. Choose a file instead.',
+    denied: 'No access to the microphone. Allow it in your browser settings.',
+    failed: 'Recording failed. Please try again.',
+    tooLarge: 'A voice memo can be at most 5 MB.',
+    tooLong: 'A voice memo can be at most 3 minutes long.',
+  },
+}

@@ -1,0 +1,20 @@
+export default {
+  continueApple: 'Continue with Apple',
+  or: 'or',
+  signingIn: 'Signing in…',
+  failed: 'Sign-in failed. Please try again.',
+  unavailable: 'Signing in with {provider} is not available right now. Please try again later.',
+  linked: {
+    title: 'Linked accounts',
+    text: 'Sign in with Google or Apple instead of your password.',
+    none: 'No accounts linked yet.',
+    noEmail: 'No email address shared',
+    add: 'Link an account',
+    unlink: 'Unlink',
+    unlinkLabel: 'Unlink {provider}',
+    linked: '{provider} is linked.',
+    unlinked: '{provider} is unlinked.',
+    confirmTitle: 'Unlink {provider}?',
+    confirmText: "You won't be able to sign in with {provider} until you link it again.",
+  },
+}

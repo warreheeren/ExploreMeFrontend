@@ -1,0 +1,22 @@
+export default {
+  routeTitle: 'Reiskaart',
+  mapAria: 'Kaart van de reis',
+  by: 'door {name}',
+  viewOnExploreMe: 'Bekijk op ExploreMe',
+  newTab: '(opent in een nieuw tabblad)',
+  goneTitle: 'Deze reis is niet meer gedeeld',
+  goneText: 'De eigenaar heeft de deel-link ingetrokken of de reis bestaat niet meer.',
+  // Deeldialoog
+  title: 'Insluiten op je website',
+  open: 'Insluiten',
+  text: 'Toon de route en de stops als interactieve kaart op je blog of website.',
+  needsLink: 'Insluiten werkt via de openbare deel-link. Maak er eerst een aan.',
+  height: 'Hoogte',
+  theme: 'Thema',
+  themes: { auto: 'Automatisch', light: 'Licht', dark: 'Donker' },
+  preview: 'Voorbeeld',
+  code: 'Insluitcode',
+  copyCode: 'Code kopiëren',
+  codeCopied: 'Insluitcode gekopieerd',
+  revokeNote: 'Trek je de deel-link in, dan verdwijnt ook de ingesloten kaart (binnen vijf minuten).',
+}
