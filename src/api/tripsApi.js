@@ -130,8 +130,9 @@ export async function updateExpense(tripId, expenseId, payload) {
   return data
 }
 
-export async function deleteExpense(tripId, expenseId) {
-  await http.delete(`/trips/${tripId}/expenses/${expenseId}`)
+/** `version` (uit de uitgave): de API weigert met 409 als een reisgenoot de uitgave intussen wijzigde. */
+export async function deleteExpense(tripId, expenseId, version) {
+  await http.delete(`/trips/${tripId}/expenses/${expenseId}`, { params: { version: version ?? undefined } })
 }
 
 // ---------- checklist ----------

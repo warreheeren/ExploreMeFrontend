@@ -454,13 +454,21 @@ async function save() {
     participantUserNames: form.items.length ? form.rest : null,
   }
   try {
-    if (editing.value) await tripsApi.updateExpense(props.tripId, editing.value.id, payload)
+    // version: de API weigert (409) als een reisgenoot deze uitgave intussen wijzigde.
+    if (editing.value) await tripsApi.updateExpense(props.tripId, editing.value.id, { ...payload, version: editing.value.version })
     else await tripsApi.addExpense(props.tripId, payload)
     formOpen.value = false
     toast.success(editing.value ? t('budget.updated') : t('budget.added'))
     await load()
   } catch (e) {
-    formError.value = errorMessage(e)
+    if (e?.response?.status === 409) {
+      // Verouderd formulier: sluiten en de actuele uitgaven tonen, anders blijft elke nieuwe poging botsen.
+      formOpen.value = false
+      toast.error(errorMessage(e))
+      await load()
+    } else {
+      formError.value = errorMessage(e)
+    }
   } finally {
     saving.value = false
   }
@@ -470,11 +478,12 @@ async function remove(expense) {
   const ok = await confirm({ title: t('budget.deleteTitle'), message: t('budget.deleteText', { title: expense.title, amount: formatCurrency(expense.amount, expense.currency) }), confirmLabel: t('common.delete'), variant: 'danger' })
   if (!ok) return
   try {
-    await tripsApi.deleteExpense(props.tripId, expense.id)
+    await tripsApi.deleteExpense(props.tripId, expense.id, expense.version)
     toast.success(t('budget.deleted'))
     await load()
   } catch (e) {
     toast.error(errorMessage(e))
+    if (e?.response?.status === 409) await load()
   }
 }
 
