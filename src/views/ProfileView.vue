@@ -48,7 +48,7 @@
               </div>
             </div>
 
-            <h1 class="mt-3 flex items-center gap-2 text-2xl font-extrabold tracking-tight text-ink">
+            <h1 class="title-display mt-3 flex items-center gap-2 text-[28px] leading-tight sm:text-[32px]">
               {{ profile.displayName }}
               <Icon v-if="profile.isPrivate" name="lock" :size="18" class="text-muted" :aria-label="$t('profile.privateAccount')" />
             </h1>

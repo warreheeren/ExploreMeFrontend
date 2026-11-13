@@ -9,8 +9,10 @@ import nlMessages from '../src/i18n/locales/nl/messages.js'
 import nlLanding from '../src/i18n/locales/nl/landing.js'
 import nlShell from '../src/i18n/locales/nl/shell.js'
 import nlNav from '../src/i18n/locales/nl/nav.js'
+import nlBudget from '../src/i18n/locales/nl/budget.js'
+import nlCommon from '../src/i18n/locales/nl/common.js'
 
-export const t = { nlSettings, enSettings, nlTrip, nlEditor, nlMessages, nlLanding, nlShell, nlNav }
+export const t = { nlSettings, enSettings, nlTrip, nlEditor, nlMessages, nlLanding, nlShell, nlNav, nlBudget, nlCommon }
 
 /** Seed-wachtwoord van alle demo-accounts (DataSeeder). */
 export const PASSWORD = 'Password123!'

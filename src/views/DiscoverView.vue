@@ -24,7 +24,11 @@
 
     <!-- Filters -->
     <section class="card card-pad mb-4 space-y-3" :aria-label="$t('discover.filters')">
-      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,200px)_150px_150px_auto]">
+      <button type="button" class="btn btn-secondary w-full justify-between sm:hidden" :aria-expanded="filtersOpen" aria-controls="disc-filters" @click="filtersOpen = !filtersOpen">
+        <span class="inline-flex items-center gap-2"><Icon name="search" :size="16" /> {{ $t('discover.filters') }}<span v-if="activeFieldCount" class="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-ink px-1 text-[10px] font-bold text-surface">{{ activeFieldCount }}</span></span>
+        <Icon name="chevron-down" :size="16" class="transition-transform" :class="filtersOpen ? 'rotate-180' : ''" />
+      </button>
+      <div id="disc-filters" class="grid-cols-1 gap-3 sm:grid sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,200px)_150px_150px_auto]" :class="filtersOpen ? 'grid' : 'hidden'">
         <div class="relative">
           <label for="disc-country" class="sr-only">{{ $t('discover.country') }}</label>
           <Icon name="globe" :size="16" class="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
@@ -141,6 +145,9 @@ function filtersToQuery(f) {
 
 const filters = reactive(filtersFromQuery(route.query))
 
+// Mobiel: de invoervelden zijn ingeklapt tot je ze nodig hebt (of er al één gevuld is, bv. via een link).
+const activeFieldCount = computed(() => [filters.country, filters.userName, filters.from, filters.to].filter(Boolean).length)
+const filtersOpen = ref(activeFieldCount.value > 0)
 const hasFilters = computed(() => !!(filters.country || filters.userName || filters.from || filters.to || filters.types.length))
 
 let map = null

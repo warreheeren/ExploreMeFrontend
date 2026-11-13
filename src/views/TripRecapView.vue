@@ -50,7 +50,7 @@
               <div class="absolute inset-0 opacity-60"><CoverImage :src="recap.coverImageUrl" :seed="recap.tripId" eager /></div>
               <div class="relative">
                 <p class="eyebrow text-surface/70">{{ recap.isFinished ? $t('tripExtras.recap.wrapped') : $t('tripExtras.recap.soFar') }}</p>
-                <h1 class="mt-2 text-4xl font-extrabold leading-tight tracking-tight text-balance">{{ recap.title }}</h1>
+                <h1 class="mt-2 font-display text-4xl font-semibold leading-tight tracking-tight text-balance">{{ recap.title }}</h1>
                 <p class="mt-2 text-sm font-semibold opacity-80">{{ formatDateRange(recap.startDate, recap.endDate) }}<template v-if="recap.country"> · {{ recap.country }}</template></p>
               </div>
             </template>

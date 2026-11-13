@@ -155,3 +155,37 @@ test('mobiel: het Meer-scherm geeft toegang tot uitnodigingen en instellingen', 
   await sheet.getByRole('link', { name: t.nlNav.invites }).click()
   await expect(page).toHaveURL(/\/invites$/)
 })
+
+test('budget: een uitgave die een reisgenoot intussen wijzigde wordt niet stil overschreven', async ({ page, request }, testInfo) => {
+  const { user } = accountFor(testInfo)
+  const { token, trip } = await firstTripOf(request, user)
+  const headers = { Authorization: `Bearer ${token}` }
+  const title = `E2E-uitgave ${testInfo.project.name} ${Date.now()}`
+  const created = await request.post(`${API_URL}/api/trips/${trip.id}/expenses`, {
+    headers,
+    data: { title, amount: 10, category: 'Other', date: new Date().toISOString(), currency: 'EUR' },
+  })
+  expect(created.ok(), `uitgave aanmaken: ${created.status()} ${await created.text()}`).toBeTruthy()
+  const expense = await created.json()
+
+  await login(page, user)
+  await page.goto(`/trips/${trip.id}?tab=budget`)
+  await page.getByRole('button', { name: t.nlBudget.editExpense.replace('{title}', title) }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog).toBeVisible()
+
+  // Intussen wijzigt "iemand anders" dezelfde uitgave via de API: de versie loopt op.
+  const other = await request.put(`${API_URL}/api/trips/${trip.id}/expenses/${expense.id}`, {
+    headers,
+    data: { title: `${title} (gewijzigd)`, amount: 12, category: 'Other', date: expense.date, currency: 'EUR', version: expense.version },
+  })
+  expect(other.ok(), `tussentijdse wijziging: ${other.status()}`).toBeTruthy()
+
+  // Opslaan met de verouderde versie: het formulier sluit en de actuele uitgave staat in de lijst.
+  await dialog.getByRole('button', { name: t.nlCommon.save }).click()
+  await expect(dialog).toBeHidden()
+  await expect(page.getByText(`${title} (gewijzigd)`).first()).toBeVisible()
+
+  // Opruimen (zonder versie = altijd toegestaan).
+  await request.delete(`${API_URL}/api/trips/${trip.id}/expenses/${expense.id}`, { headers })
+})

@@ -169,6 +169,8 @@ export default defineConfig({
     },
   },
   server: {
+    // Testuitvoer en de native build niet volgen: Playwright schrijft het rapport terwijl de dev-server draait (EBUSY op Windows).
+    watch: { ignored: ['**/playwright-report/**', '**/test-results/**', '**/android/**', '**/dist/**'] },
     proxy: {
       '/api': { target: apiTarget, changeOrigin: true, secure: false },
       '/uploads': { target: apiTarget, changeOrigin: true, secure: false },

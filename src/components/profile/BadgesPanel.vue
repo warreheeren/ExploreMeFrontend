@@ -12,7 +12,7 @@
         <div class="rounded-xl bg-gray-50 p-2"><dt class="text-[11px] font-semibold text-muted">{{ $t('badges.stats.continents') }}</dt><dd class="text-base font-bold tabular-nums text-ink">{{ stats.continents }}</dd></div>
         <div class="rounded-xl bg-gray-50 p-2"><dt class="text-[11px] font-semibold text-muted">{{ $t('badges.stats.km') }}</dt><dd class="text-base font-bold tabular-nums text-ink">{{ Math.round(stats.distanceKm).toLocaleString(localeTag()) }}</dd></div>
       </dl>
-      <ul class="grid grid-cols-4 gap-2 px-4 pb-4 sm:grid-cols-5 lg:grid-cols-4">
+      <ul class="grid grid-cols-3 gap-x-2 gap-y-3 px-4 pb-4 sm:grid-cols-5 lg:grid-cols-3">
         <li v-for="b in stats.badges" :key="b.key" class="min-w-0">
           <button
             type="button"
@@ -28,7 +28,7 @@
               <Icon :name="b.icon" :size="20" />
               <span v-if="b.earned && b.maxLevel > 1" class="absolute -bottom-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-accent-700 px-1 text-[10px] font-bold text-white">{{ b.level }}</span>
             </span>
-            <span class="mt-1 line-clamp-2 w-full hyphens-auto text-[10px] font-bold leading-tight text-body [overflow-wrap:anywhere]">{{ $t(`badges.items.${b.key}.name`) }}</span>
+            <span class="mt-1.5 line-clamp-2 w-full hyphens-auto break-words text-[10px] font-semibold leading-tight text-body">{{ $t(`badges.items.${b.key}.name`) }}</span>
           </button>
         </li>
       </ul>

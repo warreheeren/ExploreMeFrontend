@@ -14,7 +14,7 @@
     <article v-else class="mx-auto max-w-3xl bg-surface px-6 py-10 text-ink sm:my-6 sm:rounded-2xl sm:border sm:border-line sm:px-10 print:my-0 print:border-0 print:p-0">
       <header class="border-b-2 border-ink pb-5">
         <p class="text-xs font-bold uppercase tracking-[0.12em] text-accent-700">{{ trip.country }}</p>
-        <h1 class="mt-1 text-3xl font-extrabold tracking-tight">{{ trip.title }}</h1>
+        <h1 class="mt-1 font-display text-3xl font-semibold tracking-tight">{{ trip.title }}</h1>
         <p class="mt-1 text-sm font-semibold text-body">{{ formatDateRange(trip.startDate, trip.endDate) }} · {{ $t('sharedTrip.print.days', days) }} · {{ $t('sharedTrip.print.by', { name: trip.displayName }) }}</p>
         <p v-if="trip.description" class="mt-3 whitespace-pre-line text-sm leading-relaxed text-body">{{ trip.description }}</p>
       </header>

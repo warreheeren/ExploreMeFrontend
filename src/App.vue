@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-ground">
+  <div class="flex min-h-screen flex-col bg-ground">
     <OfflineBanner v-if="layout !== 'print' && layout !== 'embed'" />
     <template v-if="layout === 'app' && auth.isAuthenticated">
       <!-- Pull-to-refresh indicator (mobiel) -->
@@ -18,7 +18,7 @@
       <AppHeader :hidden="headerHidden" @logout="logout" @home-click="onHomeClick" />
       <EmailVerifyBanner />
 
-      <main id="main" class="mx-auto w-full max-w-content px-4 pb-28 pt-5 sm:px-6 md:pb-14 md:pt-8">
+      <main id="main" class="mx-auto w-full max-w-content flex-1 px-4 pb-28 pt-5 sm:px-6 md:pb-14 md:pt-8">
         <RouterView />
       </main>
 

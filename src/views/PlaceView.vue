@@ -15,7 +15,7 @@
         <div class="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,380px)]">
           <div class="p-5 sm:p-6">
             <span class="chip" :class="meta.chip"><Icon :name="meta.icon" :size="13" /> {{ meta.singular }}</span>
-            <h1 class="mt-3 text-2xl font-extrabold tracking-tight text-ink sm:text-[28px]">{{ place.name }}</h1>
+            <h1 class="title-display mt-3 text-[28px] leading-tight sm:text-[34px]">{{ place.name }}</h1>
             <p v-if="place.address" class="mt-1 flex items-start gap-1.5 text-sm text-muted"><Icon name="pin" :size="15" class="mt-0.5" /> {{ place.address }}</p>
             <p v-if="place.cuisineTypes.length || place.typicalPriceLevel" class="mt-2 flex flex-wrap items-center gap-2 text-sm text-body">
               <span v-for="c in place.cuisineTypes" :key="c" class="chip chip-muted h-6">{{ c }}</span>

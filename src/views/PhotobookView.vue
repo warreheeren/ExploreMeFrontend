@@ -47,7 +47,7 @@
         <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
         <div class="absolute inset-x-0 bottom-0 p-[6%]">
           <p v-if="trip.country" class="text-xs font-bold uppercase tracking-[0.18em] opacity-85">{{ trip.country }}</p>
-          <h1 class="mt-2 text-4xl font-extrabold leading-tight tracking-tight text-balance">{{ trip.title }}</h1>
+          <h1 class="mt-2 font-display text-4xl font-semibold leading-tight tracking-tight text-balance">{{ trip.title }}</h1>
           <p class="mt-2 text-sm font-semibold opacity-90">{{ formatDateRange(trip.startDate, trip.endDate) }}</p>
           <p v-if="crewNames" class="mt-1 text-sm opacity-80">{{ crewNames }}</p>
         </div>

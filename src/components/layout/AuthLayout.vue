@@ -5,7 +5,7 @@
 
       <div class="relative z-10 max-w-md">
         <p class="eyebrow mb-3 text-[#99F6E4]">{{ $t('auth.layout.eyebrow') }}</p>
-        <h2 class="text-4xl font-extrabold leading-[1.1] tracking-tight text-balance">{{ $t('auth.layout.headline') }}</h2>
+        <h2 class="font-display text-[42px] font-semibold leading-[1.08] tracking-tight text-balance">{{ $t('auth.layout.headline') }}</h2>
         <p class="mt-4 text-[15px] leading-relaxed text-white/80">{{ $t('auth.layout.intro') }}</p>
       </div>
 

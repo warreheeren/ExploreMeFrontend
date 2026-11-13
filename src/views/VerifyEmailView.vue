@@ -5,7 +5,7 @@
         <Spinner v-if="state === 'busy'" />
         <Icon v-else :name="state === 'ok' ? 'check' : 'alert'" :size="26" />
       </div>
-      <h1 class="text-2xl font-extrabold tracking-tight text-ink">
+      <h1 class="title-display text-[26px] leading-tight">
         {{ state === 'ok' ? $t('account.verify.okTitle') : state === 'error' ? $t('account.verify.errorTitle') : $t('account.verify.busyTitle') }}
       </h1>
       <p class="mx-auto mt-2 max-w-sm text-sm text-muted">
