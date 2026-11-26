@@ -17,6 +17,12 @@ export async function stripMetadata() {
   return data
 }
 
+/** Hoe de API deze verbinding ziet → { clientIp, remoteIp, forwardLimit, clientIpHeader, headers } */
+export async function getConnection() {
+  const { data } = await http.get('/admin/connection')
+  return data
+}
+
 /** status: 'open' | 'reviewed' | 'dismissed' | 'all' */
 export async function getReports(status = 'open', take = 100) {
   const { data } = await http.get('/admin/reports', { params: { status, take } })

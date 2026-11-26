@@ -85,7 +85,7 @@
           <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label for="set-new" class="label">{{ $t('settings.account.new') }}</label>
-              <input id="set-new" v-model="pw.next" type="password" class="input" autocomplete="new-password" minlength="6" />
+              <input id="set-new" v-model="pw.next" type="password" class="input" autocomplete="new-password" minlength="8" />
             </div>
             <div>
               <label for="set-new2" class="label">{{ $t('settings.account.repeat') }}</label>
@@ -94,7 +94,7 @@
           </div>
           <p v-if="pw.confirm && pw.confirm !== pw.next" class="text-xs font-semibold text-red-600">{{ $t('settings.account.mismatch') }}</p>
           <div class="flex justify-end">
-            <button type="submit" class="btn btn-secondary" :disabled="savingPw || !pw.current || pw.next.length < 6 || pw.next !== pw.confirm">{{ savingPw ? $t('settings.account.changing') : $t('settings.account.change') }}</button>
+            <button type="submit" class="btn btn-secondary" :disabled="savingPw || !pw.current || pw.next.length < 8 || pw.next !== pw.confirm">{{ savingPw ? $t('settings.account.changing') : $t('settings.account.change') }}</button>
           </div>
         </form>
       </section>

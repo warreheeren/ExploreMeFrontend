@@ -157,6 +157,21 @@
           <button type="button" class="btn btn-secondary btn-sm" :disabled="maintenanceBusy" @click="runStrip"><Icon name="shield" :size="14" /> {{ $t('admin.maintenance.stripRun') }}</button>
           <p v-if="stripResult" class="text-xs font-semibold text-accent-700">{{ $t('admin.maintenance.stripDone', stripResult) }}</p>
         </div>
+        <div class="card card-pad space-y-3 md:col-span-2">
+          <h2 class="card-title">{{ $t('admin.maintenance.ipTitle') }}</h2>
+          <p class="text-sm text-muted">{{ $t('admin.maintenance.ipText') }}</p>
+          <button type="button" class="btn btn-secondary btn-sm" :disabled="maintenanceBusy" @click="runConnection"><Icon name="shield" :size="14" /> {{ $t('admin.maintenance.ipRun') }}</button>
+          <dl v-if="connection" class="grid grid-cols-1 gap-x-6 gap-y-1 text-sm sm:grid-cols-[auto,1fr]">
+            <dt class="font-semibold text-ink">{{ $t('admin.maintenance.ipSeen') }}</dt>
+            <dd class="break-all font-mono text-body">{{ connection.clientIp }}</dd>
+            <dt class="text-muted">{{ $t('admin.maintenance.ipSetting') }}</dt>
+            <dd class="break-all font-mono text-muted">Proxy:ForwardLimit={{ connection.forwardLimit }}, Proxy:ClientIpHeader={{ connection.clientIpHeader || '–' }}</dd>
+            <template v-for="(value, name) in connection.headers" :key="name">
+              <dt class="text-muted">{{ headerLabel(name) }}</dt>
+              <dd class="break-all font-mono text-muted">{{ value || '–' }}</dd>
+            </template>
+          </dl>
+        </div>
       </section>
     </template>
 
@@ -253,6 +268,12 @@ async function runMaintenance(action, target) {
 }
 
 const runBackup = () => runMaintenance(adminApi.createBackup, backupResult)
+
+// Welk IP-adres de API voor deze verbinding ziet (voor de inloglimiet per IP achter een proxy).
+const connection = ref(null)
+const runConnection = () => runMaintenance(adminApi.getConnection, connection)
+const HEADER_LABELS = { xForwardedFor: 'X-Forwarded-For', xOriginalFor: 'X-Original-For', cfConnectingIp: 'CF-Connecting-IP', trueClientIp: 'True-Client-IP' }
+const headerLabel = (name) => HEADER_LABELS[name] || name
 
 async function runStrip() {
   const ok = await confirm({ title: t('admin.maintenance.stripTitle'), message: t('admin.maintenance.stripConfirm'), confirmLabel: t('admin.maintenance.stripRun') })

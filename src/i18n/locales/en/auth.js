@@ -9,7 +9,7 @@ export default {
   repeatPassword: 'Repeat password',
   showPassword: 'Show password',
   hidePassword: 'Hide password',
-  passwordMin: 'At least 6 characters.',
+  passwordMin: 'At least 8 characters.',
   passwordMismatch: 'The passwords do not match.',
   backToLogin: 'Back to log in',
   toLogin: 'Go to log in',

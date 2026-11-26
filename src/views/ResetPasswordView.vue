@@ -13,7 +13,7 @@
       <form class="mt-6 space-y-4" @submit.prevent="onSubmit">
         <div>
           <label for="rp-pass" class="label">{{ $t('auth.reset.newPassword') }}</label>
-          <input id="rp-pass" v-model="password" type="password" class="input" autocomplete="new-password" minlength="6" required autofocus />
+          <input id="rp-pass" v-model="password" type="password" class="input" autocomplete="new-password" minlength="8" required autofocus />
           <p class="hint">{{ $t('auth.passwordMin') }}</p>
         </div>
         <div>
@@ -24,7 +24,7 @@
         <p v-if="error" class="rounded-xl bg-red-50 px-3.5 py-2.5 text-sm font-semibold text-red-700" role="alert">
           {{ error }} <RouterLink to="/forgot-password" class="underline">{{ $t('auth.reset.requestNewLink') }}</RouterLink>.
         </p>
-        <button type="submit" class="btn btn-dark btn-lg w-full" :disabled="loading || password.length < 6 || password !== confirmPassword">
+        <button type="submit" class="btn btn-dark btn-lg w-full" :disabled="loading || password.length < 8 || password !== confirmPassword">
           {{ loading ? $t('auth.reset.submitting') : $t('auth.reset.submit') }}
         </button>
       </form>

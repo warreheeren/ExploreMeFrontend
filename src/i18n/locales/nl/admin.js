@@ -7,6 +7,11 @@ export default {
   toTimeline: 'Naar je tijdlijn',
   tabs: { reports: 'Meldingen', hidden: 'Verborgen', users: 'Gebruikers', log: 'Logboek', maintenance: 'Onderhoud' },
   maintenance: {
+    ipTitle: 'IP-adres van bezoekers',
+    ipText: 'Inloggen, registreren en meedoen als gast zijn begrensd per IP-adres. Achter een proxy (zoals bij Render) moet de API het echte adres van de bezoeker zien, anders delen alle bezoekers één limiet. Controleer hier of het getoonde adres jouw eigen publieke IP-adres is.',
+    ipRun: 'Controleren',
+    ipSeen: 'De API ziet jou als',
+    ipSetting: 'Instelling',
     backupTitle: 'Database-back-up',
     backupText: 'Er wordt elke nacht automatisch een back-up gemaakt (de laatste 14 blijven bewaard). Maak hier meteen een extra kopie, bv. vóór een update.',
     backupRun: 'Back-up maken',

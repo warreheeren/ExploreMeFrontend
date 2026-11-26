@@ -9,7 +9,7 @@ export default {
   repeatPassword: 'Herhaal wachtwoord',
   showPassword: 'Wachtwoord tonen',
   hidePassword: 'Wachtwoord verbergen',
-  passwordMin: 'Minstens 6 tekens.',
+  passwordMin: 'Minstens 8 tekens.',
   passwordMismatch: 'De wachtwoorden zijn niet gelijk.',
   backToLogin: 'Terug naar inloggen',
   toLogin: 'Naar inloggen',

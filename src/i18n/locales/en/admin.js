@@ -7,6 +7,11 @@ export default {
   toTimeline: 'Go to your timeline',
   tabs: { reports: 'Reports', hidden: 'Hidden', users: 'Users', log: 'Log', maintenance: 'Maintenance' },
   maintenance: {
+    ipTitle: 'Visitor IP address',
+    ipText: 'Signing in, registering and joining as a guest are limited per IP address. Behind a proxy (such as on Render) the API must see the visitor\'s real address, otherwise all visitors share one limit. Check here that the address shown is your own public IP address.',
+    ipRun: 'Check',
+    ipSeen: 'The API sees you as',
+    ipSetting: 'Setting',
     backupTitle: 'Database backup',
     backupText: 'A backup is created automatically every night (the latest 14 are kept). Create an extra copy right now, e.g. before an update.',
     backupRun: 'Create backup',

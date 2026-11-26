@@ -19,8 +19,9 @@ export function resolveMediaUrl(url) {
  */
 export function thumbUrl(url, width = 640) {
   if (!url) return url
-  const upload = url.match(/^(.*\/uploads\/)(?!thumb\/)([^/?#]+)$/)
-  if (upload) return `${upload[1]}thumb/${upload[2]}`
+  // De handtekening in de querystring (?exp=…&sig=…) blijft staan: origineel en thumbnail delen dezelfde.
+  const upload = url.match(/^(.*\/uploads\/)(?!thumb\/)([^/?#]+)(\?[^#]*)?$/)
+  if (upload) return `${upload[1]}thumb/${upload[2]}${upload[3] || ''}`
   if (/^https:\/\/images\.unsplash\.com\//.test(url)) {
     try {
       const u = new URL(url)

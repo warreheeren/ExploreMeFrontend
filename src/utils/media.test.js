@@ -22,4 +22,11 @@ describe('thumbUrl', () => {
     expect(thumbUrl('/uploads/abc.jpg')).toBe('/uploads/thumb/abc.jpg')
     expect(thumbUrl('/uploads/thumb/abc.jpg')).toBe('/uploads/thumb/abc.jpg')
   })
+
+  it('behoudt de handtekening van een ondertekende upload', () => {
+    expect(thumbUrl('/uploads/abc.jpg?exp=1800000000&sig=AbC-_123')).toBe('/uploads/thumb/abc.jpg?exp=1800000000&sig=AbC-_123')
+    expect(thumbUrl('https://api.example.com/uploads/abc.jpg?exp=1&sig=x')).toBe('https://api.example.com/uploads/thumb/abc.jpg?exp=1&sig=x')
+    // audio en video hebben geen thumbnail
+    expect(thumbUrl('/uploads/video/abc.mp4?exp=1&sig=x')).toBe('/uploads/video/abc.mp4?exp=1&sig=x')
+  })
 })

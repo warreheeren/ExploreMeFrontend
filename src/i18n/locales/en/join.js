@@ -49,7 +49,7 @@ export default {
       tripEnded: 'The trip is over. Save your photos and memories.',
     },
     userNameHint: '3 to 30 characters: letters, numbers, dot, underscore or hyphen.',
-    passwordHint: 'At least 6 characters.',
+    passwordHint: 'At least 8 characters.',
     email: 'Email address (optional)',
     emailHint: 'Only to recover your password if you forget it.',
     later: 'Later',

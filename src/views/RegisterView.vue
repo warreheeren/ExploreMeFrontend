@@ -26,7 +26,7 @@
       <div>
         <label for="reg-pass" class="label">{{ $t('auth.password') }}</label>
         <div class="relative">
-          <input id="reg-pass" v-model="form.password" :type="showPassword ? 'text' : 'password'" class="input pr-11" autocomplete="new-password" minlength="6" required aria-describedby="reg-pass-hint" />
+          <input id="reg-pass" v-model="form.password" :type="showPassword ? 'text' : 'password'" class="input pr-11" autocomplete="new-password" minlength="8" required aria-describedby="reg-pass-hint" />
           <button type="button" class="absolute right-1 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-muted hover:text-ink" :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')" @click="showPassword = !showPassword">
             <Icon :name="showPassword ? 'eye-off' : 'eye'" :size="18" />
           </button>

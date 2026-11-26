@@ -49,7 +49,7 @@ export default {
       tripEnded: 'De reis zit erop. Bewaar je foto\'s en herinneringen.',
     },
     userNameHint: '3 tot 30 tekens: letters, cijfers, punt, underscore of koppelteken.',
-    passwordHint: 'Minstens 6 tekens.',
+    passwordHint: 'Minstens 8 tekens.',
     email: 'E-mailadres (optioneel)',
     emailHint: 'Alleen om je wachtwoord te herstellen als je het vergeet.',
     later: 'Later',
