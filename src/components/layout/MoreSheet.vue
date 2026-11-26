@@ -11,6 +11,10 @@
     </RouterLink>
 
     <nav class="safe-bottom py-1.5" :aria-label="$t('shell.more.title')">
+      <button v-if="auth.isGuest" type="button" class="menu-item px-5 py-3 font-bold text-accent-700" @click="close(); openGuestSave()">
+        <Icon name="lock" :size="19" />
+        <span class="flex-1">{{ $t('join.save.menu') }}</span>
+      </button>
       <RouterLink v-for="item in items" :key="item.to" :to="item.to" class="menu-item px-5 py-3" @click="close">
         <Icon :name="item.icon" :size="19" />
         <span class="flex-1">{{ item.label }}</span>
@@ -38,6 +42,7 @@ import { features } from '@/config/features'
 import { useAuthStore } from '@/stores/auth'
 import { useCountsStore } from '@/stores/counts'
 import { usePreferencesStore } from '@/stores/preferences'
+import { openGuestSave } from '@/composables/useGuestSave'
 
 defineProps({ modelValue: { type: Boolean, default: false } })
 const emit = defineEmits(['update:modelValue', 'logout'])
@@ -49,12 +54,12 @@ const prefs = usePreferencesStore()
 
 const items = computed(() => [
   { to: '/invites', icon: 'mail', label: t('nav.invites'), badge: counts.invites },
-  { to: '/lists', icon: 'list', label: t('nav.lists') },
+  features.lists && { to: '/lists', icon: 'list', label: t('nav.lists') },
   features.buddies && { to: '/buddies', icon: 'users', label: t('buddies.title') },
   features.challenges && { to: '/challenges', icon: 'flag', label: t('challenges.title') },
   features.postcards && { to: '/postcards', icon: 'send', label: t('postcards.title') },
   auth.isAdmin && { to: '/admin', icon: 'shield', label: t('nav.admin') },
-  { to: '/settings', icon: 'settings', label: t('nav.settings'), badge: auth.pendingFollowRequests },
+  { to: '/settings', icon: 'settings', label: t('nav.settings'), badge: features.follows ? auth.pendingFollowRequests : 0 },
 ].filter(Boolean))
 
 function close() {

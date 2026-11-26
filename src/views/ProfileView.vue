@@ -8,7 +8,7 @@
       </div>
 
       <EmptyState v-else-if="!profile" icon="user" :title="$t('profile.notFoundTitle')" :text="$t('profile.notFoundText')">
-        <RouterLink to="/" class="btn btn-secondary btn-sm">{{ $t('profile.toTimeline') }}</RouterLink>
+        <RouterLink to="/" class="btn btn-secondary btn-sm">{{ features.feed ? $t('profile.toTimeline') : $t('myTrips.toMyTrips') }}</RouterLink>
       </EmptyState>
 
       <template v-else>
@@ -26,6 +26,7 @@
                 </template>
                 <template v-else>
                   <button
+                    v-if="features.follows"
                     type="button"
                     class="btn btn-sm"
                     :class="profile.isFollowedByMe || profile.followRequestedByMe ? 'btn-secondary' : 'btn-dark'"
@@ -50,15 +51,15 @@
 
             <h1 class="title-display mt-3 flex items-center gap-2 text-[28px] leading-tight sm:text-[32px]">
               {{ profile.displayName }}
-              <Icon v-if="profile.isPrivate" name="lock" :size="18" class="text-muted" :aria-label="$t('profile.privateAccount')" />
+              <Icon v-if="profile.isPrivate && features.follows" name="lock" :size="18" class="text-muted" :aria-label="$t('profile.privateAccount')" />
             </h1>
             <p class="text-sm font-semibold text-muted">
               @{{ profile.userName }}<template v-if="profile.createdAt"> · {{ $t('profile.memberSince', { date: memberSince }) }}</template>
-              <template v-if="profile.followsMe && !isOwnProfile"> · <span class="text-accent-700">{{ $t('profile.followsYou') }}</span></template>
+              <template v-if="features.follows && profile.followsMe && !isOwnProfile"> · <span class="text-accent-700">{{ $t('profile.followsYou') }}</span></template>
             </p>
             <p v-if="profile.bio" class="mt-2 max-w-2xl whitespace-pre-line text-[15px] leading-relaxed text-body">{{ profile.bio }}</p>
 
-            <div class="mt-5 grid grid-cols-5 divide-x divide-line rounded-2xl border border-line" role="group" :aria-label="$t('profile.travelStats')">
+            <div class="mt-5 grid divide-x divide-line rounded-2xl border border-line" :class="STATS_GRID_COLS[stats.length]" role="group" :aria-label="$t('profile.travelStats')">
               <component
                 :is="s.action ? 'button' : 'div'"
                 v-for="s in stats"
@@ -79,7 +80,8 @@
         <section v-if="!profile.canViewContent" class="card card-pad flex flex-col items-center gap-2 py-10 text-center">
           <span class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-muted"><Icon name="lock" :size="22" /></span>
           <p class="text-sm font-bold text-ink">{{ $t('profile.privateTitle') }}</p>
-          <p class="max-w-sm text-sm text-muted">{{ profile.followRequestedByMe ? $t('profile.privateRequested') : $t('profile.privateText', { name: profile.displayName }) }}</p>
+          <!-- Zonder volgen is er geen verzoek te doen: reisgenoten zien elkaar vanzelf (PrivacyService in de API). -->
+          <p class="max-w-sm text-sm text-muted">{{ !features.follows ? $t('profile.privateNoFollow', { name: profile.displayName }) : profile.followRequestedByMe ? $t('profile.privateRequested') : $t('profile.privateText', { name: profile.displayName }) }}</p>
         </section>
 
         <template v-else>
@@ -91,12 +93,12 @@
           </div>
 
           <!-- Badges, wereldkaart en challenges (mobiel) -->
-          <BadgesPanel class="lg:hidden" :user-name="profile.userName" />
-          <WorldMap class="lg:hidden" :user-name="profile.userName" :display-name="profile.displayName" :is-own="isOwnProfile" @loaded="onCountriesLoaded" />
+          <BadgesPanel v-if="features.badges" class="lg:hidden" :user-name="profile.userName" />
+          <WorldMap v-if="features.worldMap" class="lg:hidden" :user-name="profile.userName" :display-name="profile.displayName" :is-own="isOwnProfile" @loaded="onCountriesLoaded" />
           <CompletedChallenges v-if="features.challenges" class="lg:hidden" :user-name="profile.userName" :is-own="isOwnProfile" />
 
-          <!-- Tabs -->
-          <nav class="tabs" role="tablist" :aria-label="$t('profile.contentTabs')">
+          <!-- Tabs (één tab = geen tabbalk nodig) -->
+          <nav v-if="tabs.length > 1" class="tabs" role="tablist" :aria-label="$t('profile.contentTabs')">
             <button v-for="t in tabs" :key="t.id" type="button" role="tab" class="tab" :class="tab === t.id ? 'tab-active' : ''" :aria-selected="tab === t.id" @click="setTab(t.id)">
               <Icon :name="t.icon" :size="16" /> {{ t.label }}
             </button>
@@ -106,7 +108,7 @@
           <div v-if="tab === 'posts'" class="space-y-5">
             <div v-if="postsLoading" class="space-y-4"><div v-for="i in 2" :key="i" class="skeleton h-64 rounded-2xl" /></div>
             <EmptyState v-else-if="!posts.length" icon="image" :title="isOwnProfile ? $t('profile.noPostsOwn') : $t('profile.noPosts')" :text="isOwnProfile ? $t('profile.noPostsOwnText') : ''">
-              <RouterLink v-if="isOwnProfile" to="/" class="btn btn-secondary btn-sm">{{ $t('profile.toTimeline') }}</RouterLink>
+              <RouterLink v-if="isOwnProfile" to="/" class="btn btn-secondary btn-sm">{{ features.feed ? $t('profile.toTimeline') : $t('myTrips.toMyTrips') }}</RouterLink>
             </EmptyState>
             <PostCard v-for="p in posts" :key="p.id" :post="p" @deleted="onPostDeleted" />
             <div v-if="posts.length" ref="postsSentinel" class="py-3 text-center text-sm font-semibold text-muted">
@@ -130,7 +132,7 @@
           <template v-else>
             <div v-if="tabLoading" class="grid grid-cols-1 gap-5 sm:grid-cols-2"><div v-for="i in 2" :key="i" class="skeleton h-72 rounded-2xl" /></div>
             <EmptyState v-else-if="!tabTrips.length" :icon="emptyCopy.icon" :title="emptyCopy.title" :text="emptyCopy.text">
-              <RouterLink v-if="tab === 'reizen' && isOwnProfile" to="/trips/new" class="btn btn-primary btn-sm">{{ $t('profile.planTrip') }}</RouterLink>
+              <RouterLink v-if="tab === 'reizen' && isOwnProfile" to="/trips/start" class="btn btn-primary btn-sm">{{ $t('profile.planTrip') }}</RouterLink>
             </EmptyState>
             <div v-else class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <TripCard v-for="t in tabTrips" :key="t.id" :trip="t" :show-author="tab !== 'reizen'" show-countdown />
@@ -143,8 +145,8 @@
     <!-- Zijbalk -->
     <aside v-if="profile && profile.canViewContent" class="hidden lg:block" :aria-label="$t('profile.travelStats')">
       <div class="sticky top-24 space-y-5">
-        <WorldMap :user-name="profile.userName" :display-name="profile.displayName" :is-own="isOwnProfile" @loaded="onCountriesLoaded" />
-        <BadgesPanel :user-name="profile.userName" />
+        <WorldMap v-if="features.worldMap" :user-name="profile.userName" :display-name="profile.displayName" :is-own="isOwnProfile" @loaded="onCountriesLoaded" />
+        <BadgesPanel v-if="features.badges" :user-name="profile.userName" />
         <CompletedChallenges v-if="features.challenges" :user-name="profile.userName" :is-own="isOwnProfile" />
         <section v-if="countries.length" class="card">
           <h3 class="card-title px-4 pb-2 pt-4">{{ $t('profile.tripsPerCountry') }}</h3>
@@ -165,7 +167,7 @@
     </aside>
 
     <ReportDialog v-if="profile && !isOwnProfile" v-model="reportOpen" target-type="user" :target-id="profile.id" />
-    <FollowListModal v-if="profile" v-model="followListOpen" :user-name="profile.userName" :mode="followListMode" :is-own="isOwnProfile" @changed="reloadProfile" />
+    <FollowListModal v-if="profile && features.follows" v-model="followListOpen" :user-name="profile.userName" :mode="followListMode" :is-own="isOwnProfile" @changed="reloadProfile" />
   </div>
 </template>
 
@@ -230,20 +232,24 @@ const isOwnProfile = computed(() => auth.userName === username.value)
 const postFeed = useInfiniteList((take, before) => userApi.getUserPosts(username.value, take, before), { pageSize: 10 })
 const { items: posts, loading: postsLoading, loadingMore: postsLoadingMore, done: postsDone, sentinel: postsSentinel } = postFeed
 
+// Sociale tabs staan achter hun vlag; "opgeslagen" zijn gebookmarkte reizen van anderen (discover).
 const tabs = computed(() => [
-  { id: 'posts', label: t('profile.tabs.posts'), icon: 'image' },
+  features.feed && { id: 'posts', label: t('profile.tabs.posts'), icon: 'image' },
   { id: 'reizen', label: t('profile.tabs.trips'), icon: 'map' },
-  { id: 'lijsten', label: t('profile.tabs.lists'), icon: 'list' },
-  ...(isOwnProfile.value ? [{ id: 'opgeslagen', label: t('profile.tabs.saved'), icon: 'bookmark' }, { id: 'samen', label: t('profile.tabs.together'), icon: 'users' }] : []),
-])
+  features.lists && { id: 'lijsten', label: t('profile.tabs.lists'), icon: 'list' },
+  ...(isOwnProfile.value ? [features.discover && { id: 'opgeslagen', label: t('profile.tabs.saved'), icon: 'bookmark' }, { id: 'samen', label: t('profile.tabs.together'), icon: 'users' }] : []),
+].filter(Boolean))
+
+// Standaard de eerste zichtbare tab (posts met de feed aan, anders reizen); die krijgt geen ?tab in de URL.
+const defaultTab = computed(() => tabs.value[0].id)
 
 const tab = computed(() => {
-  const requested = typeof route.query.tab === 'string' ? route.query.tab : 'posts'
-  return tabs.value.some((x) => x.id === requested) ? requested : 'posts'
+  const requested = typeof route.query.tab === 'string' ? route.query.tab : defaultTab.value
+  return tabs.value.some((x) => x.id === requested) ? requested : defaultTab.value
 })
 
 function setTab(id) {
-  router.replace({ query: id === 'posts' ? {} : { tab: id } })
+  router.replace({ query: id === defaultTab.value ? {} : { tab: id } })
 }
 
 const tabTrips = computed(() => {
@@ -284,14 +290,17 @@ function openFollowList(mode) {
   followListOpen.value = true
 }
 
+// Tailwind ziet alleen volledige klassenamen: daarom een vaste tabel per aantal statistieken.
+const STATS_GRID_COLS = { 1: 'grid-cols-1', 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-4', 5: 'grid-cols-5' }
+
 const stats = computed(() => [
-  { key: 'posts', label: t('profile.stats.posts'), value: profile.value?.postsCount ?? 0 },
+  features.feed && { key: 'posts', label: t('profile.stats.posts'), value: profile.value?.postsCount ?? 0 },
   { key: 'trips', label: t('profile.stats.trips'), value: loadingTrips.value ? profile.value?.tripsCount ?? 0 : (profile.value?.canViewContent ? trips.value.length : profile.value?.tripsCount ?? 0) },
   // Zelfde definitie als badges en wereldkaart (server): reizen waaraan je deelneemt + zelf gemarkeerde landen.
   { key: 'countries', label: t('profile.stats.countries'), value: countryStats.value?.visitedCount ?? countries.value.length },
-  { key: 'followers', label: t('profile.stats.followers'), value: profile.value?.followerCount ?? 0, action: profile.value?.canViewContent ? () => openFollowList('followers') : null },
-  { key: 'following', label: t('profile.stats.following'), value: profile.value?.followingCount ?? 0, action: profile.value?.canViewContent ? () => openFollowList('following') : null },
-])
+  features.follows && { key: 'followers', label: t('profile.stats.followers'), value: profile.value?.followerCount ?? 0, action: profile.value?.canViewContent ? () => openFollowList('followers') : null },
+  features.follows && { key: 'following', label: t('profile.stats.following'), value: profile.value?.followingCount ?? 0, action: profile.value?.canViewContent ? () => openFollowList('following') : null },
+].filter(Boolean))
 
 const memberSince = computed(() => parseTimestamp(profile.value?.createdAt)?.toLocaleDateString(localeTag(), { month: 'long', year: 'numeric' }) || '')
 
@@ -323,7 +332,8 @@ async function load() {
     return
   }
 
-  postFeed.reload()
+  // Zonder feed is er geen posts-tab: de posts ook niet ophalen.
+  if (features.feed) postFeed.reload()
   try {
     trips.value = await tripsApi.getUserTrips(username.value, 100)
   } catch {

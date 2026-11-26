@@ -1,0 +1,48 @@
+export default {
+  invite: 'Uitnodigen',
+  waitingBadge: '{n} ding wacht op jou | {n} dingen wachten op jou',
+  waiting: {
+    title: 'Wacht op jou',
+    none: 'Er wacht niets op jou.',
+  },
+  steps: {
+    title: 'Waar staat de groep?',
+    doneAria: 'klaar',
+    group: { label: 'Groep', alone: 'Nog alleen jij', action: 'Deel de link' },
+    dates: { label: 'Datum', action: 'Vul in wanneer je kunt', unsure: 'Nog niet zeker? Prik een datum' },
+    route: { label: 'Route', none: 'Nog geen stops', stops: '{n} stop | {n} stops', action: 'Stops toevoegen' },
+    settle: { label: 'Verrekenen', later: 'Na de reis', open: 'Er staat nog iets open', done: 'Alles is verrekend', action: 'Verrekenen' },
+  },
+  activity: {
+    title: 'Laatste activiteit',
+    empty: 'Nog niets gebeurd. Voeg een stop toe of start een stemming.',
+    someone: 'Iemand',
+    expense: '{name} betaalde {text} · {amount}',
+    settlement: '{name} betaalde {text} {amount} terug',
+    paymentRequest: '{name} vraagt {amount} per persoon voor {text}',
+    poll: '{name} startte een stemming: {text}',
+    taskDone: 'Taak afgevinkt: {text}',
+    journal: '{name} schreef in het dagboek',
+    journalTitled: '{name} schreef in het dagboek: {text}',
+    joined: '{name} doet mee met de reis',
+    photos: '{name} voegde {n} foto toe | {name} voegde {n} foto\'s toe',
+    other: '{name} deed een aanpassing',
+  },
+  countdown: {
+    aria: 'Aftellen',
+    upcoming: 'dag tot vertrek | dagen tot vertrek',
+    active: 'dag van de reis',
+    past: 'De reis zit erop',
+  },
+  money: {
+    title: 'Geld',
+    spent: '{amount} uitgegeven',
+    openRequests: '{n} betaalverzoek open | {n} betaalverzoeken open',
+    open: 'Naar het budget',
+  },
+  chat: {
+    title: 'Groepschat',
+    empty: 'Nog geen berichten. Zeg hallo tegen je groep.',
+    open: 'Open de chat',
+  },
+}

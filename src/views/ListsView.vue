@@ -12,7 +12,7 @@
     </EmptyState>
     <EmptyState v-else-if="!lists.length" icon="list" :title="$t('lists.emptyTitle')" :text="$t('lists.emptyText')">
       <button type="button" class="btn btn-primary btn-sm" @click="formOpen = true">{{ $t('lists.new') }}</button>
-      <RouterLink to="/discover" class="btn btn-secondary btn-sm">{{ $t('lists.toDiscover') }}</RouterLink>
+      <RouterLink v-if="features.discover" to="/discover" class="btn btn-secondary btn-sm">{{ $t('lists.toDiscover') }}</RouterLink>
     </EmptyState>
     <div v-else class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       <ListCard v-for="l in lists" :key="l.id" :list="l" />
@@ -32,6 +32,7 @@ import ListCard from '@/components/lists/ListCard.vue'
 import ListFormDialog from '@/components/lists/ListFormDialog.vue'
 import * as listsApi from '@/api/listsApi'
 import { errorMessage } from '@/utils/errors'
+import { features } from '@/config/features'
 
 const router = useRouter()
 const lists = ref([])

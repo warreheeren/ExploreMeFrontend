@@ -4,7 +4,6 @@ export default {
   register: 'Account maken',
   forgotPassword: 'Wachtwoord vergeten',
   resetPassword: 'Nieuw wachtwoord',
-  verifyEmail: 'E-mailadres bevestigen',
   welcome: 'Welkom',
   settings: 'Instellingen',
   post: 'Post',

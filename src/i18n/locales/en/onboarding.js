@@ -31,6 +31,9 @@ export default {
     title: 'You are ready to set off',
     intro: 'Plan your first trip with stops on the map, or have a look around your timeline first.',
     planTrip: 'Plan your first trip',
+    introGroup: 'Create a trip and share the link with your group. Everyone joins without an account.',
+    startGroupTrip: 'Start your first group trip',
+    gotLink: 'Did someone send you a link? Open that link again: you will join with this account.',
     toTimeline: 'Go to your timeline',
   },
 }

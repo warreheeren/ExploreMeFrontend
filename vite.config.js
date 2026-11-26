@@ -80,7 +80,7 @@ export default defineConfig({
       manifest: {
         name: 'ExploreMe',
         short_name: 'ExploreMe',
-        description: 'Deel je reizen, plan samen met reisgenoten en ontdek de wereld door de ogen van anderen.',
+        description: "Eén plek voor je groepsreis: plannen, stemmen, kosten delen en foto's bewaren. Je vrienden doen mee zonder account.",
         lang: 'nl',
         start_url: '/',
         scope: '/',

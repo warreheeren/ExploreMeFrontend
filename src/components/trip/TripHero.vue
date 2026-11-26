@@ -18,7 +18,8 @@
       <p v-if="trip.copiedFrom" class="mt-1.5 inline-flex flex-wrap items-center gap-1 text-sm text-muted">
         <Icon name="copy" :size="14" />
         <i18n-t keypath="tripExtras.copy.basedOn" tag="span">
-          <template #trip><RouterLink :to="`/trips/${trip.copiedFrom.id}`" class="link">{{ trip.copiedFrom.title }}</RouterLink></template>
+          <!-- De bron is meestal een publieke reis van iemand anders: alleen linken met ontdekken aan. -->
+          <template #trip><RouterLink v-if="features.discover" :to="`/trips/${trip.copiedFrom.id}`" class="link">{{ trip.copiedFrom.title }}</RouterLink><span v-else class="font-bold text-ink">{{ trip.copiedFrom.title }}</span></template>
           <template #name><RouterLink :to="`/u/${trip.copiedFrom.ownerUserName}`" class="font-bold text-ink hover:underline">{{ trip.copiedFrom.ownerDisplayName }}</RouterLink></template>
         </i18n-t>
       </p>
@@ -58,6 +59,7 @@ import TranslateButton from '../TranslateButton.vue'
 import { useAuthStore } from '@/stores/auth'
 import { countdownLabel, daysUntil, formatDateRange, tripDays } from '@/utils/date'
 import { flagFor } from '@/utils/countries'
+import { features } from '@/config/features'
 
 const props = defineProps({
   trip: { type: Object, required: true },

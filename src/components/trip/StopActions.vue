@@ -1,9 +1,10 @@
 <template>
   <div class="flex shrink-0 flex-col items-center gap-0.5 pt-2 sm:opacity-0 sm:transition sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
-    <RouterLink :to="`/places/${stop.id}`" class="btn-icon btn-icon-sm" :aria-label="$t('planning.stop.viewPlace', { name: stop.name })" :title="$t('places.view')">
+    <!-- Plekpagina's horen bij ontdekken, bewaren in een lijst bij lijsten. -->
+    <RouterLink v-if="features.discover" :to="`/places/${stop.id}`" class="btn-icon btn-icon-sm" :aria-label="$t('planning.stop.viewPlace', { name: stop.name })" :title="$t('places.view')">
       <Icon name="compass" :size="16" />
     </RouterLink>
-    <button type="button" class="btn-icon btn-icon-sm" :aria-label="$t('planning.stop.save', { name: stop.name })" :title="$t('places.save')" @click="$emit('save', stop)">
+    <button v-if="features.lists" type="button" class="btn-icon btn-icon-sm" :aria-label="$t('planning.stop.save', { name: stop.name })" :title="$t('places.save')" @click="$emit('save', stop)">
       <Icon name="bookmark" :size="16" />
     </button>
     <RouterLink

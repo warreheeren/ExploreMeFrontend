@@ -26,10 +26,11 @@
         </template>
         <StarRating v-if="trip.avgFoodRating" :model-value="trip.avgFoodRating.value" size="xs" show-value />
         <span class="ml-auto inline-flex shrink-0 items-center gap-3 text-xs font-bold text-muted">
-          <span class="inline-flex items-center gap-1" :class="trip.likedByMe ? 'text-accent-700' : ''">
+          <!-- Likes en publieke reacties horen bij ontdekken (features.discover). -->
+          <span v-if="features.discover" class="inline-flex items-center gap-1" :class="trip.likedByMe ? 'text-accent-700' : ''">
             <Icon name="heart" :size="14" :filled="trip.likedByMe" /> {{ trip.likeCount || 0 }}
           </span>
-          <span v-if="trip.commentCount" class="inline-flex items-center gap-1">
+          <span v-if="features.discover && trip.commentCount" class="inline-flex items-center gap-1">
             <Icon name="chat" :size="14" /> {{ trip.commentCount }}
           </span>
           <span v-if="trip.copyCount" class="inline-flex items-center gap-1" :title="$t('tripExtras.copy.count', { n: trip.copyCount })">
@@ -52,6 +53,7 @@ import { countdownLabel, daysUntil, formatDateRange, tripDays } from '@/utils/da
 import { countsFromSummary, STOP_TYPE_ORDER } from '@/utils/stopTypes'
 import { flagFor } from '@/utils/countries'
 import { thumbUrl } from '@/utils/media'
+import { features } from '@/config/features'
 
 const props = defineProps({
   trip: { type: Object, required: true },

@@ -3,7 +3,7 @@
     <PageHeader :title="$t('admin.title')" :subtitle="$t('admin.subtitle')" :eyebrow="$t('admin.eyebrow')" />
 
     <EmptyState v-if="forbidden" icon="lock" :title="$t('admin.forbiddenTitle')" :text="$t('admin.forbiddenText')">
-      <RouterLink to="/" class="btn btn-secondary btn-sm">{{ $t('admin.toTimeline') }}</RouterLink>
+      <RouterLink to="/" class="btn btn-secondary btn-sm">{{ features.feed ? $t('admin.toTimeline') : $t('myTrips.toMyTrips') }}</RouterLink>
     </EmptyState>
 
     <template v-else>
@@ -101,7 +101,7 @@
                   <span v-if="u.bannedAtUtc" class="chip h-5 bg-red-50 px-2 text-[10px] text-red-700">{{ $t('admin.users.banned') }}</span>
                 </span>
                 <span class="block truncate text-xs text-muted">
-                  @{{ u.userName }}<template v-if="u.email"> · {{ u.email }}<template v-if="!u.emailVerified"> ({{ $t('admin.users.unverified') }})</template></template>
+                  @{{ u.userName }}<template v-if="u.email"> · {{ u.email }}</template>
                 </span>
                 <span class="block text-xs text-muted">
                   {{ $t('admin.users.counts', { posts: u.postsCount, trips: u.tripsCount }) }}
@@ -201,6 +201,7 @@
 </template>
 
 <script setup>
+import { features } from '@/config/features'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'

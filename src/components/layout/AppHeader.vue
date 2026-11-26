@@ -4,11 +4,11 @@
     :class="hidden ? '-translate-y-full' : 'translate-y-0'"
   >
     <div class="mx-auto flex h-16 max-w-content items-center gap-3 px-4 sm:px-6">
-      <RouterLink to="/" class="shrink-0" :aria-label="$t('nav.homeAria')" @click="onHomeClick">
+      <RouterLink to="/" class="shrink-0" :aria-label="features.feed ? $t('nav.homeAria') : $t('myTrips.homeAria')" @click="onHomeClick">
         <Logo />
       </RouterLink>
 
-      <div class="mx-4 hidden max-w-sm flex-1 md:block">
+      <div v-if="features.discover" class="mx-4 hidden max-w-sm flex-1 md:block">
         <GlobalSearch />
       </div>
 
@@ -35,16 +35,17 @@
         </RouterLink>
 
         <!-- Mobiel: zoeken + berichten -->
-        <button type="button" class="btn-icon md:hidden" :aria-label="$t('nav.search')" @click="mobileSearchOpen = true">
+        <button v-if="features.discover" type="button" class="btn-icon md:hidden" :aria-label="$t('nav.search')" @click="mobileSearchOpen = true">
           <Icon name="search" :size="22" />
         </button>
-        <RouterLink to="/messages" class="btn-icon relative md:hidden" :aria-label="$t('nav.messages')">
+        <!-- Zonder tijdlijn staan berichten en meldingen op mobiel in de tabbalk onderaan. -->
+        <RouterLink v-if="features.feed" to="/messages" class="btn-icon relative md:hidden" :aria-label="$t('nav.messages')">
           <Icon name="chat" :size="22" />
           <span v-if="counts.messages" class="badge absolute right-0.5 top-0.5">{{ counts.messages > 9 ? '9+' : counts.messages }}</span>
         </RouterLink>
 
         <!-- Meldingen -->
-        <div v-click-outside="() => (notifOpen = false)" class="relative">
+        <div v-click-outside="() => (notifOpen = false)" class="relative" :class="features.feed ? '' : 'hidden md:block'">
           <button
             type="button"
             class="relative inline-flex h-10 w-10 items-center justify-center rounded-xl transition"
@@ -61,17 +62,18 @@
           </div>
         </div>
 
-        <!-- Nieuw (desktop) -->
-        <div v-click-outside="() => (createOpen = false)" class="relative ml-1 hidden md:block">
+        <!-- Nieuw (desktop): alleen met de tijdlijn, waar je ook een post maakt. In de groepsversie staat "Nieuwe reis"
+             op het startscherm en de veiligheids-check-in in het accountmenu. -->
+        <div v-if="features.feed" v-click-outside="() => (createOpen = false)" class="relative ml-1 hidden md:block">
           <button type="button" class="btn btn-primary btn-sm h-9" :aria-expanded="createOpen" @click="createOpen = !createOpen">
             <Icon name="plus" :size="16" :stroke-width="2.5" /> {{ $t('nav.new') }}
           </button>
           <div v-if="createOpen" class="menu right-0 top-full mt-2 w-64" role="menu">
-            <button type="button" class="menu-item" role="menuitem" @click="newPost">
+            <button v-if="features.feed" type="button" class="menu-item" role="menuitem" @click="newPost">
               <Icon name="image" :size="18" />
               <span><span class="block font-bold text-ink">{{ $t('nav.newPost') }}</span><span class="block text-xs font-medium text-muted">{{ $t('nav.newPostHint') }}</span></span>
             </button>
-            <RouterLink to="/trips/new" class="menu-item" role="menuitem" @click="createOpen = false">
+            <RouterLink to="/trips/start" class="menu-item" role="menuitem" @click="createOpen = false">
               <Icon name="map" :size="18" />
               <span><span class="block font-bold text-ink">{{ $t('nav.newTrip') }}</span><span class="block text-xs font-medium text-muted">{{ $t('nav.newTripHint') }}</span></span>
             </RouterLink>
@@ -86,7 +88,7 @@
         <div v-click-outside="() => (accountOpen = false)" class="relative ml-1 hidden md:block">
           <button type="button" class="relative rounded-full p-0.5 transition hover:ring-2 hover:ring-line" :aria-expanded="accountOpen" :aria-label="$t('nav.accountMenu')" @click="accountOpen = !accountOpen">
             <Avatar :src="auth.profilePhotoUrl" :name="auth.displayName" size="sm" />
-            <span v-if="counts.invites || auth.pendingFollowRequests" class="dot-badge right-0 top-0" />
+            <span v-if="counts.invites || (features.follows && auth.pendingFollowRequests)" class="dot-badge right-0 top-0" />
           </button>
           <div v-if="accountOpen" class="menu right-0 top-full mt-2 w-64" role="menu">
             <RouterLink :to="`/u/${auth.userName}`" class="flex items-center gap-3 border-b border-line px-4 pb-3 pt-2 hover:bg-gray-50" role="menuitem" @click="accountOpen = false">
@@ -97,6 +99,17 @@
               </span>
             </RouterLink>
             <div class="pt-1.5">
+              <button v-if="auth.isGuest" type="button" class="menu-item font-bold text-accent-700" role="menuitem" @click="accountOpen = false; openGuestSave()">
+                <Icon name="lock" :size="18" /> {{ $t('join.save.menu') }}
+              </button>
+              <template v-if="!features.feed">
+                <RouterLink to="/trips/start" class="menu-item" role="menuitem" @click="accountOpen = false">
+                  <Icon name="plus" :size="18" /> {{ $t('nav.newTrip') }}
+                </RouterLink>
+                <button v-if="!safety.active" type="button" class="menu-item" role="menuitem" @click="accountOpen = false; openSafety()">
+                  <Icon name="shield" :size="18" /> {{ $t('safety.title') }}
+                </button>
+              </template>
               <RouterLink to="/invites" class="menu-item" role="menuitem" @click="accountOpen = false">
                 <Icon name="mail" :size="18" /> <span class="flex-1">{{ $t('nav.invites') }}</span>
                 <span v-if="counts.invites" class="badge">{{ counts.invites }}</span>
@@ -104,7 +117,7 @@
               <RouterLink v-if="features.postcards" to="/postcards" class="menu-item" role="menuitem" @click="accountOpen = false">
                 <Icon name="send" :size="18" /> {{ $t('postcards.title') }}
               </RouterLink>
-              <RouterLink to="/lists" class="menu-item" role="menuitem" @click="accountOpen = false">
+              <RouterLink v-if="features.lists" to="/lists" class="menu-item" role="menuitem" @click="accountOpen = false">
                 <Icon name="list" :size="18" /> {{ $t('nav.lists') }}
               </RouterLink>
               <RouterLink v-if="features.challenges" to="/challenges" class="menu-item" role="menuitem" @click="accountOpen = false">
@@ -115,7 +128,7 @@
               </RouterLink>
               <RouterLink to="/settings" class="menu-item" role="menuitem" @click="accountOpen = false">
                 <Icon name="settings" :size="18" /> <span class="flex-1">{{ $t('nav.settings') }}</span>
-                <span v-if="auth.pendingFollowRequests" class="badge">{{ auth.pendingFollowRequests }}</span>
+                <span v-if="features.follows && auth.pendingFollowRequests" class="badge">{{ auth.pendingFollowRequests }}</span>
               </RouterLink>
               <button type="button" class="menu-item" role="menuitemcheckbox" :aria-checked="prefs.isDark" @click="prefs.toggleDark()">
                 <Icon :name="prefs.isDark ? 'sun' : 'moon'" :size="18" /> {{ prefs.isDark ? $t('nav.lightMode') : $t('nav.darkMode') }}
@@ -166,6 +179,7 @@ import { useNotificationsStore } from '@/stores/notifications'
 import { useCountsStore } from '@/stores/counts'
 import { usePreferencesStore } from '@/stores/preferences'
 import { lockScroll, unlockScroll } from '@/utils/scrollLock'
+import { openGuestSave } from '@/composables/useGuestSave'
 
 defineProps({
   hidden: { type: Boolean, default: false },
@@ -193,13 +207,20 @@ const accountOpen = ref(false)
 const mobileSearchOpen = ref(false)
 const isDesktop = ref(typeof window !== 'undefined' ? window.matchMedia('(min-width: 768px)').matches : true)
 
+const onTripPage = computed(() => String(route.name || '').startsWith('trip') && route.name !== 'trip-chat')
+// Zonder tijdlijn is "/" het startscherm "Mijn reizen" en heet die ingang gewoon Reizen.
 const navItems = computed(() => [
-  { to: '/', label: t('nav.timeline'), icon: 'home', active: route.name === 'home' },
-  { to: '/trips', label: t('nav.trips'), icon: 'map', active: String(route.name || '').startsWith('trip') && route.name !== 'trip-chat' },
-  { to: '/discover', label: t('nav.discover'), icon: 'compass', active: route.name === 'discover' || route.name === 'place' },
+  features.feed
+    ? { to: '/', label: t('nav.timeline'), icon: 'home', active: route.name === 'home' }
+    : { to: '/', label: t('myTrips.nav'), icon: 'map', active: route.name === 'home' || onTripPage.value },
+  features.feed && { to: '/trips', label: t('nav.trips'), icon: 'map', active: onTripPage.value },
+  features.discover && { to: '/discover', label: t('nav.discover'), icon: 'compass', active: route.name === 'discover' || route.name === 'place' },
   features.buddies && { to: '/buddies', label: t('buddies.title'), icon: 'users', active: route.name === 'buddies' },
   { to: '/messages', label: t('nav.messages'), icon: 'chat', active: String(route.name || '').startsWith('message') || route.name === 'trip-chat', badge: counts.messages },
 ].filter(Boolean))
+
+// De mobiele tabbalk opent het meldingenpaneel via App.vue.
+defineExpose({ openNotifications: () => { if (!notifOpen.value) toggleNotifications() } })
 
 function toggleNotifications() {
   notifOpen.value = !notifOpen.value

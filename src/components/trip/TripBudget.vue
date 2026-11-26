@@ -111,6 +111,9 @@
         </section>
       </div>
 
+      <!-- Betaalverzoeken: een betaling is een terugbetaling vooraf, dus de saldi hierboven bewegen mee. -->
+      <TripPaymentRequests :trip-id="tripId" :participants="budget.participants" :currency="budget.currency" :trip-title="tripTitle" @changed="load" @add-expense="prefillExpense" />
+
       <BudgetOverview v-if="budget.spentTotal > 0" :budget="budget" />
 
       <!-- Uitgaven -->
@@ -230,12 +233,14 @@ import BudgetOverview from './BudgetOverview.vue'
 import ReceiptField from './ReceiptField.vue'
 import ExpenseItemSplit from './ExpenseItemSplit.vue'
 import PayQrDialog from './PayQrDialog.vue'
+import TripPaymentRequests from './TripPaymentRequests.vue'
 import { resolveMediaUrl, thumbUrl } from '@/utils/media'
 import * as tripsApi from '@/api/tripsApi'
 import * as geoApi from '@/api/geoApi'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 import { confirm } from '@/composables/useConfirm'
+import { nudgeGuestSave } from '@/composables/useGuestSave'
 import { useDebounce } from '@/composables/useDebounce'
 import { errorMessage } from '@/utils/errors'
 import { formatCurrency, formatDate, toDateInput, dateInputToIso } from '@/utils/date'
@@ -293,6 +298,9 @@ async function load() {
   error.value = ''
   try {
     budget.value = await tripsApi.getBudget(props.tripId)
+    // Gast die geld tegoed heeft: een goed moment om het account te bewaren.
+    const mine = (budget.value?.participants || []).find((p) => p.userName === auth.userName)
+    if (mine?.balance > 0.004) nudgeGuestSave('owedMoney')
   } catch (e) {
     error.value = errorMessage(e)
   } finally {
@@ -399,6 +407,13 @@ watch(debouncedRateKey, async (key) => {
   }
 })
 
+/** Vanuit een betaalverzoek: de echte uitgave invoeren met omschrijving en een geschat totaal (aanpasbaar). */
+function prefillExpense({ title, amount }) {
+  openForm()
+  form.title = title
+  form.amount = Math.round(amount * 100) / 100
+}
+
 function openForm(expense = null) {
   editing.value = expense
   formError.value = ''
@@ -459,6 +474,7 @@ async function save() {
     else await tripsApi.addExpense(props.tripId, payload)
     formOpen.value = false
     toast.success(editing.value ? t('budget.updated') : t('budget.added'))
+    if (!editing.value) nudgeGuestSave('firstExpense')
     await load()
   } catch (e) {
     if (e?.response?.status === 409) {

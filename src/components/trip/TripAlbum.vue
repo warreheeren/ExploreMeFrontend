@@ -5,12 +5,16 @@
         <h2 id="album-title" class="card-title">{{ $t('album.title') }}</h2>
         <p class="mt-0.5 text-sm text-muted">{{ $t('album.subtitle') }}</p>
       </div>
-      <template v-if="trip.canEdit">
-        <input ref="fileInput" type="file" class="sr-only" :accept="ACCEPT" multiple tabindex="-1" aria-hidden="true" @change="onFiles" />
-        <button type="button" class="btn btn-primary btn-sm" :disabled="uploading" @click="fileInput?.click()">
-          <Icon name="upload" :size="16" /> {{ $t('album.add') }}
-        </button>
-      </template>
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Van het album naar het boek: zodra er iets in staat. -->
+        <RouterLink v-if="photos.length" :to="`/trips/${trip.id}/photobook`" class="btn btn-secondary btn-sm"><Icon name="book" :size="16" /> {{ $t('photobook.make') }}</RouterLink>
+        <template v-if="trip.canEdit">
+          <input ref="fileInput" type="file" class="sr-only" :accept="ACCEPT" multiple tabindex="-1" aria-hidden="true" @change="onFiles" />
+          <button type="button" class="btn btn-primary btn-sm" :disabled="uploading" @click="fileInput?.click()">
+            <Icon name="upload" :size="16" /> {{ $t('album.add') }}
+          </button>
+        </template>
+      </div>
     </div>
 
     <!-- Uploadvoortgang -->
@@ -34,6 +38,18 @@
     </EmptyState>
 
     <div v-else class="space-y-7">
+      <!-- Favorieten: de hartjes van de groep bepalen wat in het fotoboek komt. -->
+      <div v-if="trip.canEdit" class="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <button type="button" class="chip-toggle" :class="!onlyFavorites ? 'chip-toggle-active' : ''" :aria-pressed="!onlyFavorites" @click="onlyFavorites = false">
+          {{ $t('album.filterAll') }} <span class="font-bold opacity-70">{{ photos.length }}</span>
+        </button>
+        <button type="button" class="chip-toggle" :class="onlyFavorites ? 'chip-toggle-active' : ''" :aria-pressed="onlyFavorites" @click="onlyFavorites = true">
+          <Icon name="heart" :size="14" /> {{ $t('album.filterFavorites') }} <span class="font-bold opacity-70">{{ favoriteCount }}</span>
+        </button>
+        <p class="text-xs text-muted">{{ $t('album.likeHint') }}</p>
+      </div>
+      <p v-if="onlyFavorites && !favoriteCount" class="text-sm text-muted">{{ $t('album.noFavorites') }}</p>
+
       <section v-for="group in groups" :key="group.day || 'none'" :aria-label="group.day ? formatFullDate(group.day) : $t('album.noDay')">
         <h3 class="mb-3 text-sm font-bold text-ink">{{ group.day ? formatFullDate(group.day) : $t('album.noDay') }}</h3>
         <div class="space-y-4">
@@ -44,7 +60,7 @@
               <span class="font-semibold">· {{ $t('album.photoCount', stop.photos.length) }}</span>
             </p>
             <ul class="grid grid-cols-3 gap-1.5 sm:grid-cols-4 lg:grid-cols-6">
-              <li v-for="p in stop.photos" :key="p.id">
+              <li v-for="p in stop.photos" :key="p.id" class="relative">
                 <button
                   type="button"
                   class="block aspect-square w-full overflow-hidden rounded-xl bg-gray-100"
@@ -52,6 +68,18 @@
                   @click="openPhoto(p)"
                 >
                   <img :src="thumbUrl(p.imageUrl)" :alt="p.caption || ''" class="h-full w-full object-cover transition hover:scale-105" loading="lazy" decoding="async" />
+                </button>
+                <!-- Hartje: los van de foto-knop, zodat een tik op het hartje de foto niet opent. -->
+                <button
+                  v-if="trip.canEdit"
+                  type="button"
+                  class="absolute bottom-1 right-1 inline-flex h-7 min-w-[1.75rem] items-center justify-center gap-1 rounded-full bg-surface/90 px-1.5 text-xs font-bold text-ink shadow-sm transition hover:bg-surface"
+                  :aria-pressed="p.likedByMe"
+                  :aria-label="$t(p.likedByMe ? 'album.unlike' : 'album.like')"
+                  @click="toggleLike(p)"
+                >
+                  <Icon name="heart" :size="14" :filled="p.likedByMe" :class="p.likedByMe ? 'text-red-600' : ''" />
+                  <span v-if="p.likeCount" class="tabular-nums">{{ p.likeCount }}</span>
                 </button>
               </li>
             </ul>
@@ -66,6 +94,8 @@
       :trip-id="trip.id"
       :photos="ordered"
       :stops="trip.stops"
+      :can-like="trip.canEdit"
+      @like="toggleLike"
       @updated="onUpdated"
       @deleted="onDeleted"
       @close="lightboxIndex = null"
@@ -108,7 +138,35 @@ const progress = ref({ done: 0, total: 0, current: 0 })
 const fileInput = ref(null)
 const lightboxIndex = ref(null)
 
-const groups = computed(() => groupAlbum(photos.value))
+const onlyFavorites = ref(false)
+const favoriteCount = computed(() => photos.value.filter((p) => p.likeCount > 0).length)
+// Een foto waar je net het hartje afhaalde blijft staan tot je het filter of de grote weergave verlaat: anders
+// verspringt de lijst onder je vingers en haal je met een tweede tik het hartje van de vólgende foto weg.
+const keptFavoriteIds = ref(new Set())
+function resetKeptFavorites() {
+  keptFavoriteIds.value = new Set(photos.value.filter((p) => p.likeCount > 0).map((p) => p.id))
+}
+const groups = computed(() => groupAlbum(onlyFavorites.value
+  ? photos.value.filter((p) => p.likeCount > 0 || keptFavoriteIds.value.has(p.id))
+  : photos.value))
+
+/** Hartje geven of weghalen: meteen zichtbaar, en teruggedraaid als de server weigert. */
+async function toggleLike(photo) {
+  const target = photos.value.find((p) => p.id === photo.id)
+  if (!target || target.liking) return
+  const before = { likedByMe: !!target.likedByMe, likeCount: target.likeCount || 0 }
+  const liked = !before.likedByMe
+  Object.assign(target, { liking: true, likedByMe: liked, likeCount: Math.max(0, before.likeCount + (liked ? 1 : -1)) })
+  try {
+    const result = await albumApi.setPhotoLike(props.trip.id, target.id, liked)
+    Object.assign(target, { likedByMe: result.likedByMe, likeCount: result.likeCount })
+  } catch (e) {
+    Object.assign(target, before)
+    toast.error(errorMessage(e))
+  } finally {
+    target.liking = false
+  }
+}
 const ordered = computed(() => flattenAlbum(groups.value))
 const progressPercent = computed(() => {
   const { done, total, current } = progress.value
@@ -187,6 +245,8 @@ const off = onRealtime('tripChanged', (p) => {
   // Niet herladen tijdens een eigen upload; de lijst wordt dan lokaal bijgewerkt.
   if (p?.tripId === props.trip.id && p.area === 'photos' && !uploading.value) load({ silent: true })
 })
+watch(onlyFavorites, resetKeptFavorites)
+watch(lightboxIndex, (index) => { if (index === null) resetKeptFavorites() })
 watch(() => props.trip.id, () => load())
 onMounted(load)
 onBeforeUnmount(off)

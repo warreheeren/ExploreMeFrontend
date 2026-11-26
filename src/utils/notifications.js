@@ -36,12 +36,18 @@ const TEXT_KEYS = {
   flight_gate_changed: 'flightGateChanged',
   flight_cancelled: 'flightCancelled',
   calendar_sync_failed: 'calendarSyncFailed',
+  task_due: 'taskDue',
+  payment_request: 'paymentRequest',
+  payment_due: 'paymentDue',
+  payment_complete: 'paymentComplete',
+  photobook_ready: 'photobookReady',
 }
 
 // Meldingen zonder andere actor (de ontvanger is zelf de actor).
 const SYSTEM_TYPES = [
   'report_resolved', 'challenge_completed', 'memory', 'trip_departure', 'safety_reminder', 'capsule_opened', 'travel_advisory_changed',
   'flight_delayed', 'flight_gate_changed', 'flight_cancelled', 'calendar_sync_failed',
+  'task_due', 'payment_due', 'payment_complete', 'photobook_ready',
 ]
 
 export function notificationText(n) {
@@ -70,7 +76,12 @@ export function notificationLink(n) {
     // Na de keuze zijn de datums van de reis zelf het nieuws.
     case 'date_poll_decided': return n.tripId ? `/trips/${n.tripId}` : '/'
     case 'trip_journal': return `/trips/${n.tripId}?tab=dagboek`
-    case 'trip_settlement': return `/trips/${n.tripId}?tab=budget`
+    case 'trip_settlement':
+    case 'payment_request':
+    case 'payment_due':
+    case 'payment_complete': return n.tripId ? `/trips/${n.tripId}?tab=budget` : '/'
+    case 'task_due': return n.tripId ? `/trips/${n.tripId}?tab=paklijst` : '/'
+    case 'photobook_ready': return n.tripId ? `/trips/${n.tripId}?tab=album` : '/'
     case 'buddy_response': return '/buddies?tab=mine'
     case 'buddy_match': return '/buddies?matches=1'
     // Plekvragen: de melding kent alleen de reis; /places/qa zoekt de juiste plekpagina op.
@@ -115,7 +126,12 @@ export function notificationIcon(n) {
     case 'trip_invite_accepted': return 'check'
     case 'trip_poll': return 'checklist'
     case 'trip_journal': return 'edit'
-    case 'trip_settlement': return 'wallet'
+    case 'trip_settlement':
+    case 'payment_request':
+    case 'payment_due':
+    case 'payment_complete': return 'wallet'
+    case 'task_due': return 'checklist'
+    case 'photobook_ready': return 'book'
     case 'trip_copied': return 'copy'
     case 'report_resolved': return 'flag'
     case 'buddy_response':

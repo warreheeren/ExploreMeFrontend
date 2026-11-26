@@ -26,12 +26,3 @@ export async function changePassword(currentPassword, newPassword) {
   const { data } = await http.post('/auth/change-password', { currentPassword, newPassword })
   return AuthUser.fromApi(data)
 }
-
-export async function verifyEmail(token) {
-  const { data } = await http.post('/auth/verify-email', { token })
-  return data
-}
-
-export async function resendVerification() {
-  await http.post('/auth/resend-verification')
-}

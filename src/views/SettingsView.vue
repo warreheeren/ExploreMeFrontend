@@ -73,12 +73,7 @@
               <ExternalLoginButtons :exclude="['google', 'apple'].filter((p) => !linkedProviders.includes(p))" :busy="savingEmail" @credential="saveEmailWithProvider" @error="() => toast.error(t('externalAuth.failed'))" />
             </div>
           </div>
-          <p v-if="auth.email && auth.emailVerified" class="hint flex items-center gap-1 text-accent-700"><Icon name="check" :size="13" /> {{ $t('settings.account.verified') }}</p>
-          <p v-else-if="auth.email" class="hint flex flex-wrap items-center gap-1 text-rating-text">
-            <Icon name="alert" :size="13" /> {{ $t('settings.account.unverified') }}
-            <button type="button" class="font-bold underline" :disabled="resending" @click="resendVerification">{{ $t('settings.account.resend') }}</button>
-          </p>
-          <p v-else class="hint">{{ $t('settings.account.noEmail') }}</p>
+          <p class="hint">{{ auth.email ? $t('settings.account.emailUse') : $t('settings.account.noEmail') }}</p>
         </form>
 
         <form class="space-y-3 border-t border-line pt-5" @submit.prevent="changePassword">
@@ -141,7 +136,8 @@
 
     <!-- ===== Privacy ===== -->
     <template v-else-if="tab === 'privacy'">
-      <section class="card card-pad mb-5 sm:p-6">
+      <!-- Privé-account en volgverzoeken horen bij volgen (features.follows). -->
+      <section v-if="features.follows" class="card card-pad mb-5 sm:p-6">
         <div class="flex items-start gap-4">
           <span class="flex-1">
             <span class="block text-sm font-bold text-ink">{{ $t('settings.privacy.private') }}</span>
@@ -153,7 +149,7 @@
 
       <SafetyDefaultContact class="mb-5" />
 
-      <section class="card card-pad sm:p-6" aria-labelledby="settings-requests">
+      <section v-if="features.follows" class="card card-pad sm:p-6" aria-labelledby="settings-requests">
         <h2 id="settings-requests" class="card-title mb-1">{{ $t('settings.privacy.requests') }}</h2>
         <p class="mb-4 text-sm text-muted">{{ auth.isPrivate ? $t('settings.privacy.requestsText') : $t('settings.privacy.requestsPublic') }}</p>
         <div v-if="loadingRequests" class="space-y-2"><div v-for="i in 2" :key="i" class="skeleton h-14 rounded-xl" /></div>
@@ -204,7 +200,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-line">
-            <tr v-for="cat in CATEGORIES.filter((c) => prefs.categories[c])" :key="cat">
+            <tr v-for="cat in visibleCategories.filter((c) => prefs.categories[c])" :key="cat">
               <td class="px-5 py-3 sm:px-6">
                 <span class="block font-bold text-ink">{{ $t(`settings.notifications.categories.${cat}.label`) }}</span>
                 <span class="block text-xs text-muted">{{ $t(`settings.notifications.categories.${cat}.hint`) }}</span>
@@ -214,7 +210,6 @@
                   v-model="prefs.categories[cat][ch]"
                   type="checkbox"
                   class="checkbox h-5 w-5"
-                  :disabled="ch === 'email' && !auth.emailVerified"
                   :aria-label="`${$t(`settings.notifications.categories.${cat}.label`)}: ${$t(`settings.notifications.channels.${ch}`)}`"
                   @change="savePrefs"
                 />
@@ -222,17 +217,6 @@
             </tr>
           </tbody>
         </table>
-        <p v-if="!auth.emailVerified" class="border-t border-line px-5 py-3 text-xs text-muted sm:px-6">{{ $t('settings.notifications.emailNeedsVerify') }}</p>
-      </section>
-
-      <section v-if="prefs" class="card card-pad sm:p-6">
-        <div class="flex items-start gap-4">
-          <span class="flex-1">
-            <span class="block text-sm font-bold text-ink">{{ $t('settings.notifications.digest') }}</span>
-            <span class="mt-0.5 block text-sm text-muted">{{ $t('settings.notifications.digestText') }}</span>
-          </span>
-          <Toggle v-model="prefs.weeklyDigest" :disabled="!auth.emailVerified" :label="$t('settings.notifications.digest')" @update:model-value="savePrefs" />
-        </div>
       </section>
     </template>
 
@@ -320,7 +304,6 @@ import CalendarSyncCard from '@/components/settings/CalendarSyncCard.vue'
 import PaymentDetailsCard from '@/components/settings/PaymentDetailsCard.vue'
 import PassportCountriesCard from '@/components/settings/PassportCountriesCard.vue'
 import ConsentSettingsCard from '@/components/settings/ConsentSettingsCard.vue'
-import * as authApi from '@/api/authApi'
 import * as userApi from '@/api/userApi'
 import * as notificationsApi from '@/api/notificationsApi'
 import { setLocale } from '@/i18n'
@@ -332,9 +315,18 @@ import { currentSubscription, disablePush, enablePush, pushPermission, pushSuppo
 import { errorMessage } from '@/utils/errors'
 import { timeAgo } from '@/utils/date'
 import { saveBlob } from '@/utils/format'
+import { features } from '@/config/features'
 
 const CATEGORIES = ['likes', 'comments', 'follows', 'trips', 'trip_reminders', 'safety', 'messages']
-const CHANNELS = ['inApp', 'push', 'email']
+// Categorieën die alleen over uitgeschakelde sociale functies gaan verbergen we (de voorkeur zelf blijft bewaard).
+// Likes en reacties bestaan op posts (feed) én op reizen (discover); reizen, berichten e.d. zijn kern en altijd zichtbaar.
+const CATEGORY_FEATURE_ON = {
+  likes: features.feed || features.discover,
+  comments: features.feed || features.discover,
+  follows: features.follows,
+}
+const visibleCategories = CATEGORIES.filter((c) => CATEGORY_FEATURE_ON[c] !== false)
+const CHANNELS = ['inApp', 'push']
 const THEMES = [
   { value: 'system', icon: 'settings' },
   { value: 'light', icon: 'sun' },
@@ -356,7 +348,7 @@ const { uploading, error: uploadError, upload, accept } = useImageUpload()
 const tabs = computed(() => [
   { id: 'profiel', label: t('settings.tabs.profile'), icon: 'user' },
   { id: 'account', label: t('settings.tabs.account'), icon: 'key' },
-  { id: 'privacy', label: t('settings.tabs.privacy'), icon: 'shield', count: auth.pendingFollowRequests || 0 },
+  { id: 'privacy', label: t('settings.tabs.privacy'), icon: 'shield', count: features.follows ? auth.pendingFollowRequests || 0 : 0 },
   { id: 'meldingen', label: t('settings.tabs.notifications'), icon: 'bell' },
   { id: 'weergave', label: t('settings.tabs.display'), icon: 'palette' },
 ])
@@ -404,7 +396,6 @@ const email = ref(auth.email || '')
 const pw = reactive({ current: '', next: '', confirm: '' })
 const savingEmail = ref(false)
 const savingPw = ref(false)
-const resending = ref(false)
 
 const emailPassword = ref('')
 const emailChanged = computed(() => (email.value || '').toLowerCase() !== (auth.email || '').toLowerCase())
@@ -440,17 +431,6 @@ async function doSaveEmail(confirmation) {
   }
 }
 
-async function resendVerification() {
-  resending.value = true
-  try {
-    await authApi.resendVerification()
-    toast.success(t('settings.account.resent', { email: auth.email }))
-  } catch (e) {
-    toast.error(errorMessage(e))
-  } finally {
-    resending.value = false
-  }
-}
 
 async function changePassword() {
   savingPw.value = true
@@ -636,7 +616,7 @@ async function changeLanguage(code) {
 }
 
 function loadTab(id) {
-  if (id === 'privacy') loadRequests()
+  if (id === 'privacy' && features.follows) loadRequests()
   if (id === 'meldingen') {
     if (!prefs.value) loadPrefs()
     if (pushSupported()) currentSubscription().then((sub) => { pushEnabled.value = !!sub && pushPermission() === 'granted' })

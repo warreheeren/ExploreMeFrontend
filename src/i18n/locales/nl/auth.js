@@ -1,7 +1,7 @@
 export default {
   layout: {
     eyebrow: 'Reizen, samen',
-    headline: 'Ontdek de wereld door de ogen van anderen.',
+    headline: 'Eén plek voor je groepsreis.',
     intro: 'Plan je route met hotels, foodspots en activiteiten. Nodig reisgenoten uit, deel het budget en vink samen de paklijst af.',
   },
   userName: 'Gebruikersnaam',
@@ -46,7 +46,7 @@ export default {
     submitting: 'Versturen…',
     failed: 'Versturen mislukt.',
     sentTitle: 'Check je inbox',
-    sentText: 'Als we een account met een bevestigd e-mailadres vonden, staat er nu een link in je mailbox. De link is één uur geldig.',
+    sentText: 'Als we een account met dit e-mailadres vonden, staat er nu een link in je mailbox. De link is één uur geldig.',
     devNoteBefore: 'Ontwikkelomgeving: de mail staat als .html-bestand in de map',
     devNoteAfter: 'naast de API-binaries.',
   },

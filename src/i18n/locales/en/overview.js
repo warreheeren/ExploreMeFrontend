@@ -1,0 +1,48 @@
+export default {
+  invite: 'Invite',
+  waitingBadge: '{n} thing is waiting for you | {n} things are waiting for you',
+  waiting: {
+    title: 'Waiting for you',
+    none: 'Nothing is waiting for you.',
+  },
+  steps: {
+    title: 'Where does the group stand?',
+    doneAria: 'done',
+    group: { label: 'Group', alone: 'Just you so far', action: 'Share the link' },
+    dates: { label: 'Dates', action: 'Fill in when you are available', unsure: 'Not sure yet? Run a date poll' },
+    route: { label: 'Route', none: 'No stops yet', stops: '{n} stop | {n} stops', action: 'Add stops' },
+    settle: { label: 'Settle up', later: 'After the trip', open: 'Something is still open', done: 'Everything is settled', action: 'Settle up' },
+  },
+  activity: {
+    title: 'Latest activity',
+    empty: 'Nothing has happened yet. Add a stop or start a poll.',
+    someone: 'Someone',
+    expense: '{name} paid {text} · {amount}',
+    settlement: '{name} paid {text} back {amount}',
+    paymentRequest: '{name} asks {amount} per person for {text}',
+    poll: '{name} started a poll: {text}',
+    taskDone: 'Task done: {text}',
+    journal: '{name} wrote in the journal',
+    journalTitled: '{name} wrote in the journal: {text}',
+    joined: '{name} joined the trip',
+    photos: '{name} added {n} photo | {name} added {n} photos',
+    other: '{name} made a change',
+  },
+  countdown: {
+    aria: 'Countdown',
+    upcoming: 'day to departure | days to departure',
+    active: 'day of the trip',
+    past: 'The trip is over',
+  },
+  money: {
+    title: 'Money',
+    spent: '{amount} spent',
+    openRequests: '{n} payment request open | {n} payment requests open',
+    open: 'Go to the budget',
+  },
+  chat: {
+    title: 'Group chat',
+    empty: 'No messages yet. Say hello to your group.',
+    open: 'Open the chat',
+  },
+}

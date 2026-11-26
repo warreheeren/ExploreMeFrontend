@@ -1,7 +1,7 @@
 export default {
   layout: {
     eyebrow: 'Travel, together',
-    headline: 'Discover the world through the eyes of others.',
+    headline: 'One place for your group trip.',
     intro: 'Plan your route with hotels, food spots and activities. Invite travel companions, share the budget and tick off the packing list together.',
   },
   userName: 'Username',
@@ -46,7 +46,7 @@ export default {
     submitting: 'Sending…',
     failed: 'Sending failed.',
     sentTitle: 'Check your inbox',
-    sentText: 'If we found an account with a verified email address, a link is now in your mailbox. The link is valid for one hour.',
+    sentText: 'If we found an account with this email address, a link is now in your mailbox. The link is valid for one hour.',
     devNoteBefore: 'Development environment: the email is saved as an .html file in the',
     devNoteAfter: 'folder next to the API binaries.',
   },

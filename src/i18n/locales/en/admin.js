@@ -96,7 +96,6 @@ export default {
     empty: 'No users found',
     moderator: 'Moderator',
     banned: 'Banned',
-    unverified: 'unverified',
     counts: '{posts} posts · {trips} trips',
     reported: 'reported {n}×',
     since: 'member since {date}',

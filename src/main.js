@@ -1,4 +1,4 @@
-import '@fontsource-variable/manrope'
+import '@fontsource-variable/montserrat'
 // Schreef voor titels (reisnamen, paginakoppen): gewicht + optische grootte.
 import '@fontsource-variable/fraunces/opsz.css'
 import './style.css'
@@ -10,6 +10,8 @@ import router from './router'
 import { i18n } from './i18n'
 import { clickOutside } from './directives/clickOutside'
 import { usePreferencesStore } from './stores/preferences'
+import { useAuthStore } from './stores/auth'
+import { setTokenRefreshedHandler } from './api/http'
 import { useConsentStore } from './stores/consent'
 import { setupAnalytics } from './services/analytics'
 import { isNative } from './services/native'
@@ -21,6 +23,8 @@ app.use(i18n)
 app.use(router)
 app.directive('click-outside', clickOutside)
 usePreferencesStore(pinia).init()
+// Gast met een verlopen token: http.js haalt een nieuw token op; de store (en realtime) nemen het over.
+setTokenRefreshedHandler((token) => useAuthStore(pinia).replaceToken(token))
 
 // Toestemming: keuzes uit andere tabbladen volgen; statistieken alleen met configuratie én toestemming
 // (vóór het mounten, zodat router.afterEach ook de eerste pagina ziet).

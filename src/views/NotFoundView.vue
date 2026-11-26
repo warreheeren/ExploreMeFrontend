@@ -5,12 +5,13 @@
       <p class="eyebrow-accent mt-5">404</p>
       <h1 class="page-title mt-1">{{ $t('misc.notFound.title') }}</h1>
       <p class="mt-2 text-sm text-muted">{{ $t('misc.notFound.text') }}</p>
-      <RouterLink :to="auth.isAuthenticated ? '/' : '/login'" class="btn btn-dark mt-6">{{ auth.isAuthenticated ? $t('misc.notFound.toTimeline') : $t('misc.notFound.toLogin') }}</RouterLink>
+      <RouterLink :to="auth.isAuthenticated ? '/' : '/login'" class="btn btn-dark mt-6">{{ auth.isAuthenticated ? (features.feed ? $t('misc.notFound.toTimeline') : $t('myTrips.toMyTrips')) : $t('misc.notFound.toLogin') }}</RouterLink>
     </div>
   </div>
 </template>
 
 <script setup>
+import { features } from '@/config/features'
 import Icon from '@/components/ui/Icon.vue'
 import { useAuthStore } from '@/stores/auth'
 

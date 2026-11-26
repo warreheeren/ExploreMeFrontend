@@ -26,7 +26,7 @@
       </p>
 
       <EmptyState v-if="!list.items.length" icon="pin" :title="$t('lists.noItemsTitle')" :text="$t('lists.noItemsText')">
-        <RouterLink to="/discover" class="btn btn-secondary btn-sm">{{ $t('lists.toDiscover') }}</RouterLink>
+        <RouterLink v-if="features.discover" to="/discover" class="btn btn-secondary btn-sm">{{ $t('lists.toDiscover') }}</RouterLink>
       </EmptyState>
 
       <div v-else class="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)]">
@@ -38,7 +38,9 @@
             </button>
             <div class="min-w-0 flex-1">
               <p class="flex items-start gap-2">
-                <RouterLink :to="`/places/${item.stopId}`" class="min-w-0 flex-1 text-sm font-bold text-ink hover:underline">{{ item.name }}</RouterLink>
+                <!-- Plekpagina's horen bij ontdekken (features.discover). -->
+                <RouterLink v-if="features.discover" :to="`/places/${item.stopId}`" class="min-w-0 flex-1 text-sm font-bold text-ink hover:underline">{{ item.name }}</RouterLink>
+                <span v-else class="min-w-0 flex-1 text-sm font-bold text-ink">{{ item.name }}</span>
                 <button v-if="list.isOwner" type="button" class="btn-icon btn-icon-sm -mr-1 -mt-1 hover:text-red-600" :aria-label="$t('lists.removeItem', { name: item.name })" @click="removeItem(item)">
                   <Icon name="x" :size="15" />
                 </button>
@@ -87,6 +89,7 @@ import { confirm } from '@/composables/useConfirm'
 import { errorMessage } from '@/utils/errors'
 import { thumbUrl } from '@/utils/media'
 import { stopTypeMeta } from '@/utils/stopTypes'
+import { features } from '@/config/features'
 
 const { t } = useI18n()
 const route = useRoute()

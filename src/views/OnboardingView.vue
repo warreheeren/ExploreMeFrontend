@@ -25,7 +25,7 @@
       </ol>
 
       <!-- Stap 1: profiel -->
-      <section v-if="step === 0" class="card card-pad sm:p-8">
+      <section v-if="stepId === 'profile'" class="card card-pad sm:p-8">
         <h1 class="page-title">{{ $t('onboarding.profile.title', { name: firstName }) }}</h1>
         <p class="mt-1 text-sm text-muted">{{ $t('onboarding.profile.intro') }}</p>
 
@@ -61,7 +61,7 @@
       </section>
 
       <!-- Stap 2: volgen -->
-      <section v-else-if="step === 1" class="card card-pad sm:p-8">
+      <section v-else-if="stepId === 'follow'" class="card card-pad sm:p-8">
         <h1 class="page-title">{{ $t('onboarding.follow.title') }}</h1>
         <p class="mt-1 text-sm text-muted">{{ $t('onboarding.follow.intro') }}</p>
         <SuggestedTravellers class="mt-4" variant="list" :take="8" @followed="onFollowed" />
@@ -77,11 +77,13 @@
       <section v-else class="card card-pad text-center sm:p-10">
         <span class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-accent-50 text-accent-700"><Icon name="plane" :size="30" /></span>
         <h1 class="page-title mt-5">{{ $t('onboarding.done.title') }}</h1>
-        <p class="mx-auto mt-2 max-w-md text-sm text-muted">{{ $t('onboarding.done.intro') }}</p>
+        <p class="mx-auto mt-2 max-w-md text-sm text-muted">{{ features.feed ? $t('onboarding.done.intro') : $t('onboarding.done.introGroup') }}</p>
         <div class="mt-7 flex flex-col justify-center gap-2 sm:flex-row">
-          <button type="button" class="btn btn-primary btn-lg" :disabled="finishing" @click="finish('/trips/new')"><Icon name="map" :size="18" /> {{ $t('onboarding.done.planTrip') }}</button>
-          <button type="button" class="btn btn-secondary btn-lg" :disabled="finishing" @click="finish('/')">{{ $t('onboarding.done.toTimeline') }}</button>
+          <button type="button" class="btn btn-primary btn-lg" :disabled="finishing" @click="finish('/trips/start')"><Icon name="map" :size="18" /> {{ features.feed ? $t('onboarding.done.planTrip') : $t('onboarding.done.startGroupTrip') }}</button>
+          <button type="button" class="btn btn-secondary btn-lg" :disabled="finishing" @click="finish('/')">{{ features.feed ? $t('onboarding.done.toTimeline') : $t('myTrips.toMyTrips') }}</button>
         </div>
+        <!-- Wie via een vriend komt heeft geen reis om te starten, maar een link om te openen. -->
+        <p v-if="!features.feed" class="mx-auto mt-5 max-w-md text-xs text-muted">{{ $t('onboarding.done.gotLink') }}</p>
       </section>
     </main>
   </div>
@@ -98,6 +100,7 @@ import SuggestedTravellers from '@/components/SuggestedTravellers.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useImageUpload } from '@/composables/useImageUpload'
 import { errorMessage } from '@/utils/errors'
+import { features } from '@/config/features'
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -105,8 +108,11 @@ const route = useRoute()
 const { uploading, error: uploadError, upload, accept } = useImageUpload()
 const { t } = useI18n()
 
-const steps = computed(() => [t('onboarding.steps.profile'), t('onboarding.steps.follow'), t('onboarding.steps.done')])
+// Zonder volgen (features.follows) valt de stap "mensen volgen" weg; `step` blijft een index in deze lijst.
+const STEP_IDS = ['profile', features.follows && 'follow', 'done'].filter(Boolean)
+const steps = computed(() => STEP_IDS.map((id) => t(`onboarding.steps.${id}`)))
 const step = ref(0)
+const stepId = computed(() => STEP_IDS[step.value])
 const displayName = ref(auth.displayName || '')
 const bio = ref(auth.bio || '')
 const photoUrl = ref(auth.profilePhotoUrl || '')
@@ -130,7 +136,7 @@ async function saveProfile() {
   error.value = ''
   try {
     await auth.updateProfile({ displayName: displayName.value, bio: bio.value, profileImgUrl: photoUrl.value || '' })
-    step.value = 1
+    step.value = 1 // volgende stap: volgen, of meteen "klaar" als die uit staat
   } catch (e) {
     error.value = errorMessage(e, t('onboarding.profile.saveFailed'))
   } finally {

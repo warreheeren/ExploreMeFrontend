@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { OPTIONAL_FEATURES, isFeatureEnabled, isNotificationFeatureEnabled, parseFeatures } from './features'
 
 describe('parseFeatures', () => {
@@ -29,7 +29,39 @@ describe('vlaggen in de testomgeving', () => {
   })
 
   it('meldingen zonder gekoppelde functie zijn altijd ingeschakeld', () => {
+    expect(isNotificationFeatureEnabled('trip_invite')).toBe(true)
     expect(isNotificationFeatureEnabled('like')).toBe(true)
     expect(isNotificationFeatureEnabled('buddy_match')).toBe(true)
+  })
+})
+
+// Standaardinstelling (geen VITE_FEATURES): sociale meldingen linken nergens heen, kernmeldingen wel.
+describe('meldingen zonder optionele functies', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs()
+    vi.resetModules()
+  })
+
+  async function loadWithoutFeatures() {
+    vi.stubEnv('VITE_FEATURES', '')
+    vi.resetModules()
+    return import('./features')
+  }
+
+  it.each([
+    ['like'], ['comment'], ['comment_reply'], ['mention'], ['memory'],
+    ['follow'], ['follow_request'], ['follow_request_accepted'],
+    ['trip_like'], ['trip_comment'],
+  ])('%s staat uit', async (type) => {
+    const mod = await loadWithoutFeatures()
+    expect(mod.isNotificationFeatureEnabled(type)).toBe(false)
+  })
+
+  it.each([
+    ['trip_invite'], ['trip_invite_accepted'], ['trip_poll'], ['trip_journal'], ['trip_settlement'],
+    ['date_poll_opened'], ['date_poll_decided'], ['trip_departure'], ['flight_delayed'], ['report_resolved'],
+  ])('%s blijft aan', async (type) => {
+    const mod = await loadWithoutFeatures()
+    expect(mod.isNotificationFeatureEnabled(type)).toBe(true)
   })
 })

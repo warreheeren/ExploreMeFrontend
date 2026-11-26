@@ -31,6 +31,9 @@ export default {
     title: 'Je bent klaar om te vertrekken',
     intro: 'Plan je eerste reis met stops op de kaart, of kijk eerst rond in je tijdlijn.',
     planTrip: 'Plan je eerste reis',
+    introGroup: 'Maak een reis en deel de link met je groep. Iedereen doet mee zonder account.',
+    startGroupTrip: 'Start je eerste groepsreis',
+    gotLink: 'Heb je een link van iemand gekregen? Open die link opnieuw: je doet dan mee met dit account.',
     toTimeline: 'Naar je tijdlijn',
   },
 }

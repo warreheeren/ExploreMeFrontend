@@ -5,7 +5,7 @@
     <div v-if="loading" class="space-y-3"><div v-for="i in 2" :key="i" class="skeleton h-28 rounded-2xl" /></div>
 
     <EmptyState v-else-if="!invites.length" icon="mail" :title="$t('misc.invites.emptyTitle')" :text="$t('misc.invites.emptyText')">
-      <RouterLink to="/trips" class="btn btn-secondary btn-sm">{{ $t('misc.invites.discoverTrips') }}</RouterLink>
+      <RouterLink to="/trips" class="btn btn-secondary btn-sm">{{ features.discover ? $t('misc.invites.discoverTrips') : $t('myTrips.toMyTrips') }}</RouterLink>
     </EmptyState>
 
     <ul v-else class="space-y-3">
@@ -35,6 +35,7 @@
 </template>
 
 <script setup>
+import { features } from '@/config/features'
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import PageHeader from '@/components/ui/PageHeader.vue'

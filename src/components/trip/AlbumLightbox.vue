@@ -54,6 +54,18 @@
               <template v-if="photo.takenAtUtc"> · {{ $t('album.lightbox.takenAt', { date: formatDate(photo.takenAtUtc, { day: 'numeric', month: 'long', year: 'numeric' }) }) }}</template>
               <template v-if="photo.stopName"> · {{ photo.stopName }}</template>
             </p>
+            <button
+              v-if="canLike"
+              type="button"
+              class="btn btn-secondary btn-sm shrink-0"
+              :class="photo.likedByMe ? 'border-red-600 text-red-600' : ''"
+              :aria-pressed="photo.likedByMe"
+              :aria-label="$t(photo.likedByMe ? 'album.unlike' : 'album.like')"
+              :title="$t('album.likeKey')"
+              @click="$emit('like', photo)"
+            >
+              <Icon name="heart" :size="14" :filled="photo.likedByMe" /> {{ photo.likeCount || 0 }}
+            </button>
             <RouterLink v-if="features.postcards" :to="postcardLink" class="btn btn-secondary btn-sm shrink-0"><Icon name="send" :size="14" /> {{ $t('postcards.fromAlbum') }}</RouterLink>
           </div>
 
@@ -104,8 +116,10 @@ const props = defineProps({
   photos: { type: Array, required: true },
   index: { type: Number, required: true },
   stops: { type: Array, default: () => [] },
+  /** Reisgenoten kunnen een hartje geven (ook met de toets L). */
+  canLike: { type: Boolean, default: false },
 })
-const emit = defineEmits(['update:index', 'close', 'updated', 'deleted'])
+const emit = defineEmits(['update:index', 'close', 'updated', 'deleted', 'like'])
 
 const { t } = useI18n()
 const toast = useToastStore()
@@ -149,6 +163,8 @@ function onKey(e) {
     go(-1)
   } else if (!isTyping(e.target) && e.key === 'ArrowRight') {
     go(1)
+  } else if (!isTyping(e.target) && props.canLike && photo.value && e.key.toLowerCase() === 'l' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    emit('like', photo.value)
   }
 }
 

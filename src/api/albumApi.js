@@ -32,6 +32,13 @@ export async function updatePhoto(tripId, photoId, payload) {
   return data
 }
 
+/** Hartje geven of weghalen (alleen reisgenoten) → { likeCount, likedByMe }. */
+export async function setPhotoLike(tripId, photoId, liked) {
+  const url = `/trips/${tripId}/photos/${photoId}/like`
+  const { data } = liked ? await http.post(url) : await http.delete(url)
+  return data
+}
+
 export async function deletePhoto(tripId, photoId) {
   await http.delete(`/trips/${tripId}/photos/${photoId}`)
 }

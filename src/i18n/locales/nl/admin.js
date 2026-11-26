@@ -96,7 +96,6 @@ export default {
     empty: 'Geen gebruikers gevonden',
     moderator: 'Moderator',
     banned: 'Geblokkeerd',
-    unverified: 'niet bevestigd',
     counts: '{posts} posts · {trips} reizen',
     reported: '{n}× gemeld',
     since: 'lid sinds {date}',

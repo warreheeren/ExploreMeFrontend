@@ -83,9 +83,10 @@
               >
                 <Icon name="check" :size="14" :stroke-width="3" />
               </button>
-              <RouterLink :to="`/places/${stop.id}`" class="min-w-0 flex-1" :class="isDone(stop) ? 'opacity-60' : ''">
+              <!-- Plekpagina's horen bij ontdekken: zonder die vlag is de stop geen link. -->
+              <component :is="features.discover ? 'RouterLink' : 'div'" :to="features.discover ? `/places/${stop.id}` : undefined" class="min-w-0 flex-1" :class="isDone(stop) ? 'opacity-60' : ''">
                 <StopRow :stop="stop" :clickable="false" :selected="next?.id === stop.id" :badge="stop.startTime ? stop.startTime.slice(0, 5) : ''" />
-              </RouterLink>
+              </component>
             </li>
           </ul>
         </section>
@@ -151,6 +152,7 @@ import { formatDistance, formatDuration } from '@/utils/format'
 import { stopTypeMeta } from '@/utils/stopTypes'
 import { isFlightToday } from '@/utils/flights'
 import { getDoneStops, navigationUrl, nextStop, setDoneStops, stopsForToday, tripDayStatus } from '@/utils/today'
+import { features } from '@/config/features'
 
 const route = useRoute()
 const { t } = useI18n()

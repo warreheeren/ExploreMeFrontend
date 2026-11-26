@@ -15,8 +15,7 @@
 
       <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-surface">{{ $t('nav.skipToContent') }}</a>
 
-      <AppHeader :hidden="headerHidden" @logout="logout" @home-click="onHomeClick" />
-      <EmailVerifyBanner />
+      <AppHeader ref="headerRef" :hidden="headerHidden" @logout="logout" @home-click="onHomeClick" />
 
       <main id="main" class="mx-auto w-full max-w-content flex-1 px-4 pb-28 pt-5 sm:px-6 md:pb-14 md:pt-8">
         <RouterView />
@@ -29,10 +28,10 @@
             <span class="text-muted">© {{ year }}</span>
           </div>
           <nav class="flex flex-wrap items-center justify-end gap-x-5 gap-y-2 font-semibold text-muted" :aria-label="$t('nav.footer')">
-            <RouterLink to="/" class="hover:text-ink">{{ $t('nav.timeline') }}</RouterLink>
-            <RouterLink to="/trips" class="hover:text-ink">{{ $t('nav.trips') }}</RouterLink>
-            <RouterLink to="/discover" class="hover:text-ink">{{ $t('nav.discover') }}</RouterLink>
-            <RouterLink to="/lists" class="hover:text-ink">{{ $t('nav.lists') }}</RouterLink>
+            <RouterLink v-if="features.feed" to="/" class="hover:text-ink">{{ $t('nav.timeline') }}</RouterLink>
+            <RouterLink :to="features.feed ? '/trips' : '/'" class="hover:text-ink">{{ $t('nav.trips') }}</RouterLink>
+            <RouterLink v-if="features.discover" to="/discover" class="hover:text-ink">{{ $t('nav.discover') }}</RouterLink>
+            <RouterLink v-if="features.lists" to="/lists" class="hover:text-ink">{{ $t('nav.lists') }}</RouterLink>
             <RouterLink to="/settings" class="hover:text-ink">{{ $t('nav.settings') }}</RouterLink>
             <RouterLink to="/privacy" class="hover:text-ink">{{ $t('legal.footer.privacy') }}</RouterLink>
             <RouterLink to="/terms" class="hover:text-ink">{{ $t('legal.footer.terms') }}</RouterLink>
@@ -42,7 +41,7 @@
         </div>
       </footer>
 
-      <MobileTabBar @create="createOpen = true" @more="moreOpen = true" @home-click="onHomeClick" />
+      <MobileTabBar @create="createOpen = true" @more="moreOpen = true" @home-click="onHomeClick" @notifications="headerRef?.openNotifications()" />
       <MoreSheet v-model="moreOpen" @logout="logout" />
       <CreateSheet v-model="createOpen" @post="newPostFromSheet" />
     </template>
@@ -50,9 +49,10 @@
     <RouterView v-else />
 
     <ToastHost />
+    <GuestSaveDialog v-if="auth.isGuest" />
     <ConfirmHost />
     <!-- Niet in de embed (iframe op andere sites) en niet op afdrukpagina's. -->
-    <ConsentBanner v-if="!isEmbed && !isConsentExemptLayout(layout)" :above-tab-bar="layout === 'app' && auth.isAuthenticated" />
+    <ConsentBanner v-if="!isEmbed && !isConsentExemptLayout(layout) && route.meta.consentBanner !== false" :above-tab-bar="layout === 'app' && auth.isAuthenticated" />
   </div>
 </template>
 
@@ -65,12 +65,15 @@ import CreateSheet from '@/components/layout/CreateSheet.vue'
 import MoreSheet from '@/components/layout/MoreSheet.vue'
 import ToastHost from '@/components/ToastHost.vue'
 import ConfirmHost from '@/components/ConfirmHost.vue'
+import GuestSaveDialog from '@/components/auth/GuestSaveDialog.vue'
+import { confirm } from '@/composables/useConfirm'
+import { openGuestSave } from '@/composables/useGuestSave'
 import Icon from '@/components/ui/Icon.vue'
 import Logo from '@/components/ui/Logo.vue'
-import EmailVerifyBanner from '@/components/layout/EmailVerifyBanner.vue'
 import OfflineBanner from '@/components/layout/OfflineBanner.vue'
 import ConsentBanner from '@/components/layout/ConsentBanner.vue'
 import { useConsentStore } from '@/stores/consent'
+import { features } from '@/config/features'
 import { isConsentExemptLayout } from '@/utils/consent'
 import { useI18n } from 'vue-i18n'
 import { resyncPush } from '@/services/push'
@@ -98,6 +101,7 @@ const layout = computed(() => route.meta.layout || 'app')
 // Via het pad (niet route.meta), want de eerste route is bij de setup nog niet opgelost.
 const isEmbed = window.location.pathname.startsWith('/embed/')
 const createOpen = ref(false)
+const headerRef = ref(null)
 const moreOpen = ref(false)
 
 // ---------- sessie: realtime + polling ----------
@@ -149,7 +153,15 @@ function onVisibility() {
   }
 }
 
-function logout() {
+async function logout() {
+  // Een gast heeft geen wachtwoord: uitloggen wist de sleutel en daarmee de toegang tot zijn reizen.
+  if (auth.isGuest) {
+    const leave = await confirm({ title: t('join.save.logoutTitle'), message: t('join.save.logoutText'), confirmLabel: t('join.save.logoutConfirm'), cancelLabel: t('join.save.menu'), variant: 'danger' })
+    if (!leave) {
+      openGuestSave()
+      return
+    }
+  }
   auth.logout()
   router.push({ name: 'login' })
 }

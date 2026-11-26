@@ -26,7 +26,7 @@
               <SunTimes :date="today" :lat="place.latitude" :lng="place.longitude" :timezone="timezone" />
             </p>
             <div class="mt-5 flex flex-wrap gap-2">
-              <button type="button" class="btn btn-dark btn-sm" @click="saveOpen = true"><Icon name="bookmark" :size="14" /> {{ $t('places.save') }}</button>
+              <button v-if="features.lists" type="button" class="btn btn-dark btn-sm" @click="saveOpen = true"><Icon name="bookmark" :size="14" /> {{ $t('places.save') }}</button>
               <a :href="osmLink" target="_blank" rel="noopener" class="btn btn-secondary btn-sm"><Icon name="external" :size="14" /> {{ $t('places.openMap') }}</a>
               <RouterLink v-if="features.nearby" :to="{ name: 'nearby', query: { lat: place.latitude, lng: place.longitude, name: place.name } }" class="btn btn-secondary btn-sm"><Icon name="locate" :size="14" /> {{ $t('nearby.open') }}</RouterLink>
             </div>

@@ -16,6 +16,7 @@ export default {
   memberSince: 'lid sinds {date}',
   privateTitle: 'Dit account is privé',
   privateText: 'Volg {name} om posts, reizen en lijsten te zien.',
+  privateNoFollow: 'Je ziet de reizen van {name} zodra jullie samen een reis plannen.',
   privateRequested: 'Je volgverzoek is verstuurd. Zodra het geaccepteerd is, zie je hier alles.',
   countriesVisited: 'Bezochte landen',
   contentTabs: 'Inhoud van het profiel',

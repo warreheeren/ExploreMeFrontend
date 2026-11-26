@@ -4,7 +4,6 @@ export default {
   register: 'Create account',
   forgotPassword: 'Forgot password',
   resetPassword: 'New password',
-  verifyEmail: 'Confirm email address',
   welcome: 'Welcome',
   settings: 'Settings',
   post: 'Post',

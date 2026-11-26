@@ -19,6 +19,18 @@ export async function getBookmarkedTrips(take = 50) {
   return data
 }
 
+/** Startscherm "Mijn reizen": [{ trip, isOwner, participantCount, participants, hasOpenDatePoll, actionCount, actions, myBalance, baseCurrency }] */
+export async function getTripsHome() {
+  const { data } = await http.get('/trips/home')
+  return data
+}
+
+/** Tabblad Overzicht van een reis: { item, activity, chatUnread, lastMessage, spentTotal, openPaymentRequests } (alleen deelnemers). */
+export async function getTripOverview(tripId) {
+  const { data } = await http.get(`/trips/${tripId}/overview`)
+  return data
+}
+
 export async function getUpcomingTrips(take = 5) {
   const { data } = await http.get('/trips/upcoming', { params: { take } })
   return data
@@ -171,6 +183,35 @@ export async function deleteSettlement(tripId, settlementId) {
   await http.delete(`/trips/${tripId}/settlements/${settlementId}`)
 }
 
+// ---------- betaalverzoeken ----------
+
+/** [{ id, title, amountPerPerson, currency, dueDate, isCancelled, requestedByDisplayName, paidCount, totalCount, shares, isMine, paidByMe, canManage, payToIban, payToName }] */
+export async function getPaymentRequests(tripId) {
+  const { data } = await http.get(`/trips/${tripId}/payment-requests`)
+  return data
+}
+
+/** payload: { title, amountPerPerson, dueDate?, userNames? } (zonder userNames: iedereen behalve jij) */
+export async function createPaymentRequest(tripId, payload) {
+  const { data } = await http.post(`/trips/${tripId}/payment-requests`, payload)
+  return data
+}
+
+/** Eigen betaling afvinken; met userName namens een ander (alleen de aanvrager of eigenaar). */
+export async function markPaymentPaid(requestId, userName = null) {
+  const { data } = await http.post(`/trips/payment-requests/${requestId}/paid`, null, { params: userName ? { userName } : {} })
+  return data
+}
+
+export async function unmarkPaymentPaid(requestId, userName = null) {
+  const { data } = await http.delete(`/trips/payment-requests/${requestId}/paid`, { params: userName ? { userName } : {} })
+  return data
+}
+
+export async function cancelPaymentRequest(requestId) {
+  await http.delete(`/trips/payment-requests/${requestId}`)
+}
+
 // ---------- route & weer ----------
 
 export async function getRoute(tripId) {
@@ -204,6 +245,12 @@ export async function createPoll(tripId, payload) {
 
 export async function votePoll(pollId, optionIds) {
   const { data } = await http.post(`/trips/polls/${pollId}/vote`, { optionIds })
+  return data
+}
+
+/** Voorstel toevoegen aan een open stemming: payload { text, url? } → de bijgewerkte stemming. */
+export async function addPollOption(pollId, payload) {
+  const { data } = await http.post(`/trips/polls/${pollId}/options`, payload)
   return data
 }
 

@@ -20,10 +20,16 @@
 
       <TripHero :trip="trip">
         <template #actions>
-          <!-- Eén hoofdactie: tijdens de reis "Vandaag", anders bewerken (voor deelnemers). -->
-          <RouterLink v-if="showToday" :to="`/trips/${trip.id}/today`" class="btn btn-dark btn-sm"><Icon name="sun" :size="16" /> {{ $t('today.button') }}</RouterLink>
-          <RouterLink v-else-if="trip.canEdit" :to="`/trips/${trip.id}/edit`" class="btn btn-dark btn-sm"><Icon name="edit" :size="16" /> {{ $t('trip.actions.edit') }}</RouterLink>
+          <!-- Eén hoofdactie voor deelnemers: de groep bij elkaar krijgen, daarna de groepschat. -->
+          <button v-if="trip.isOwner && isAlone" type="button" class="btn btn-dark btn-sm" @click="inviteLinkOpen = true"><Icon name="users" :size="16" /> {{ $t('overview.invite') }}</button>
+          <RouterLink v-else-if="trip.canEdit" :to="`/messages/trip/${trip.id}`" class="btn btn-dark btn-sm">
+            <Icon name="chat" :size="16" /> {{ $t('planning.tabs.chat') }}
+            <span v-if="overview?.chatUnread" class="badge">{{ overview.chatUnread > 99 ? '99+' : overview.chatUnread }}</span>
+          </RouterLink>
+          <RouterLink v-if="showToday" :to="`/trips/${trip.id}/today`" class="btn btn-secondary btn-sm"><Icon name="sun" :size="16" /> {{ $t('today.button') }}</RouterLink>
+          <!-- Likes en bewaren horen bij ontdekken (features.discover). -->
           <button
+            v-if="features.discover"
             type="button"
             class="btn btn-secondary btn-sm"
             :class="trip.likedByMe ? 'border-accent-700 text-accent-700' : ''"
@@ -33,6 +39,7 @@
             <Icon name="heart" :size="16" :filled="trip.likedByMe" /> {{ trip.likeCount }}
           </button>
           <button
+            v-if="features.discover"
             type="button"
             class="btn btn-secondary btn-sm"
             :class="trip.bookmarkedByMe ? 'border-accent-700 text-accent-700' : ''"
@@ -49,14 +56,15 @@
               <Icon name="more" :size="18" />
             </button>
             <div v-if="menuOpen" class="menu right-0 top-full mt-2 w-64" role="menu">
-              <RouterLink v-if="trip.canEdit" :to="`/messages/trip/${trip.id}`" class="menu-item" role="menuitem"><Icon name="chat" :size="16" /> {{ $t('planning.chat.open') }}</RouterLink>
+              <!-- De chat is de hoofdknop, behalve zolang "Uitnodigen" daar staat. -->
+              <RouterLink v-if="trip.isOwner && isAlone" :to="`/messages/trip/${trip.id}`" class="menu-item" role="menuitem"><Icon name="chat" :size="16" /> {{ $t('planning.chat.open') }}</RouterLink>
               <RouterLink v-if="recapMode !== 'none'" :to="`/trips/${trip.id}/recap`" class="menu-item" role="menuitem"><Icon name="sparkle" :size="16" /> {{ $t(recapMode === 'finished' ? 'tripExtras.recap.open' : 'tripExtras.recap.openSoFar') }}</RouterLink>
               <OfflineTripButton :trip="trip" variant="menu" />
               <div class="menu-sep" />
-              <RouterLink v-if="trip.canEdit && showToday" :to="`/trips/${trip.id}/edit`" class="menu-item" role="menuitem"><Icon name="edit" :size="16" /> {{ $t('trip.actions.edit') }}</RouterLink>
+              <RouterLink v-if="trip.canEdit" :to="`/trips/${trip.id}/edit`" class="menu-item" role="menuitem"><Icon name="edit" :size="16" /> {{ $t('trip.actions.edit') }}</RouterLink>
               <button v-if="trip.canEdit && aiStatus.enabled" type="button" class="menu-item" role="menuitem" @click="openBookingImport"><Icon name="sparkle" :size="16" /> {{ $t('bookingImport.open') }}</button>
               <RouterLink :to="`/trips/${trip.id}/print`" class="menu-item" role="menuitem"><Icon name="printer" :size="16" /> {{ $t('trip.actions.print') }}</RouterLink>
-              <RouterLink v-if="features.photobook" :to="`/trips/${trip.id}/photobook`" class="menu-item" role="menuitem"><Icon name="book" :size="16" /> {{ $t('photobook.open') }}</RouterLink>
+              <RouterLink :to="`/trips/${trip.id}/photobook`" class="menu-item" role="menuitem"><Icon name="book" :size="16" /> {{ $t('photobook.open') }}</RouterLink>
               <button type="button" class="menu-item" role="menuitem" @click="exportIcs"><Icon name="calendar" :size="16" /> {{ $t('trip.actions.ics') }}</button>
               <button type="button" class="menu-item" role="menuitem" @click="cloneTrip"><Icon name="copy" :size="16" /> {{ $t('tripExtras.copy.action') }}</button>
               <div class="menu-sep" />
@@ -70,7 +78,7 @@
 
 
       <!-- Tabs -->
-      <!-- Vier hoofdtabs; de onderdelen van de actieve groep staan er als chips onder (?tab= blijft het onderdeel). -->
+      <!-- Vijf hoofdtabs; de onderdelen van de actieve groep staan er als chips onder (?tab= blijft het onderdeel). -->
       <div class="sticky top-16 z-30 -mx-4 mt-4 bg-ground/95 px-4 backdrop-blur sm:-mx-6 sm:px-6">
         <nav class="tabs" :aria-label="$t('trip.tabs.aria')" role="tablist">
           <button
@@ -85,6 +93,7 @@
           >
             <Icon :name="g.icon" :size="16" class="hidden sm:block" /> {{ g.label }}
             <span v-if="g.count" class="text-xs font-bold text-muted">{{ g.count }}</span>
+            <span v-if="g.waiting" class="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-amber-50 px-1 text-[11px] font-extrabold text-rating-text ring-1 ring-inset ring-amber-200" :aria-label="$t('overview.waitingBadge', g.waiting)">{{ g.waiting }}</span>
           </button>
         </nav>
         <div v-if="activeGroup && activeGroup.items.length > 1" ref="tabsRef" class="flex gap-1.5 overflow-x-auto py-2.5 scrollbar-none" role="tablist" :aria-label="activeGroup.label">
@@ -105,41 +114,25 @@
       </div>
 
       <div class="mt-4">
-        <!-- Overzicht begint met wie er meegaat, de cijfers en het weer (v-show: het weer voedt ook het dagschema). -->
+        <!-- Overzicht voor deelnemers. v-show: het onderdeel blijft geladen, want het voedt de bolletjes op de tabs en de chatknop. -->
+        <TripGroupOverview
+          v-if="trip.canEdit"
+          v-show="tab === 'start'"
+          ref="overviewRef"
+          :trip="trip"
+          @open-tab="setTab"
+          @invite-link="inviteLinkOpen = true"
+          @loaded="overview = $event"
+        >
+          <template #crew>
+            <TripCrewCard :trip="trip" @invite-link="inviteLinkOpen = true" @invite="inviteOpen = true" @remove="removeCollaborator" />
+          </template>
+        </TripGroupOverview>
+
+        <!-- De route begint met de cijfers en het weer (v-show: het weer voedt ook het dagschema). -->
         <div v-show="tab === 'overzicht'" class="mb-5 space-y-5">
-          <!-- Reisgenoten -->
-          <section v-if="trip.isOwner || trip.collaborators.length" class="card card-pad" aria-labelledby="crew-title">
-            <div class="mb-3 flex items-center justify-between gap-3">
-              <h2 id="crew-title" class="card-title">{{ $t('trip.crew.title') }} <span class="font-bold text-muted">{{ acceptedCollaborators.length + 1 }}</span></h2>
-              <button v-if="trip.isOwner" type="button" class="btn btn-secondary btn-sm" @click="inviteOpen = true"><Icon name="plus" :size="14" /> {{ $t('trip.crew.invite') }}</button>
-            </div>
-            <ul class="flex flex-wrap gap-2">
-              <li>
-                <RouterLink :to="`/u/${trip.userName}`" class="inline-flex h-10 items-center gap-2 rounded-full border border-line bg-surface pl-1 pr-3 hover:border-line-strong">
-                  <Avatar :src="trip.profilePhotoUrl" :name="trip.displayName" size="sm" />
-                  <span class="text-sm font-bold text-ink">{{ trip.displayName }}</span>
-                  <span class="chip chip-accent h-5 px-2 text-[10px]">{{ $t('trip.crew.owner') }}</span>
-                </RouterLink>
-              </li>
-              <li v-for="c in acceptedCollaborators" :key="c.userName" class="inline-flex h-10 items-center gap-2 rounded-full border border-line bg-surface pl-1 pr-1.5">
-                <RouterLink :to="`/u/${c.userName}`" class="inline-flex items-center gap-2 pr-1.5">
-                  <Avatar :src="c.profilePhotoUrl" :name="c.displayName" size="sm" />
-                  <span class="text-sm font-bold text-ink hover:underline">{{ c.displayName }}</span>
-                </RouterLink>
-                <button v-if="trip.isOwner" type="button" class="btn-icon h-7 w-7 hover:text-red-600" :aria-label="$t('trip.crew.removeAria', { name: c.displayName })" @click="removeCollaborator(c)">
-                  <Icon name="x" :size="14" />
-                </button>
-              </li>
-              <li v-for="c in pendingCollaborators" :key="c.userName" class="inline-flex h-10 items-center gap-2 rounded-full border border-dashed border-line-strong bg-gray-50 pl-1 pr-1.5">
-                <Avatar :src="c.profilePhotoUrl" :name="c.displayName" size="sm" class="opacity-70" />
-                <span class="text-sm font-semibold text-body">{{ c.displayName }}</span>
-                <span class="text-xs font-semibold text-muted">{{ $t('trip.crew.invited') }}</span>
-                <button type="button" class="btn-icon h-7 w-7 hover:text-red-600" :aria-label="$t('trip.crew.revokeAria', { name: c.displayName })" @click="removeCollaborator(c)">
-                  <Icon name="x" :size="14" />
-                </button>
-              </li>
-            </ul>
-          </section>
+          <!-- Deelnemers zien de reisgenoten op het tabblad Overzicht; kijkers hier, bij de route. -->
+          <TripCrewCard v-if="!trip.canEdit && trip.collaborators.length" :trip="trip" />
 
           <TripStats :trip="trip" :route="tripRoute" show-footprint :footprint="footprint" :footprint-loading="footprintLoading" :footprint-failed="footprintFailed" />
 
@@ -241,9 +234,10 @@
         :busy-user-name="invitingUserName"
         @select="invite"
       />
+      <InviteLinkDialog v-if="trip.isOwner" v-model="inviteLinkOpen" :trip="trip" />
       <ShareTripDialog v-model="shareOpen" :trip="trip" @updated="(token) => (trip.shareToken = token)" />
       <ReportDialog v-model="reportOpen" target-type="trip" :target-id="trip.id" />
-      <SaveToListDialog v-model="saveOpen" :stop="savingStop" />
+      <SaveToListDialog v-if="features.lists" v-model="saveOpen" :stop="savingStop" />
       <CopyTripDialog v-model="copyOpen" :trip="trip" />
       <BookingImportDialog v-if="trip.canEdit && aiStatus.enabled" v-model="bookingImportOpen" :trip="trip" @imported="load({ silent: true })" />
     </template>
@@ -271,6 +265,11 @@ import PostComposer from '@/components/PostComposer.vue'
 import CommentThread from '@/components/comments/CommentThread.vue'
 import UserSearchModal from '@/components/UserSearchModal.vue'
 import ShareTripDialog from '@/components/ShareTripDialog.vue'
+import InviteLinkDialog from '@/components/trip/InviteLinkDialog.vue'
+import TripGroupOverview from '@/components/trip/TripGroupOverview.vue'
+import TripCrewCard from '@/components/trip/TripCrewCard.vue'
+import { actionCountByGroup } from '@/utils/tripOverview'
+import { nudgeGuestSave } from '@/composables/useGuestSave'
 import ReportDialog from '@/components/ReportDialog.vue'
 import SaveToListDialog from '@/components/lists/SaveToListDialog.vue'
 import WeatherStrip from '@/components/trip/WeatherStrip.vue'
@@ -307,7 +306,7 @@ import { useToastStore } from '@/stores/toast'
 import { confirm } from '@/composables/useConfirm'
 import { errorMessage } from '@/utils/errors'
 import { buildTripIcs, downloadTextFile, safeFileName } from '@/utils/ics'
-import { toDateInput } from '@/utils/date'
+import { daysUntil, toDateInput } from '@/utils/date'
 import { STOP_TYPE_ORDER, stopTypeMeta } from '@/utils/stopTypes'
 
 const route = useRoute()
@@ -321,6 +320,10 @@ const loading = ref(true)
 const selectedStopId = ref(null)
 const menuOpen = ref(false)
 const inviteOpen = ref(false)
+const inviteLinkOpen = ref(false)
+// Gegevens van het tabblad Overzicht (acties, chat); gevuld door TripGroupOverview.
+const overview = ref(null)
+const overviewRef = ref(null)
 const invitingUserName = ref('')
 const shareOpen = ref(false)
 const reportOpen = ref(false)
@@ -454,16 +457,19 @@ function saveStop(stop) {
 const acceptedCollaborators = computed(() => (trip.value?.collaborators || []).filter((c) => c.status === 'Accepted'))
 const pendingCollaborators = computed(() => (trip.value?.collaborators || []).filter((c) => c.status === 'Pending'))
 const isCollaborator = computed(() => acceptedCollaborators.value.some((c) => c.userName === auth.userName))
+/** Nog niemand anders in de reis: dan is uitnodigen de belangrijkste stap. */
+const isAlone = computed(() => acceptedCollaborators.value.length === 0)
 const participants = computed(() => (trip.value
   ? [{ userName: trip.value.userName, displayName: trip.value.displayName }, ...acceptedCollaborators.value.map((c) => ({ userName: c.userName, displayName: c.displayName }))]
   : []))
 
 const tabs = computed(() => {
   if (!trip.value) return []
-  const list = [
-    { id: 'overzicht', label: t('trip.tabs.overview'), icon: 'map' },
-    { id: 'dagschema', label: t('trip.tabs.itinerary'), icon: 'calendar' },
-  ]
+  const list = []
+  // Alleen deelnemers hebben een overzicht van de groep; kijkers beginnen bij de route.
+  if (trip.value.canEdit) list.push({ id: 'start', label: t('trip.groups.overview'), icon: 'home' })
+  list.push({ id: 'overzicht', label: t('trip.tabs.overview'), icon: 'map' })
+  list.push({ id: 'dagschema', label: t('trip.tabs.itinerary'), icon: 'calendar' })
   if (trip.value.canEdit) {
     list.push({ id: 'budget', label: t('trip.tabs.budget'), icon: 'wallet' })
     list.push({ id: 'paklijst', label: t('trip.tabs.checklist'), icon: 'checklist' })
@@ -473,33 +479,43 @@ const tabs = computed(() => {
   list.push({ id: 'dagboek', label: t('planning.tabs.journal'), icon: 'book' })
   list.push({ id: 'album', label: t('album.tab'), icon: 'camera' })
   list.push({ id: 'praktisch', label: t('countryInfo.tab'), icon: 'globe' })
-  list.push({ id: 'posts', label: t('trip.tabs.posts'), icon: 'image' })
-  list.push({ id: 'reacties', label: t('trip.tabs.comments'), icon: 'chat', count: trip.value.commentCount || null })
+  // Posts horen bij de tijdlijn, publieke reacties bij ontdekken; zonder die vlag vallen de tabs weg.
+  if (features.feed) list.push({ id: 'posts', label: t('trip.tabs.posts'), icon: 'image' })
+  if (features.discover) list.push({ id: 'reacties', label: t('trip.tabs.comments'), icon: 'chat', count: trip.value.commentCount || null })
   return list
 })
 
+// Deelnemers openen de reis op het overzicht van de groep, kijkers op de route.
+const defaultTab = computed(() => (trip.value?.canEdit ? 'start' : 'overzicht'))
 const tab = computed(() => {
-  const requested = typeof route.query.tab === 'string' ? route.query.tab : 'overzicht'
-  return tabs.value.some((t) => t.id === requested) ? requested : 'overzicht'
+  const requested = typeof route.query.tab === 'string' ? route.query.tab : defaultTab.value
+  return tabs.value.some((t) => t.id === requested) ? requested : defaultTab.value
 })
 
 function setTab(id) {
-  router.replace({ query: { ...route.query, tab: id === 'overzicht' ? undefined : id } })
+  router.replace({ query: { ...route.query, tab: id === defaultTab.value ? undefined : id } })
 }
 
-// De elf onderdelen in vier groepen. Een groep zonder zichtbare onderdelen (kijkers zien "samen" niet) valt weg.
+// De onderdelen (?tab=-id's ongewijzigd) in vijf groepen rond de groepsreis. Een groep zonder zichtbare onderdelen
+// valt weg: kijkers zien alleen Plannen en Herinneringen.
 const TAB_GROUPS = [
-  { id: 'plan', icon: 'map', labelKey: 'trip.groups.plan', tabs: ['overzicht', 'dagschema'] },
-  { id: 'samen', icon: 'users', labelKey: 'trip.groups.together', tabs: ['budget', 'paklijst', 'stemmen', 'documenten'] },
-  { id: 'herinneringen', icon: 'camera', labelKey: 'trip.groups.memories', tabs: ['dagboek', 'album', 'posts'] },
-  { id: 'info', icon: 'globe', labelKey: 'trip.groups.info', tabs: ['praktisch', 'reacties'] },
+  { id: 'start', icon: 'home', labelKey: 'trip.groups.overview', tabs: ['start'] },
+  { id: 'plan', icon: 'map', labelKey: 'trip.groups.plan', tabs: ['overzicht', 'dagschema', 'praktisch'] },
+  { id: 'regelen', icon: 'checklist', labelKey: 'trip.groups.arrange', tabs: ['stemmen', 'paklijst', 'documenten'] },
+  { id: 'geld', icon: 'wallet', labelKey: 'trip.groups.money', tabs: ['budget'] },
+  { id: 'herinneringen', icon: 'camera', labelKey: 'trip.groups.memories', tabs: ['dagboek', 'album', 'posts', 'reacties'] },
 ]
+/** Wat er per hoofdtab op jou wacht (stemmingen en taken bij Regelen, betaalverzoeken bij Geld). */
+const waitingByGroup = computed(() => actionCountByGroup(overview.value?.item?.actions, TAB_GROUPS))
 const groups = computed(() => TAB_GROUPS
   .map((g) => {
     const items = tabs.value.filter((x) => g.tabs.includes(x.id))
-    return { id: g.id, icon: g.icon, label: t(g.labelKey), items, count: items.reduce((n, x) => n + (x.count || 0), 0) || null }
+    return { id: g.id, icon: g.icon, label: t(g.labelKey), items, count: items.reduce((n, x) => n + (x.count || 0), 0) || null, waiting: waitingByGroup.value[g.id] || 0 }
   })
   .filter((g) => g.items.length))
+
+// Na een stem, betaling of afgevinkte taak klopt het overzicht niet meer: bij elke wissel van tab verversen.
+watch(tab, () => overviewRef.value?.reload())
 const activeGroup = computed(() => groups.value.find((g) => g.items.some((x) => x.id === tab.value)) || groups.value[0] || null)
 
 // Terug naar een groep = terug naar het onderdeel waar je daar het laatst was.
@@ -523,6 +539,13 @@ async function load({ silent = false } = {}) {
     trip.value = await tripsApi.getTripById(route.params.id)
     document.title = `${trip.value.title} · ExploreMe`
     loadLive()
+    // Net aangemaakt via het korte formulier (?invite=1): de volgende stap is de link delen.
+    if (route.query.invite && trip.value.isOwner) {
+      inviteLinkOpen.value = true
+      router.replace({ query: { ...route.query, invite: undefined } })
+    }
+    // Gast na afloop van de reis: nu wil je je foto's en herinneringen houden.
+    if (!silent && trip.value.canEdit && daysUntil(trip.value.endDate) < 0) nudgeGuestSave('tripEnded')
   } catch {
     if (!silent) trip.value = null
   } finally {

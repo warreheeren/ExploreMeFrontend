@@ -55,7 +55,7 @@ export function relativizeMediaUrls(node) {
   return out
 }
 
-const SESSION_KEYS = ['token', 'userName', 'displayName', 'profilePhotoUrl', 'coverPhotoUrl', 'email', 'onboardingCompleted', 'role', 'emailVerified']
+const SESSION_KEYS = ['token', 'userName', 'displayName', 'profilePhotoUrl', 'coverPhotoUrl', 'email', 'onboardingCompleted', 'role', 'emailVerified', 'isGuest', 'guestKey']
 
 // Caches van de service worker met (mogelijk privé) gebruikersinhoud; zie workbox.runtimeCaching in vite.config.js.
 const PRIVATE_CACHES = ['trip-data', 'images']
@@ -71,6 +71,37 @@ export function clearStoredSession() {
   if (typeof caches !== 'undefined') {
     for (const name of PRIVATE_CACHES) caches.delete(name).catch(() => {})
   }
+}
+
+// ---------- gastaccounts ----------
+// Een gast heeft geen wachtwoord: zijn toestel bewaart een geheime sleutel en haalt daarmee een nieuw token op
+// zodra het oude (8 uur) verlopen is. Zonder dit zou een gast na een dag zijn reis kwijt zijn.
+
+let tokenRefreshedHandler = null
+/** De auth-store hangt hier in, zodat ook de realtime-verbinding het nieuwe token krijgt. */
+export function setTokenRefreshedHandler(handler) {
+  tokenRefreshedHandler = handler
+}
+
+let guestResume = null
+/** 'ok' (nieuw token opgeslagen), 'invalid' (sleutel geweigerd), 'failed' (tijdelijk, bv. geen netwerk) of 'none' (geen gast). */
+function resumeGuestSession() {
+  const userName = localStorage.getItem('userName')
+  const guestKey = localStorage.getItem('guestKey')
+  if (!userName || !guestKey) return Promise.resolve('none')
+  // Eén poging tegelijk: bij het openen van een pagina falen meerdere verzoeken tegelijk met 401.
+  guestResume ??= axios
+    .post(`${API_ROOT}/api/auth/guest/resume`, { userName, guestKey }, { headers: { 'Accept-Language': currentLocale() } })
+    .then(({ data }) => {
+      localStorage.setItem('token', data.token)
+      tokenRefreshedHandler?.(data.token)
+      return 'ok'
+    })
+    .catch((err) => ([401, 403].includes(err.response?.status) ? 'invalid' : 'failed'))
+    .finally(() => {
+      guestResume = null
+    })
+  return guestResume
 }
 
 http.interceptors.request.use((config) => {
@@ -105,6 +136,15 @@ http.interceptors.response.use(
     const isAuthCall = /\/auth\//.test(url) || /\/public\//.test(url)
 
     if (status === 401 && sentToken && !isAuthCall) {
+      if (!error.config.__guestResumed) {
+        const resumed = await resumeGuestSession()
+        if (resumed === 'ok') {
+          error.config.__guestResumed = true
+          return http.request(error.config)
+        }
+        // Tijdelijke storing: de sleutel niet weggooien, anders is de gast zijn toegang voorgoed kwijt.
+        if (resumed === 'failed') return Promise.reject(error)
+      }
       clearStoredSession()
       if (!window.location.pathname.startsWith('/login')) {
         const redirect = encodeURIComponent(window.location.pathname + window.location.search)

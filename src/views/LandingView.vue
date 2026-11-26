@@ -5,63 +5,82 @@
         <RouterLink to="/" aria-label="ExploreMe"><Logo /></RouterLink>
         <nav class="flex items-center gap-2" :aria-label="$t('landing.accountNav')">
           <RouterLink to="/login" class="btn btn-ghost btn-sm">{{ $t('landing.login') }}</RouterLink>
-          <RouterLink to="/register" class="btn btn-dark btn-sm">{{ $t('landing.register') }}</RouterLink>
+          <RouterLink to="/register" class="btn btn-dark btn-sm">{{ $t('landing.cta') }}</RouterLink>
         </nav>
       </div>
     </header>
 
     <main>
-      <!-- Hero -->
-      <section class="mx-auto grid max-w-content grid-cols-1 items-center gap-8 px-4 pb-12 pt-10 sm:px-6 sm:pt-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-14 lg:pb-20">
+      <!-- Hero: de belofte, met een voorbeeld van wat je in de app ziet -->
+      <section class="mx-auto grid max-w-content grid-cols-1 items-center gap-8 px-4 pb-12 pt-10 sm:px-6 sm:pt-16 lg:grid-cols-2 lg:gap-14 lg:pb-16">
         <div>
           <p class="eyebrow-accent">{{ $t('landing.eyebrow') }}</p>
           <h1 class="title-display mt-3 text-[40px] leading-[1.04] text-balance sm:text-[56px]">{{ $t('landing.headline') }}</h1>
           <p class="mt-5 max-w-xl text-[17px] leading-relaxed text-body">{{ $t('landing.intro') }}</p>
           <div class="mt-7 flex flex-wrap items-center gap-3">
-            <RouterLink to="/register" class="btn btn-primary btn-lg">{{ $t('landing.cta') }}</RouterLink>
-            <a v-if="trips.length" href="#reizen" class="btn btn-secondary btn-lg">{{ $t('landing.browse') }}</a>
+            <RouterLink to="/register" class="btn btn-primary btn-lg">{{ $t('landing.start') }}</RouterLink>
+            <a href="#zo-werkt-het" class="btn btn-secondary btn-lg">{{ $t('landing.how') }}</a>
           </div>
           <p class="mt-4 text-sm text-muted">{{ $t('landing.free') }}</p>
         </div>
 
-        <!-- Beeld: de populairste openbare reis, of de illustratie als er nog geen reizen (of geen verbinding) zijn. -->
-        <RouterLink v-if="featured" :to="`/t/${featured.id}`" class="group relative block overflow-hidden rounded-3xl border border-line bg-gray-100">
-          <div class="aspect-[4/3] sm:aspect-[16/11]">
-            <CoverImage :src="featured.coverImageUrl" :alt="featured.title" :seed="featured.id" eager img-class="transition duration-700 group-hover:scale-[1.03]" />
+        <!-- Voorbeeldkaart (decoratief): zo ziet "Mijn reizen" eruit zodra je groep meedoet. -->
+        <div class="overflow-hidden rounded-3xl bg-accent-800 px-5 pt-5 sm:px-8 sm:pt-8" aria-hidden="true">
+          <div class="rounded-t-2xl bg-surface p-5">
+            <span class="chip chip-accent">{{ $t('landing.preview.countdown') }}</span>
+            <p class="title-display mt-2 text-xl">{{ $t('landing.preview.title') }}</p>
+            <p class="mt-1 flex items-center gap-2 text-xs font-semibold text-muted">
+              {{ $t('landing.preview.dates') }} <span>·</span>
+              <span class="flex -space-x-1.5"><Avatar v-for="name in previewPeople" :key="name" :name="name" size="xs" ring /></span>
+              {{ $t('landing.preview.people') }}
+            </p>
+            <div class="mt-3 border-t border-line pt-2.5">
+              <p class="mb-1 text-xs font-extrabold text-rating-text">{{ $t('landing.preview.waiting') }}</p>
+              <p v-for="(row, i) in previewRows" :key="row.key" class="-mx-2 flex items-center gap-2.5 rounded-xl px-2 py-1.5 text-sm font-semibold text-ink" :class="i === 0 ? 'bg-amber-50 dark:bg-gray-50' : ''">
+                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-line bg-surface text-body"><Icon :name="row.icon" :size="15" /></span>
+                {{ $t(`landing.preview.${row.key}`) }}
+              </p>
+            </div>
           </div>
-          <div class="absolute inset-x-3 bottom-3 rounded-2xl bg-surface/95 p-4 backdrop-blur sm:inset-x-4 sm:bottom-4">
-            <p class="eyebrow-accent">{{ [flagFor(featured.country), featured.country].filter(Boolean).join(' ') }}</p>
-            <p class="title-display mt-0.5 line-clamp-1 text-xl">{{ featured.title }}</p>
-            <p class="mt-0.5 text-xs font-semibold text-muted">{{ formatDateRange(featured.startDate, featured.endDate) }} · {{ $t('landing.by', { name: featured.displayName }) }}</p>
-          </div>
-        </RouterLink>
-        <div v-else class="relative overflow-hidden rounded-3xl bg-accent-800" :class="loading ? 'animate-pulse' : ''" aria-hidden="true">
-          <svg viewBox="0 0 600 420" class="block w-full">
-            <circle cx="455" cy="120" r="46" fill="#F3D27A" />
-            <path d="M0 290 L90 216 L170 262 L260 180 L360 268 L450 218 L540 252 L600 222 L600 420 L0 420Z" fill="#134E4A" />
-            <path d="M0 338 L80 296 L170 328 L270 286 L360 330 L470 304 L560 338 L600 316 L600 420 L0 420Z" fill="#0F766E" />
-            <path d="M0 384 h600 v36 h-600z" fill="#0D9488" />
-            <path d="M60 396q18-7 36 0t36 0M300 404q18-7 36 0t36 0M480 397q18-7 36 0t36 0" stroke="#5EEAD4" stroke-width="3" fill="none" stroke-linecap="round" />
-          </svg>
         </div>
       </section>
 
-      <!-- Wat je ermee doet -->
-      <section class="border-y border-line bg-surface" :aria-label="$t('landing.pillarsAria')">
-        <ol class="mx-auto grid max-w-content grid-cols-1 divide-y divide-line px-4 sm:px-6 md:grid-cols-3 md:divide-x md:divide-y-0">
-          <li v-for="(p, i) in pillars" :key="p.key" class="py-8 md:px-8 md:py-10 md:first:pl-0 md:last:pr-0">
-            <p class="font-display text-sm font-semibold text-accent-700">0{{ i + 1 }}</p>
-            <h2 class="title-display mt-2 text-2xl">{{ $t(`landing.pillars.${p.key}.title`) }}</h2>
-            <p class="mt-2 text-[15px] leading-relaxed text-body">{{ $t(`landing.pillars.${p.key}.text`) }}</p>
-            <ul class="mt-4 flex flex-wrap gap-1.5">
-              <li v-for="n in 3" :key="n" class="chip chip-muted">{{ $t(`landing.pillars.${p.key}.tag${n}`) }}</li>
-            </ul>
+      <!-- In plaats van vier losse hulpmiddelen -->
+      <section class="border-y border-line bg-surface">
+        <div class="mx-auto flex max-w-content flex-wrap items-center gap-x-4 gap-y-2 px-4 py-6 sm:px-6">
+          <p class="font-bold text-ink">{{ $t('landing.instead.label') }}</p>
+          <span v-for="n in 4" :key="n" class="font-semibold text-muted line-through decoration-2">{{ $t(`landing.instead.item${n}`) }}</span>
+          <Icon name="arrow-right" :size="16" class="text-muted" />
+          <span class="chip chip-accent">{{ $t('landing.instead.one') }}</span>
+        </div>
+      </section>
+
+      <!-- Drie stappen -->
+      <section id="zo-werkt-het" class="mx-auto max-w-content scroll-mt-20 px-4 pt-12 sm:px-6 sm:pt-16">
+        <h2 class="title-display text-[28px] leading-tight sm:text-[34px]">{{ $t('landing.stepsTitle') }}</h2>
+        <ol class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <li v-for="n in 3" :key="n" class="card card-pad">
+            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-accent-50 text-sm font-extrabold text-accent-800">{{ n }}</span>
+            <h3 class="title-display mt-3 text-xl">{{ $t(`landing.steps.step${n}.title`) }}</h3>
+            <p class="mt-1.5 text-[15px] leading-relaxed text-body">{{ $t(`landing.steps.step${n}.text`) }}</p>
           </li>
         </ol>
       </section>
 
-      <!-- Openbare reizen: lezen kan zonder account -->
-      <section v-if="trips.length" id="reizen" class="mx-auto max-w-content scroll-mt-20 px-4 py-12 sm:px-6 sm:py-16">
+      <!-- Vier pijlers -->
+      <section class="mx-auto max-w-content px-4 py-12 sm:px-6 sm:py-16" :aria-label="$t('landing.pillarsAria')">
+        <h2 class="title-display text-[28px] leading-tight sm:text-[34px]">{{ $t('landing.pillarsTitle') }}</h2>
+        <ol class="card mt-6 grid grid-cols-1 divide-y divide-line sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-4 lg:divide-x">
+          <li v-for="(key, i) in pillars" :key="key" class="p-5 sm:p-6">
+            <p class="font-display text-sm font-semibold text-accent-700">0{{ i + 1 }}</p>
+            <h3 class="title-display mt-1.5 text-xl">{{ $t(`landing.pillars.${key}.title`) }}</h3>
+            <p class="mt-1.5 text-sm leading-relaxed text-body">{{ $t(`landing.pillars.${key}.text`) }}</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- Openbare reizen van anderen horen bij ontdekken (features.discover). -->
+      <section v-if="features.discover && trips.length" id="reizen" class="mx-auto max-w-content scroll-mt-20 px-4 pb-12 sm:px-6 sm:pb-16">
         <div class="mb-6 max-w-2xl">
           <h2 class="title-display text-[28px] leading-tight sm:text-[34px]">{{ $t('landing.tripsTitle') }}</h2>
           <p class="mt-2 text-[15px] leading-relaxed text-body">{{ $t('landing.tripsText') }}</p>
@@ -72,13 +91,13 @@
       </section>
 
       <!-- Afsluiter -->
-      <section class="mx-auto max-w-content px-4 pb-14 sm:px-6" :class="trips.length ? '' : 'pt-12'">
+      <section class="mx-auto max-w-content px-4 pb-14 sm:px-6">
         <div class="flex flex-col items-start gap-5 rounded-3xl bg-ink p-7 text-surface sm:flex-row sm:items-center sm:justify-between sm:p-10">
           <div class="max-w-xl">
             <h2 class="font-display text-[28px] font-semibold leading-tight tracking-tight">{{ $t('landing.closingTitle') }}</h2>
             <p class="mt-2 text-[15px] leading-relaxed opacity-80">{{ $t('landing.closingText') }}</p>
           </div>
-          <RouterLink to="/register" class="btn btn-primary btn-lg shrink-0">{{ $t('landing.cta') }}</RouterLink>
+          <RouterLink to="/register" class="btn btn-primary btn-lg shrink-0">{{ $t('landing.start') }}</RouterLink>
         </div>
       </section>
     </main>
@@ -100,37 +119,40 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import Logo from '@/components/ui/Logo.vue'
-import CoverImage from '@/components/ui/CoverImage.vue'
+import Avatar from '@/components/ui/Avatar.vue'
+import Icon from '@/components/ui/Icon.vue'
 import TripCard from '@/components/TripCard.vue'
 import * as tripsApi from '@/api/tripsApi'
 import { useConsentStore } from '@/stores/consent'
-import { formatDateRange } from '@/utils/date'
-import { flagFor } from '@/utils/countries'
+import { features } from '@/config/features'
 
+// Landingspagina voor bezoekers: ExploreMe is één plek voor een groepsreis (plannen, beslissen, geld, herinneren).
 const consent = useConsentStore()
 const year = new Date().getFullYear()
 
-const pillars = [{ key: 'plan' }, { key: 'together' }, { key: 'remember' }]
+const pillars = ['plan', 'decide', 'money', 'remember']
+// Voorbeeldkaart in de kop; de namen leveren alleen initialen voor de avatars.
+const previewPeople = ['Emma', 'Lucas', 'Sofie', 'Noah']
+const previewRows = [
+  { key: 'payment', icon: 'wallet' },
+  { key: 'poll', icon: 'vote' },
+  { key: 'task', icon: 'checklist' },
+]
 
-// Openbare reizen zijn zonder account op te vragen; lukt dat niet, dan blijft de pagina gewoon staan.
+// Alleen met ontdekken aan: de populairste openbare reizen. Lukt het verzoek niet, dan blijft de pagina gewoon staan.
 const all = ref([])
-const loading = ref(true)
-const ranked = computed(() => [...all.value].sort((a, b) => score(b) - score(a)))
-/** De populairste reis mét omslagfoto is het beeld bovenaan. */
-const featured = computed(() => ranked.value.find((t) => t.coverImageUrl) || null)
-const trips = computed(() => ranked.value.slice(0, 6))
+const trips = computed(() => [...all.value].sort((a, b) => score(b) - score(a)).slice(0, 6))
 
 function score(trip) {
   return (trip.likeCount || 0) + (trip.bookmarkCount || 0) + (trip.copyCount || 0)
 }
 
 onMounted(async () => {
+  if (!features.discover) return
   try {
     all.value = await tripsApi.getAllTrips(24)
   } catch {
     all.value = []
-  } finally {
-    loading.value = false
   }
 })
 </script>

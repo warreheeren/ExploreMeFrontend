@@ -23,7 +23,7 @@ export function pinIcon(type, { label = '', selected = false } = {}) {
   const w = selected ? 34 : 28
   const h = selected ? 44 : 36
   const inner = label !== '' && label != null
-    ? `<text x="14" y="17" text-anchor="middle" font-size="10" font-weight="800" fill="${color}" font-family="Manrope Variable, system-ui, sans-serif">${escapeHtml(String(label))}</text>`
+    ? `<text x="14" y="17" text-anchor="middle" font-size="10" font-weight="800" fill="${color}" font-family="Montserrat Variable, system-ui, sans-serif">${escapeHtml(String(label))}</text>`
     : `<circle cx="14" cy="13.5" r="3" fill="${color}"/>`
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 28 36"><path d="M14 1C6.8 1 1 6.8 1 14c0 9.6 13 21 13 21s13-11.4 13-21C27 6.8 21.2 1 14 1z" fill="${color}" stroke="#fff" stroke-width="2"/><circle cx="14" cy="13.5" r="7.5" fill="#fff"/>${inner}</svg>`
   return L.divIcon({

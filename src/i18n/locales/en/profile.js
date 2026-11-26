@@ -16,6 +16,7 @@ export default {
   memberSince: 'member since {date}',
   privateTitle: 'This account is private',
   privateText: 'Follow {name} to see their posts, trips and lists.',
+  privateNoFollow: 'You will see the trips of {name} once you plan a trip together.',
   privateRequested: 'Your follow request has been sent. Once accepted, you will see everything here.',
   countriesVisited: 'Countries visited',
   contentTabs: 'Profile content',

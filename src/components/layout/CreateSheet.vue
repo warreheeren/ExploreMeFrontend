@@ -1,14 +1,14 @@
 <template>
   <Modal :model-value="modelValue" :title="$t('shell.create.title')" size="sm" @update:model-value="$emit('update:modelValue', $event)">
     <div class="space-y-2">
-      <button type="button" class="flex w-full items-center gap-3 rounded-2xl border border-line p-4 text-left transition hover:border-line-strong hover:bg-gray-50" @click="$emit('post')">
+      <button v-if="features.feed" type="button" class="flex w-full items-center gap-3 rounded-2xl border border-line p-4 text-left transition hover:border-line-strong hover:bg-gray-50" @click="$emit('post')">
         <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-ink text-surface"><Icon name="image" :size="20" /></span>
         <span>
           <span class="block text-sm font-bold text-ink">{{ $t('shell.create.post') }}</span>
           <span class="block text-xs text-muted">{{ $t('shell.create.postHint') }}</span>
         </span>
       </button>
-      <RouterLink to="/trips/new" class="flex w-full items-center gap-3 rounded-2xl border border-line p-4 text-left transition hover:border-line-strong hover:bg-gray-50" @click="$emit('update:modelValue', false)">
+      <RouterLink to="/trips/start" class="flex w-full items-center gap-3 rounded-2xl border border-line p-4 text-left transition hover:border-line-strong hover:bg-gray-50" @click="$emit('update:modelValue', false)">
         <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-accent-700 text-white"><Icon name="map" :size="20" /></span>
         <span>
           <span class="block text-sm font-bold text-ink">{{ $t('shell.create.trip') }}</span>
@@ -33,6 +33,7 @@ import Modal from '../ui/Modal.vue'
 import Icon from '../ui/Icon.vue'
 import SafetyCheckInDialog from '../safety/SafetyCheckInDialog.vue'
 import { useSafetyStore } from '@/stores/safety'
+import { features } from '@/config/features'
 
 defineProps({ modelValue: { type: Boolean, default: false } })
 const emit = defineEmits(['update:modelValue', 'post'])
