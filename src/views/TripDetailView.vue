@@ -170,8 +170,8 @@
           </div>
           <div class="order-1 lg:order-2">
             <LiveTrackingBanner :trip-id="trip.id" class="mb-3" />
-            <div class="card overflow-hidden lg:sticky lg:top-32">
-              <TripMap ref="tripMapRef" :stops="trip.stops" :selected-stop-id="selectedStopId" :route-geometry="tripRoute?.source === 'osrm' ? tripRoute.geometry : null" :route-segments="tripRoute?.segments || null" :live-locations="liveLocations" :tracks="tracks" height-class="h-[300px] sm:h-[380px] lg:h-[calc(100vh-14rem)]" @select="selectStop" />
+            <div class="card overflow-hidden lg:sticky lg:top-44">
+              <TripMap ref="tripMapRef" :stops="trip.stops" :selected-stop-id="selectedStopId" :route-geometry="tripRoute?.source === 'osrm' ? tripRoute.geometry : null" :route-segments="tripRoute?.segments || null" :live-locations="liveLocations" :tracks="tracks" height-class="h-[300px] sm:h-[380px] lg:h-[calc(100vh-17rem)]" @select="selectStop" />
               <RouteReplay v-if="trip.stops.length > 1" :trip="trip" :map="tripMapRef" :route-geometry="tripRoute?.source === 'osrm' ? tripRoute.geometry : null" />
               <div class="flex flex-wrap gap-x-4 gap-y-1 border-t border-line px-4 py-2.5 text-xs font-semibold text-muted">
                 <span v-for="t in STOP_TYPE_ORDER" :key="t" class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-full" :class="stopTypeMeta(t).dot" /> {{ stopTypeMeta(t).singular }}</span>
